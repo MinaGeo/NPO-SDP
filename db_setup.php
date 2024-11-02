@@ -1,5 +1,5 @@
 <?php
-$configs = require "00-config.php";
+$configs = require "server-configs.php";
 $conn = new mysqli($configs->DB_HOST, $configs->DB_USER);
 
 if ($conn->connect_error) {

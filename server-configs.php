@@ -19,6 +19,7 @@ return (object) array(
     'DB_ITEMS_TABLE'      => 'shirt',
     'DB_CARTS_TABLE'      => 'cart',
     'DB_CART_ITEMS_TABLE' => 'cart_item',
+    'DB_EVENTS_TABLE'     => 'event',
 
     // Routes
     'ROUTES' => [

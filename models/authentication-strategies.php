@@ -1,6 +1,6 @@
 <?php
 
-require_once "05-user-model.php";
+require_once "userBase.php";
 // Slightly modified behavior to make use of user model... hmm... model?
 
 interface AuthenticationProvider

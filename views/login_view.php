@@ -15,7 +15,7 @@
         <div class="row">
             <div class="col s12 m8 offset-m2 l6 offset-l3">
                 <h2 class="center-align">Enter Email and Password</h2>
-                <h6 class="red-text center-align"><?php echo $msg; ?></h6>
+                <!-- <h6 class="red-text center-align"><?php echo $msg; ?></h6> -->
                 <br /><br /><!-- deng -->
                 <!-- <form method="post"> -->
                 <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="post">

@@ -1,5 +1,5 @@
 <?php
-require_once "01-db-conn-setup.php";
+require_once "db_setup.php";
 
 // Bunch of CRUDing without the U to populate our lovely database
 run_queries(
@@ -52,13 +52,31 @@ run_queries(
             FOREIGN KEY (item_id) REFERENCES $configs->DB_NAME.$configs->DB_ITEMS_TABLE(id)
         );",
 
+        // Create table for events
+        "CREATE TABLE IF NOT EXISTS $configs->DB_NAME.$configs->DB_EVENTS_TABLE (
+            `id` INT AUTO_INCREMENT PRIMARY KEY,
+            `name` VARCHAR(100) NOT NULL,
+            `description` TEXT,
+            `location` VARCHAR(50),
+            `type` VARCHAR(50),
+            `date` DATETIME
+        );",
+
+        // Populating event data
+        "INSERT INTO $configs->DB_NAME.$configs->DB_EVENTS_TABLE (name, description, location, type, date) VALUES
+        ('7ayah kareema', 'An 7ayah kareema event', 'Cairo', 'Fundraising', '2024-12-25 10:00:00'),
+        ('57357', 'Cancer awareness event', 'Cairo', 'Awareness', '2024-12-26 11:00:00'),
+        ('Blood Donation', 'A blood donation event', 'Cairo', 'Donation', '2024-12-27 12:00:00'
+        );",
+
+
         // Then insert some random (not so random) users
         "INSERT INTO $configs->DB_NAME.$configs->DB_USERS_TABLE VALUES
         (1,'GitHub','User','github.user@github.com','25d55ad283aa400af464c76d713c07ad'),
         (2,'Google','User','google.user@google.com','25d55ad283aa400af464c76d713c07ad'),
         (3,'Facebook','User','facebook.user@meta.com','25d55ad283aa400af464c76d713c07ad'),
         (4,'7amada','Belganzabeel','7amada@belganzabeel.com','25d55ad283aa400af464c76d713c07ad'),
-        (5,'7amada','Tany','5ales@depression.inc','25d55ad283aa400af464c76d713c07ad');",
+        (5,'7amada','Tany','5ales@depression.inc','a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3');",
 
         // And some random (these are random fe3lan this time) items
         "INSERT INTO $configs->DB_NAME.$configs->DB_ITEMS_TABLE VALUES
