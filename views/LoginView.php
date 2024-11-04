@@ -1,5 +1,5 @@
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -9,14 +9,12 @@
             width: 24px;
             height: 24px;
         }
-        /* Make logos smaller */
         .logo {
             width: 20px;
             vertical-align: middle;
         }
     </style>
 </head>
-
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -25,8 +23,13 @@
             const email = $('#email').val();
             const password = $('#password').val();
 
+            if (!email || !password) {
+                alert("Email and Password cannot be empty!");
+                return;
+            }
+
             $.ajax({
-                url: '../Controllers/LoginController.php',
+                url: 'validateLogin',
                 type: 'POST',
                 data: {
                     loginFlag: true,
@@ -50,19 +53,15 @@
             <div class="col s12 m8 offset-m2 l6 offset-l3">
                 <h2 class="center-align">Login to our website</h2>
                 <br />
-                
-                <!-- Main Login Form -->
                 <form id="login-form">
                     <div class="input-field">
                         <label for="email">Email:</label>
-                        <input type="email" name="email" id="email" class="validate">
+                        <input type="email" name="email" id="email" class="validate" required>
                     </div>
                     <div class="input-field">
                         <label for="password">Password:</label>
-                        <input type="password" name="password" id="password" class="validate">
+                        <input type="password" name="password" id="password" class="validate" required>
                     </div>
-                    
-                    <!-- Social Login Buttons -->
                     <div class="row center-align">
                         <button type="button" onclick="login('google')" class="btn-floating btn-large waves-effect waves-light red">
                             <img class="logo" src="../assets/google.png" alt="Google Logo" />
@@ -74,7 +73,6 @@
                             <img class="logo" src="../assets/github.png" alt="GitHub Logo" />
                         </button>
                     </div>
-                    
                     <div class="center-align">
                         <button type="button" class="btn waves-effect waves-light" onclick="login('database')">
                             <img class="logo" src="../assets/web.png" alt="Login Logo" />
@@ -87,7 +85,7 @@
         <div class="center-align" style="margin-top: 20px;">
             <p style="font-size: small;">
                 Don't have an account? 
-                <a href="../views/RegisterView.php">Create a new account</a>
+                <a href="register">Create a new account</a>
             </p>
         </div>
     </div>

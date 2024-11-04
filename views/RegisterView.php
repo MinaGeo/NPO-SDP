@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,7 +10,6 @@
         }
     </style>
 </head>
-
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -23,7 +21,7 @@
             const password = $('#password').val();
 
             $.ajax({
-                url: '../Controllers/RegisterController.php',
+                url: 'validateRegister',
                 type: 'POST',
                 data: {
                     registerFlag: true,
@@ -35,6 +33,7 @@
                 success: function(response) {
                     const res = JSON.parse(response);
                     alert(res['message']);
+                    location.reload();
                 },
                 error: function(xhr, status, error) {
                     alert('An error occurred!');
@@ -50,7 +49,7 @@
                 <br />
                 
                 <!-- Registration Form -->
-                <form id="register-form" method="POST" action="../Controllers/RegisterController.php">
+                <form id="register-form" method="POST">
                     <div class="input-field">
                         <label for="firstName">First Name:</label>
                         <input type="text" name="firstName" id="firstName" class="validate" required>
@@ -78,7 +77,7 @@
         <div class="center-align" style="margin-top: 20px;">
             <p style="font-size: small;">
                 Already have an account? 
-                <a href="../views/LoginView.php">Login here</a>
+                <a href="login">Login here</a>
             </p>
         </div>
     </div>    

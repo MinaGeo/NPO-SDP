@@ -1,7 +1,7 @@
 <?php
 $configs = require "server-configs.php";
 
-echo "Connecting to $configs->DB_HOST, $configs->DB_USER, $configs->DB_PASS, $configs->DB_NAME </br>";
+// echo "Connecting to $configs->DB_HOST, $configs->DB_USER, $configs->DB_PASS, $configs->DB_NAME </br>";
 
 // Create initial connection
 $conn = new mysqli($configs->DB_HOST, $configs->DB_USER, $configs->DB_PASS);
@@ -9,7 +9,7 @@ $conn = new mysqli($configs->DB_HOST, $configs->DB_USER, $configs->DB_PASS);
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
-echo "Connected successfully<br/><hr/>";
+// echo "Connected successfully<br/><hr/>";
 
 // Check if the database exists
 $db_name = $configs->DB_NAME;
@@ -18,7 +18,7 @@ $result = $conn->query("SHOW DATABASES LIKE '$db_name'");
 if ($result->num_rows == 0) {
     // Database doesn't exist, create it
     if ($conn->query("CREATE DATABASE `$db_name`") === TRUE) {
-        echo "Database created successfully<br/><hr/>";
+        // echo "Database created successfully<br/><hr/>";
 
         // Close the initial connection and reconnect to the new database
         $conn->close();
@@ -27,7 +27,7 @@ if ($result->num_rows == 0) {
         if ($conn->connect_error) {
             die("Reconnection failed: " . $conn->connect_error);
         }
-        echo "Reconnected successfully to $db_name database<br/><hr/>";
+        // echo "Reconnected successfully to $db_name database<br/><hr/>";
 
         //////////////////////Create Tables//////////////////////
         // User Table
@@ -87,7 +87,7 @@ if ($result->num_rows == 0) {
             $conn->query($createCartTableQuery) === TRUE &&
             $conn->query($createCartItemsTableQuery) === TRUE
         ) {
-            echo "Tables created successfully<br/><hr/>";
+            // echo "Tables created successfully<br/><hr/>";
         } else {
             echo "Error creating tables: " . $conn->error;
         }
@@ -134,7 +134,7 @@ if ($result->num_rows == 0) {
             $conn->query($insertShopItemsQuery) === TRUE &&
             $conn->query($insertCartQuery) === TRUE
         ) {
-            echo "Data inserted successfully<br/><hr/>";
+            // echo "Data inserted successfully<br/><hr/>";
         } else {
             echo "Error inserting data: " . $conn->error;
         }
@@ -142,7 +142,7 @@ if ($result->num_rows == 0) {
         echo "Error creating database: " . $conn->error;
     }
 } else {
-    echo "Database already exists, just making the connection<br/><hr/>";
+    // echo "Database already exists, just making the connection<br/><hr/>";
 
     // Close the initial connection and reconnect to the existing database
     $conn->close();
@@ -151,7 +151,7 @@ if ($result->num_rows == 0) {
     if ($conn->connect_error) {
         die("Reconnection failed: " . $conn->connect_error);
     }
-    echo "Reconnected successfully to $db_name database<br/><hr/>";
+    // echo "Reconnected successfully to $db_name database<br/><hr/>";
 }
 
 // Function to run non-select queries

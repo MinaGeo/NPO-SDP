@@ -2,13 +2,13 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include __DIR__."/../models/EventModel.php";
-include __DIR__.'/../models/IFilter.php';
-include __DIR__.'/../models/FilterStrategy.php';
-include __DIR__.'/../models/FilteringContext.php';
-include __DIR__.'/../models/ISort.php';
-include __DIR__.'/../models/SortStrategy.php';
-include __DIR__.'/../models/SortingContext.php';
+require_once "./models/EventModel.php";
+require_once './models/IFilter.php';
+require_once './models/FilterStrategy.php';
+require_once './models/FilteringContext.php';
+require_once './models/ISort.php';
+require_once './models/SortStrategy.php';
+require_once './models/SortingContext.php';
 
 class EventController
 {
@@ -106,31 +106,4 @@ class EventController
             exit;
         }
     }
-}
-
-$controller = new EventController();
-$controller->show();
-
-
-if (isset($_POST['deleteEvent'])) {
-    if (!empty($_POST['id'])) {
-        $eventId = (int)$_POST['id']; 
-        if (Event::delete_event($eventId)) {
-            echo json_encode(['success' => true, 'message' => 'Event deleted!']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to delete Event or Event not found.']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid input.']);
-    }
-    exit;
-}
-
-if (isset($_POST['addEvent'])) {
-        if (Event::add_event($_POST['name'],$_POST['description'],$_POST['location'],$_POST['type'],$_POST['date'])) {
-            echo json_encode(['success' => true, 'message' => $_POST['name'] .'Event Added!']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to add Event or Event already exist.']);
-        }
-    exit;
 }

@@ -1,8 +1,8 @@
 <?php
-include __DIR__.'/../models/IFilter.php';
-include __DIR__.'/../models/FilterStrategy.php';
-include __DIR__.'/../models/FilteringContext.php';
-include __DIR__.'/../EventModel.php'; // Include your Event model
+require_once 'models\IFilter.php';
+require_once 'models/FilterStrategy.php';
+require_once 'models/FilteringContext.php';
+require_once 'models/EventModel.php'; // require_once your Event model
 
 class FilterController {
     private FilteringContext $context;

@@ -26,12 +26,19 @@ return (object) array(
         ''               => 'TestController@show',
         '/'              => 'TestController@show',
         '/test'          => 'TestController@show',
+        //----------------------LOGIN------------------------------//
         '/login'         => 'LoginController@show',
+        '/validateLogin'         => 'LoginController@validateLogin',
+        //----------------------REGISTER--------------------------//
+        '/register'         => 'RegisterController@show',
+        '/validateRegister'         => 'RegisterController@validateRegister',
+        //-----------------------SHOP----------------------------//
         '/shop' => 'ShopController@show',
         '/deleteShopItem' => 'ShopController@shopDeleteItem',
         '/showAddItem' => 'ShopController@showAddItem',
         '/addShopItem' => 'ShopController@shopAddItem',
         '/cart' => 'ShopController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
+        //------------------------EVENT--------------------------//
         '/event' => 'EventController@show',
         '/addEventView' => 'EventController@showAddEvent',
         '/addEvent' => 'EventController@addNewEvent',
