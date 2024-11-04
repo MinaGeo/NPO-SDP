@@ -97,7 +97,7 @@
 
         <div class="row">
             <div class="col s12">
-                <a href="../views/addShopItemView.php" class="btn waves-effect waves-light green">Add Item</a>
+                <a href="showAddItem" class="btn waves-effect waves-light green">Add Item</a>
             </div>
         </div>
     </div>
@@ -133,7 +133,7 @@
         function deleteItem(itemId) {
             if (confirm('Are you sure you want to delete this item?')) {
                 $.ajax({
-                    url: '../Controllers/ShopController.php',
+                    url: 'deleteShopItem',
                     type: 'POST',
                     data: {
                         deleteItem: true,

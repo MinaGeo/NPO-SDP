@@ -133,7 +133,7 @@
                     date: date,
                 },
                 success: function (response) {
-                    alert("DONE");
+                    alert("Event Added!");
                     window.location.href = "event";
                 },
                 error: function (xhr, status, error) {

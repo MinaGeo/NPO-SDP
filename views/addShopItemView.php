@@ -94,7 +94,7 @@
 
         function addItem(name, description, price) {
             $.ajax({
-                url: '../Controllers/ShopController.php',
+                url: 'addShopItem',
                 type: 'POST',
                 data: {
                     addItem: true,
@@ -103,7 +103,8 @@
                     price: price,
                 },
                 success: function (response) {
-                    window.location.href = "../Controllers/ShopController.php";
+                    alert("Item Added!");
+                    window.location.href = "shop";
                 },
                 error: function (xhr, status, error) {
                     M.toast({ html: 'Error adding item.', classes: 'rounded red' });

@@ -69,7 +69,7 @@ class EventController
         require_once "./views/EventView.php";
     }
     
-    public function showAdd()
+    public function showAddEvent()
     {
         echo "Entering showADd";
         require_once "./views/addEventView.php";

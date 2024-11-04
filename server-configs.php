@@ -23,20 +23,20 @@ return (object) array(
 
     // Routes
     'ROUTES' => [
-        // 'login'         => 'LoginController@show',
-        // // '/shop/{userId}' => 'ShopController@show',
-        // // '/cart/{userId}' => 'ShopController@showCart',
-        // '/event' => 'EventController@show',
         ''               => 'TestController@show',
         '/'              => 'TestController@show',
         '/test'          => 'TestController@show',
         '/login'         => 'LoginController@show',
-        '/shop/{userId}' => 'ShopController@show',
-        '/cart/{userId}' => 'ShopController@showCart',
+        '/shop' => 'ShopController@show',
+        '/deleteShopItem' => 'ShopController@shopDeleteItem',
+        '/showAddItem' => 'ShopController@showAddItem',
+        '/addShopItem' => 'ShopController@shopAddItem',
+        '/cart' => 'ShopController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
         '/event' => 'EventController@show',
-        '/addEventView' => 'EventController@showAdd',
+        '/addEventView' => 'EventController@showAddEvent',
         '/addEvent' => 'EventController@addNewEvent',
-        '/deleteEvent' => 'EventController@deleteEvent'
+        '/deleteEvent' => 'EventController@deleteEvent',
+
     ],
     
 
