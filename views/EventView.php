@@ -129,7 +129,7 @@
 
         <div class="row">
             <div class="col s12">
-                <a href="../views/addEventView.php" class="btn waves-effect waves-light green">Add Event</a>
+                <a href="./views/addEventView.php" class="btn waves-effect waves-light green">Add Event</a>
             </div>
         </div>
     </div>

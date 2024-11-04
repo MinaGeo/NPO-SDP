@@ -1,5 +1,5 @@
 <?php
-require_once "../models/authentication-strategies.php";
+require_once "./models/authentication-strategies.php";
 
 class LoginController
 {

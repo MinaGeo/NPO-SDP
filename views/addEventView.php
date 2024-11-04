@@ -122,7 +122,7 @@
 
         function addEvent(name, description, location, type, date) {
             $.ajax({
-                url: '../Controllers/EventController.php',
+                url: './Controllers/EventController.php',
                 type: 'POST',
                 data: {
                     addEvent: true,

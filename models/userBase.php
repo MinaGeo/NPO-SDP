@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 ob_start();
-require_once "../db_setup.php";
+require_once "./db_setup.php";
 ob_end_clean();
 
 class User

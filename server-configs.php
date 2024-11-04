@@ -5,7 +5,7 @@ return (object) array(
     // App Data
     'SITE_NAME'     => "Rotarct Cairo North",
     'APP_ROOT'      => dirname(dirname(__FILE__)),
-    'URL_ROOT'      => 'Rotaract-Cairo-North',
+    'URL_ROOT'      => 'NPO',
     'URL_SUBFOLDER' => 'index.php',
 
     // DB Data
@@ -23,16 +23,10 @@ return (object) array(
 
     // Routes
     'ROUTES' => [
-        ''               => 'TestController@show',
-        '/'              => 'TestController@show',
-        '/test'          => 'TestController@show',
-        '/test/{arg}'    => 'TestController@show',
-        '/login'         => 'LoginController@show',
-        '/shop/{userId}' => 'ShopController@show',
-        '/cart/{userId}' => 'ShopController@showCart',
-        '/event/{eventId}' => 'EventController@show',
-        // '/user/{userId}' => 'UserController@show',
-        // Other routes...
+        ''         => 'LoginController@show',
+        // '/shop/{userId}' => 'ShopController@show',
+        // '/cart/{userId}' => 'ShopController@showCart',
+        '/event' => 'EventController@show',
     ],
 
 );

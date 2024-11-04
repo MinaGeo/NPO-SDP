@@ -1,9 +1,9 @@
 <?php
 $configs = require "server-configs.php";
-require_once './Controllers/_test_FilterController.php';
-require_once './Controllers/_test_SortController.php';
-require_once './Controllers/EventController.php';
-require_once './Controllers/LoginController.php';
+require_once '../Controllers/_test_FilterController.php';
+require_once '../Controllers/_test_SortController.php';
+require_once '../Controllers/EventController.php';
+require_once '../Controllers/LoginController.php';
 
 class Router
 {
