@@ -31,37 +31,85 @@ if ($result->num_rows == 0) {
 
         echo "Reconnected successfully to $db_name database<br/><hr/>";
 
-        // Create tables
+
+        //////////////////////Create Tables//////////////////////
+        // User Table
+        $createUserTableQuery = "
+            CREATE TABLE IF NOT EXISTS `user` (
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                firstName VARCHAR(50) NULL DEFAULT NULL,
+                lastName VARCHAR(50) NULL DEFAULT NULL,
+                email VARCHAR(50) NULL,
+                passwordHash VARCHAR(32) NOT NULL,
+                UNIQUE INDEX `uq_email` (`email` ASC)
+            )";
+        // Event Table
         $createEventTableQuery = "
             CREATE TABLE IF NOT EXISTS `event` (
-                id INT AUTO_INCREMENT PRIMARY KEY,
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 description TEXT,
                 location VARCHAR(50),
                 type VARCHAR(50),
                 date DATETIME
             )";
+        // Shop Items Table
         $createShopItemsTableQuery = "
             CREATE TABLE IF NOT EXISTS `shop_items` (
-                id INT AUTO_INCREMENT PRIMARY KEY,
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 description TEXT,
                 price INT NOT NULL
             )";
+        // Cart Table
+        $createCartTableQuery = "
+            CREATE TABLE IF NOT EXISTS `cart` (
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                user_id INT NOT NULL,
+                FOREIGN KEY (user_id) REFERENCES `NPO`.`user`(id)
+            )";
+        // To be add later when user table added
+        // FOREIGN KEY (user_id) REFERENCES `NPO`.`user`(id),
 
-        if ($conn->query($createEventTableQuery) === TRUE && $conn->query($createShopItemsTableQuery) === TRUE) {
+        // Cart Items Table
+        $createCartItemsTableQuery = "
+            CREATE TABLE IF NOT EXISTS `cart_items` (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                cart_id INT NOT NULL,
+                item_id INT NOT NULL,
+                quantity INT NOT NULL DEFAULT 1,
+                FOREIGN KEY (cart_id) REFERENCES `NPO`.`cart`(id),
+                FOREIGN KEY (item_id) REFERENCES `NPO`.`shop_items`(id)
+            )";
+        ////////////////////////////////////////////////////////////////////////////
+
+        if ($conn->query($createUserTableQuery) === TRUE && 
+            $conn->query($createEventTableQuery) === TRUE && 
+            $conn->query($createShopItemsTableQuery) === TRUE && 
+            $conn->query($createCartTableQuery) === TRUE && 
+            $conn->query($createCartItemsTableQuery) === TRUE) {
             echo "Tables created successfully<br/><hr/>";
         } else {
             echo "Error creating tables: " . $conn->error;
         }
 
-        // Insert data into tables
+        //////////////////////Create Data//////////////////////
+        $insertUserQuery = "
+            INSERT INTO `user` (firstName, lastName, email, passwordHash)
+            VALUES
+                ('GitHub','User','github.user@github.com','25d55ad283aa400af464c76d713c07ad'),
+                ('Google','User','google.user@google.com','25d55ad283aa400af464c76d713c07ad'),
+                ('Facebook','User','facebook.user@meta.com','25d55ad283aa400af464c76d713c07ad'),
+                ('7amada','Belganzabeel','7amada@belganzabeel.com','25d55ad283aa400af464c76d713c07ad'),
+                ('7amada','Tany','5ales@depression.inc','25d55ad283aa400af464c76d713c07ad')";
+                
         $insertEventQuery = "
             INSERT INTO `event` (name, description, location, type, date)
             VALUES
                 ('7ayah kareema', 'An 7ayah kareema event', 'Cairo', 'Fundraising', '2024-12-25 10:00:00'),
                 ('57357', 'Cancer awareness event', 'Cairo', 'Awareness', '2024-12-26 11:00:00'),
                 ('Blood Donation', 'A blood donation event', 'Cairo', 'Donation', '2024-12-27 12:00:00')";
+
         $insertShopItemsQuery = "
             INSERT INTO `shop_items` (name, description, price)
             VALUES
@@ -70,7 +118,19 @@ if ($result->num_rows == 0) {
                 ('Sporty Performance Tee', 'Moisture-wicking for active use', 30),
                 ('Casual Striped Tee', 'Comfortable striped t-shirt, casual fit', 22)";
 
-        if ($conn->query($insertEventQuery) === TRUE && $conn->query($insertShopItemsQuery) === TRUE) {
+        $insertCartQuery ="
+            INSERT INTO `cart` (user_id)
+            VALUES
+                (1),
+                (2),
+                (3),
+                (4),
+                (5)";
+
+        if ($conn->query($insertUserQuery) === TRUE && 
+            $conn->query($insertEventQuery) === TRUE && 
+            $conn->query($insertShopItemsQuery) === TRUE &&
+            $conn->query($insertCartQuery) === TRUE) {
             echo "Data inserted successfully<br/><hr/>";
         } else {
             echo "Error inserting data: " . $conn->error;
