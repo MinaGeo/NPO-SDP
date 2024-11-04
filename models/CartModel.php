@@ -33,19 +33,19 @@ class Cart
     {
         $price = 0;
         foreach ($this->items as $item_id => $quantity) {
-            // $shirt = ShopItem::get_by_id($item_id); //model byklm model
+            $shopItem = ShopItem::get_by_id($item_id); //model byklm model
             // $price += $quantity * (new SHIP2EGDecorator(new EGVATDecorator(new USD2EGPDecorator($shirt))))->calc_price();
-            $price += $quantity;
+            $price += $quantity*$shopItem->price;
         }
         return $price;
     }
     // Get a cart via its ID
-    static public function get_by_id($id): Cart|null
+    static public function get_by_id($id): Cart
     {
         global $configs;
-        $cart = new Cart(run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $id")->fetch_assoc());
+        $cart = new Cart(run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $id")->fetch_assoc());
         //breturn el cart ely 3ayezha bel id
-        $cart_items = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $id")->fetch_all(MYSQLI_ASSOC);
+        $cart_items = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart->id")->fetch_all(MYSQLI_ASSOC);
         //breturn el items id using cart_item class
         foreach ($cart_items as $item) {
             $cart->items[$item['item_id']] = $item['quantity'];

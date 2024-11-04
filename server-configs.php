@@ -27,12 +27,16 @@ return (object) array(
         '/'              => 'TestController@show',
         '/test'          => 'TestController@show',
         '/login'         => 'LoginController@show',
+        
         '/shop' => 'ShopController@show',
         '/deleteShopItem' => 'ShopController@shopDeleteItem',
         '/addShopItemToCart'=>'ShopController@shopAddItemToCart',
         '/showAddItem' => 'ShopController@showAddItem',
         '/addShopItem' => 'ShopController@shopAddItem',
-        '/cart' => 'ShopController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
+        
+        '/cart' => 'CartController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
+        '/removeCartItem' => 'CartController@removeCartItem',
+        
         '/event' => 'EventController@show',
         '/addEventView' => 'EventController@showAddEvent',
         '/addEvent' => 'EventController@addNewEvent',

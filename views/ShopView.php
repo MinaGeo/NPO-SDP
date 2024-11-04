@@ -103,7 +103,7 @@
             </div>
         </div>
         <div class="fixed-action-btn">
-                <a 
+                <a href="cart"
                 class="btn-floating btn-large blue">
                 <i class="large material-icons">shopping_cart</i>
                 </a>

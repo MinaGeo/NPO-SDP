@@ -65,9 +65,6 @@ if ($result->num_rows == 0) {
                 user_id INT NOT NULL,
                 FOREIGN KEY (user_id) REFERENCES `NPO`.`user`(id)
             )";
-        // To be add later when user table added
-        // FOREIGN KEY (user_id) REFERENCES `NPO`.`user`(id),
-
         // Cart Items Table
         $createCartItemsTableQuery = "
             CREATE TABLE IF NOT EXISTS `cart_items` (
