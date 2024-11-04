@@ -122,7 +122,7 @@
 
         function addEvent(name, description, location, type, date) {
             $.ajax({
-                url: './Controllers/EventController.php',
+                url: 'addEvent',
                 type: 'POST',
                 data: {
                     addEvent: true,
@@ -133,7 +133,8 @@
                     date: date,
                 },
                 success: function (response) {
-                    window.location.href = "Controllers/EventController.php";
+                    alert("DONE");
+                    window.location.href = "event";
                 },
                 error: function (xhr, status, error) {
                     M.toast({ html: 'Error adding event.', classes: 'rounded red' });

@@ -33,7 +33,10 @@ return (object) array(
         '/login'         => 'LoginController@show',
         '/shop/{userId}' => 'ShopController@show',
         '/cart/{userId}' => 'ShopController@showCart',
-        '/event' => 'EventController@show'
+        '/event' => 'EventController@show',
+        '/addEventView' => 'EventController@showAdd',
+        '/addEvent' => 'EventController@addNewEvent',
+        '/deleteEvent' => 'EventController@deleteEvent'
     ],
 
 );

@@ -12,11 +12,11 @@ class Router
 
     public function route($url)
     {
-        echo $this->configs->ROUTES;
+        echo "Entering $url";
         foreach ($this->configs->ROUTES as $route => $handler) {
             $pattern = $this->buildPattern($route);
             // Debugging: Uncomment the line below to see patterns and URLs
-            // echo "<pre>Pattern: $pattern | URL: $url</pre>";
+            echo "<pre>Pattern: $pattern | URL: $url</pre>";
 
             if (preg_match($pattern, $url, $matches)) {
                 // Debugging: Uncomment the line below to confirm route match

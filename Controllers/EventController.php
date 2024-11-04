@@ -15,12 +15,14 @@ class EventController
     private FilteringContext $filteringContext;
     private SortingContext $sortingContext;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->filteringContext = new FilteringContext();
         $this->sortingContext = new SortingContext();
     }
 
-    public function show() {
+    public function show()
+    {
         $events = Event::get_all();
 
         // Handle Filtering
@@ -63,38 +65,42 @@ class EventController
         // Make sure $events is available in the included file
         require_once "./views/EventView.php";
     }
-}
-
-
-$controller = new EventController();
-$controller->show();
-
-
-
-
-if (isset($_POST['deleteEvent'])) {
-    if (!empty($_POST['id'])) {
-        $eventId = (int)$_POST['id']; 
-        if (Event::delete_event($eventId)) {
-            echo json_encode(['success' => true, 'message' => 'Event deleted!']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to delete Event or Event not found.']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+    public function showAdd()
+    {
+        echo "Entering showADd";
+        // Make sure $events is available in the included file
+        require_once "./views/addEventView.php";
     }
-    exit;
-}
 
 
-
-
-
-if (isset($_POST['addEvent'])) {
-        if (Event::add_event($_POST['name'],$_POST['description'],$_POST['location'],$_POST['type'],$_POST['date'])) {
-            echo json_encode(['success' => true, 'message' => $_POST['name'] .'Event Added!']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to add Event or Event already exist.']);
+    public function deleteEvent()
+    {
+        if (isset($_POST['deleteEvent'])) {
+            if (!empty($_POST['id'])) {
+                $eventId = (int)$_POST['id'];
+                if (Event::delete_event($eventId)) {
+                    echo json_encode(['success' => true, 'message' => 'Event deleted!']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Failed to delete Event or Event not found.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+            }
+            exit;
         }
-    exit;
+    }
+
+
+
+    public function addNewEvent()
+    {
+        if (isset($_POST['addEvent'])) {
+            if (Event::add_event($_POST['name'], $_POST['description'], $_POST['location'], $_POST['type'], $_POST['date'])) {
+                echo json_encode(['success' => true, 'message' => $_POST['name'] . 'Event Added!']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to add Event or Event already exist.']);
+            }
+            exit;
+        }
+    }
 }

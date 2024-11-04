@@ -129,7 +129,7 @@
 
         <div class="row">
             <div class="col s12">
-                <a href="./views/addEventView.php" class="btn waves-effect waves-light green">Add Event</a>
+                <a href="addEventView" class="btn waves-effect waves-light green">Add Event</a>
             </div>
         </div>
     </div>
@@ -165,7 +165,7 @@
         function deleteEvent(eventId) {
             if (confirm('Are you sure you want to delete this event?')) {
                 $.ajax({
-                    url: 'Controllers/EventController.php',
+                    url: 'deleteEvent',
                     type: 'POST',
                     data: {
                         deleteEvent: true,
