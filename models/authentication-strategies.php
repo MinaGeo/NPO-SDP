@@ -12,8 +12,7 @@ class FacebookAuthenticator implements AuthenticationProvider
 {
     public function login(String $email, String $password): User|null
     {
-        echo "Authenticating user with email: $email with Facebook...<br/>";
-        return User::get_by_id(3);
+        return User::get_by_email_and_password_hash($email, md5($password));
     }
 }
 
@@ -21,8 +20,7 @@ class GoogleAuthenticator implements AuthenticationProvider
 {
     public function login(String $email, String $password): User|null
     {
-        echo "Authenticating user with email: $email with Google...<br/>";
-        return User::get_by_id(2);
+        return User::get_by_email_and_password_hash($email, md5($password));
     }
 }
 
@@ -30,8 +28,7 @@ class GitHubAuthenticator implements AuthenticationProvider
 {
     public function login(String $email, String $password): User|null
     {
-        echo "Authenticating user with email: $email with GitHub...<br/>";
-        return User::get_by_id(1);
+        return User::get_by_email_and_password_hash($email, md5($password));
     }
 }
 
@@ -39,7 +36,6 @@ class DBAuthenticator implements AuthenticationProvider
 {
     public function login(String $email, String $password): User|null
     {
-        echo "Authenticating user with email: $email with database...<br/>";
         $md5Hash = md5($password);
         // $rows = run_select_query("SELECT * FROM ESHOP.user WHERE email = '$email' AND passwordHash = '$md5Hash'");
         return User::get_by_email_and_password_hash($email, $md5Hash);

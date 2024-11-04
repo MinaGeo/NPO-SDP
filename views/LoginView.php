@@ -20,7 +20,31 @@
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    
+    <script>
+        function login(loginMethod) {
+            const email = $('#email').val();
+            const password = $('#password').val();
+
+            $.ajax({
+                url: '../Controllers/LoginController.php',
+                type: 'POST',
+                data: {
+                    loginFlag: true,
+                    loginMethod: loginMethod,
+                    email: email,
+                    password: password
+                },
+                success: function(response) {
+                    console.log(response);
+                    const res = JSON.parse(response);
+                    alert(res['message']);
+                },
+                error: function(xhr, status, error) {
+                    console.error("An error occurred:", error);
+                }
+            });
+        }
+    </script>
     <div class="container">
         <div class="row">
             <div class="col s12 m8 offset-m2 l6 offset-l3">
@@ -60,32 +84,12 @@
                 </form>
             </div>
         </div>
+        <div class="center-align" style="margin-top: 20px;">
+            <p style="font-size: small;">
+                Don't have an account? 
+                <a href="../views/RegisterView.php">Create a new account</a>
+            </p>
+        </div>
     </div>
-
-    <script>
-        function login(loginMethod) {
-            const email = $('#email').val();
-            const password = $('#password').val();
-
-            $.ajax({
-                url: '../Controllers/LoginController.php',
-                type: 'POST',
-                data: {
-                    loginFlag: true,
-                    loginMethod: loginMethod,
-                    email: email,
-                    password: password
-                },
-                success: function(response) {
-                    alert("Login successful");
-                    //window.location.href = '../views/EventView.php'; ------------>Rafik Router
-                    // Optionally redirect or handle response
-                },
-                error: function(xhr, status, error) {
-                    console.error("An error occurred:", error);
-                }
-            });
-        }
-    </script>
 </body>
 </html>
