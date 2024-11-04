@@ -1,7 +1,8 @@
 <?php
 $configs = require "server-configs.php";
-// $conn = new mysqli($configs->DB_HOST, $configs->DB_USER, $configs->DB_USER, $configs->DB_NAME);
-$conn = new mysqli($configs->DB_HOST, $configs->DB_USER);
+echo "Connecting to $configs->DB_HOST, $configs->DB_USER, $configs->DB_PASS, $configs->DB_NAME </br>";
+$conn = new mysqli($configs->DB_HOST, $configs->DB_USER, $configs->DB_PASS, $configs->DB_NAME);
+// $conn = new mysqli($configs->DB_HOST, $configs->DB_USER);
 // $mysqli = new mysqli("DB_HOST", "DB_USER", "password", "database_name");
 
 if ($conn->connect_error) {
@@ -33,7 +34,6 @@ function run_query($query, $echo = false): bool
 function run_select_query($query, $echo = false): mysqli_result|bool
 {
     global $conn;
-    echo $query."</br>";
     $result = $conn->query($query);
     if ($echo) {
         echo '<pre>' . $query . '</pre>';

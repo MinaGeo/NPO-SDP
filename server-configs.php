@@ -23,12 +23,18 @@ return (object) array(
 
     // Routes
     'ROUTES' => [
-        'login'         => 'LoginController@show',
-        // '/shop/{userId}' => 'ShopController@show',
-        // '/cart/{userId}' => 'ShopController@showCart',
-        '/event' => 'EventController@show',
-        "" => "TestController@show"
+        // 'login'         => 'LoginController@show',
+        // // '/shop/{userId}' => 'ShopController@show',
+        // // '/cart/{userId}' => 'ShopController@showCart',
+        // '/event' => 'EventController@show',
+        ''               => 'TestController@show',
+        '/'              => 'TestController@show',
+        '/test'          => 'TestController@show',
+        '/login'         => 'LoginController@show',
+        '/shop/{userId}' => 'ShopController@show',
+        '/cart/{userId}' => 'ShopController@showCart',
+        '/event' => 'EventController@show'
     ],
 
 );
-?>
+

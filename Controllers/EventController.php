@@ -60,8 +60,8 @@ class EventController
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);
 
-        // Make sure $events is available in the require_onced file
-        require_once "./views/EventView.php";
+        // Make sure $events is available in the included file
+        include "./views/EventView.php";
     }
 }
 

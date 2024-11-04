@@ -1,20 +1,27 @@
 <?php
-$configs = require "server-configs.php";
-require_once 'Controllers/_test_FilterController.php';
-require_once 'Controllers/_test_SortController.php';
-require_once 'Controllers/EventController.php';
-require_once 'Controllers/LoginController.php';
-require_once 'Controllers/TestController.php';
+// src/Router.php
 
 class Router
 {
+    private $configs;
+
+    public function __construct($configs)
+    {
+        $this->configs = $configs;
+    }
+
     public function route($url)
     {
-        global $configs;
-        foreach ($configs->ROUTES as $route => $handler) {
-            $pattern = $this->buildPattern("/$configs->URL_ROOT/$configs->URL_SUBFOLDER$route");
-            // echo "<pre>$pattern\t\t\t\t$url\n</pre>";
+        echo $this->configs->ROUTES;
+        foreach ($this->configs->ROUTES as $route => $handler) {
+            $pattern = $this->buildPattern($route);
+            // Debugging: Uncomment the line below to see patterns and URLs
+            // echo "<pre>Pattern: $pattern | URL: $url</pre>";
+
             if (preg_match($pattern, $url, $matches)) {
+                // Debugging: Uncomment the line below to confirm route match
+                // echo "entered </br>";
+
                 array_shift($matches); // Remove the full match
                 $this->invokeControllerAction($handler, $matches);
                 return;
@@ -25,27 +32,54 @@ class Router
 
     private function buildPattern($route)
     {
-        return '#^' . preg_replace('/\{(\w+)\}/', '(?P<$1>[^/]+)', $route) . '$#';
+        // Escape slashes for regex and replace {param} with named regex groups
+        $pattern = preg_replace('/\//', '\/', $route);
+        $pattern = preg_replace('/\{(\w+)\}/', '(?P<$1>[^\/]+)', $pattern);
+        return '/^' . $pattern . '$/';
     }
 
     private function invokeControllerAction($handler, $params)
     {
         list($controllerName, $action) = explode('@', $handler);
+
+        if (!class_exists($controllerName)) {
+            echo "Error: Controller '$controllerName' not found.";
+            return;
+        }
+
         $controller = new $controllerName();
+
+        if (!method_exists($controller, $action)) {
+            echo "Error: Action '$action' not found in controller '$controllerName'.";
+            return;
+        }
+
         $this->callControllerAction($controller, $action, $params);
     }
 
     private function callControllerAction($controller, $action, $params)
     {
-        $reflectionMethod = new ReflectionMethod($controller, $action);
-        $methodParameters = $reflectionMethod->getParameters();
+        try {
+            $reflectionMethod = new ReflectionMethod($controller, $action);
+            $methodParameters = $reflectionMethod->getParameters();
 
-        $resolvedParams = [];
-        foreach ($methodParameters as $param) {
-            $paramName = $param->getName();
-            $resolvedParams[] = $params[$paramName] ?? null;
+            $resolvedParams = [];
+            foreach ($methodParameters as $param) {
+                $paramName = $param->getName();
+                if (isset($params[$paramName])) {
+                    $resolvedParams[] = $params[$paramName];
+                } elseif ($param->isDefaultValueAvailable()) {
+                    $resolvedParams[] = $param->getDefaultValue();
+                } else {
+                    // Parameter is missing and no default value
+                    echo "Error: Missing parameter '$paramName'.";
+                    return;
+                }
+            }
+
+            $reflectionMethod->invokeArgs($controller, $resolvedParams);
+        } catch (ReflectionException $e) {
+            echo "Error invoking method: " . $e->getMessage();
         }
-
-        $reflectionMethod->invokeArgs($controller, $resolvedParams);
     }
 }
