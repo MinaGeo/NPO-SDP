@@ -19,7 +19,7 @@ if ($result->num_rows == 0) {
     // Database doesn't exist, create it
     if ($conn->query("CREATE DATABASE `$db_name`") === TRUE) {
         echo "Database created successfully<br/><hr/>";
-        
+
         // Close the initial connection and reconnect to the new database
         $conn->close();
         $conn = new mysqli($configs->DB_HOST, $configs->DB_USER, $configs->DB_PASS, $db_name);
@@ -80,11 +80,13 @@ if ($result->num_rows == 0) {
             )";
         ////////////////////////////////////////////////////////////////////////////
 
-        if ($conn->query($createUserTableQuery) === TRUE && 
-            $conn->query($createEventTableQuery) === TRUE && 
-            $conn->query($createShopItemsTableQuery) === TRUE && 
-            $conn->query($createCartTableQuery) === TRUE && 
-            $conn->query($createCartItemsTableQuery) === TRUE) {
+        if (
+            $conn->query($createUserTableQuery) === TRUE &&
+            $conn->query($createEventTableQuery) === TRUE &&
+            $conn->query($createShopItemsTableQuery) === TRUE &&
+            $conn->query($createCartTableQuery) === TRUE &&
+            $conn->query($createCartItemsTableQuery) === TRUE
+        ) {
             echo "Tables created successfully<br/><hr/>";
         } else {
             echo "Error creating tables: " . $conn->error;
@@ -116,7 +118,7 @@ if ($result->num_rows == 0) {
                 ('Sporty Performance Tee', 'Moisture-wicking for active use', 30),
                 ('Casual Striped Tee', 'Comfortable striped t-shirt, casual fit', 22)";
         // Insert Cart Data
-        $insertCartQuery ="
+        $insertCartQuery = "
             INSERT INTO `cart` (user_id)
             VALUES
                 (1),
@@ -126,10 +128,12 @@ if ($result->num_rows == 0) {
                 (5)";
         ////////////////////////////////////////////////////////////////////////////
 
-        if ($conn->query($insertUserQuery) === TRUE && 
-            $conn->query($insertEventQuery) === TRUE && 
+        if (
+            $conn->query($insertUserQuery) === TRUE &&
+            $conn->query($insertEventQuery) === TRUE &&
             $conn->query($insertShopItemsQuery) === TRUE &&
-            $conn->query($insertCartQuery) === TRUE) {
+            $conn->query($insertCartQuery) === TRUE
+        ) {
             echo "Data inserted successfully<br/><hr/>";
         } else {
             echo "Error inserting data: " . $conn->error;
@@ -211,4 +215,3 @@ function run_select_query($query, $params = [], $echo = false): mysqli_result|bo
 
 // Close the connection when done
 // $conn->close();
-?>

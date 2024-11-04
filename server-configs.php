@@ -38,7 +38,6 @@ return (object) array(
         '/deleteEvent' => 'EventController@deleteEvent',
 
     ],
-    
+
 
 );
-
