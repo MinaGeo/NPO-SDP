@@ -133,7 +133,7 @@
                     date: date,
                 },
                 success: function (response) {
-                    window.location.href = "../Controllers/EventController.php";
+                    window.location.href = "Controllers/EventController.php";
                 },
                 error: function (xhr, status, error) {
                     M.toast({ html: 'Error adding event.', classes: 'rounded red' });

@@ -23,7 +23,7 @@ return (object) array(
 
     // Routes
     'ROUTES' => [
-        ''         => 'LoginController@show',
+        'login'         => 'LoginController@show',
         // '/shop/{userId}' => 'ShopController@show',
         // '/cart/{userId}' => 'ShopController@showCart',
         '/event' => 'EventController@show',

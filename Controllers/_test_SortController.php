@@ -1,8 +1,8 @@
 <?php 
-include '../models/ISort.php';
-include '../models/SortStrategy.php';
-include '../models/SortingContext.php';
-include '../EventModel.php';
+require_once 'models/ISort.php';
+require_once 'models/SortStrategy.php';
+require_once 'models/SortingContext.php';
+require_once 'models/EventModel.php';
 
 class SortController {
     private SortingContext $context;
@@ -39,9 +39,9 @@ class SortController {
                 break;
         }
 
-        // Sort data and include the view
+        // Sort data and require_once the view
         $events = $this->sortData($events, $strategy);
-        include '../EventView.php';
+        // require_once 'models/EventView.php';
     }
 }
 

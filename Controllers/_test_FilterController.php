@@ -1,8 +1,9 @@
 <?php
-include '../models/IFilter.php';
-include '../models/FilterStrategy.php';
-include '../models/FilteringContext.php';
-include '../EventModel.php'; // Include your Event model
+require_once 'models\IFilter.php';
+require_once 'models/FilterStrategy.php';
+require_once 'models/FilteringContext.php';
+// require_once 'models/FilteringContext.php';
+require_once 'models/EventModel.php'; // require_once your Event model
 
 class FilterController {
     private FilteringContext $context;
@@ -30,9 +31,9 @@ class FilterController {
                 break;
         }
 
-        // Filter data and include the view
+        // Filter data and require_once the view
         $events = $this->filterData($events, $strategy);
-        include '../EventView.php'; // Include the view with filtered events
+        // require_once 'models/EventView.php'; // require_once the view with filtered events
     }
 }
 

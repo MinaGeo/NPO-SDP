@@ -2,13 +2,13 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include "./models/EventModel.php";
-include './models/IFilter.php';
-include './models/FilterStrategy.php';
-include './models/FilteringContext.php';
-include './models/ISort.php';
-include './models/SortStrategy.php';
-include './models/SortingContext.php';
+require_once "./models/EventModel.php";
+require_once './models/IFilter.php';
+require_once './models/FilterStrategy.php';
+require_once './models/FilteringContext.php';
+require_once './models/ISort.php';
+require_once './models/SortStrategy.php';
+require_once './models/SortingContext.php';
 
 class EventController
 {
@@ -60,8 +60,8 @@ class EventController
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);
 
-        // Make sure $events is available in the included file
-        include "./views/EventView.php";
+        // Make sure $events is available in the require_onced file
+        require_once "./views/EventView.php";
     }
 }
 
