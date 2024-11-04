@@ -48,7 +48,7 @@ class Event
     {
         $events = [];
         global $configs;    
-        $rows = run_select_query("SELECT * FROM $configs->DB_EVENTS_TABLE")->fetch_all(MYSQLI_ASSOC);
+        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE")->fetch_all(MYSQLI_ASSOC);
 
         foreach ($rows as $row) {
             $events[] = new Event($row); // Corrected variable name

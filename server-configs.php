@@ -12,7 +12,7 @@ return (object) array(
     'DB_HOST' => 'localhost',
     'DB_USER' => 'root',
     'DB_PASS' => '',
-    'DB_NAME' => 'website',
+    'DB_NAME' => 'npo',
 
     // DB Tables
     'DB_USERS_TABLE'      => 'user',
@@ -27,6 +27,8 @@ return (object) array(
         // '/shop/{userId}' => 'ShopController@show',
         // '/cart/{userId}' => 'ShopController@showCart',
         '/event' => 'EventController@show',
+        "" => "TestController@show"
     ],
 
 );
+?>
