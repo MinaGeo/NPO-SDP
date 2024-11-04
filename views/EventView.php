@@ -69,7 +69,7 @@
                     <option value="date_desc">Sort by Date (Farthest to closest)</option>
                 </select>
                 <label>
-                    <img class="logo" src="assets/sort.png" alt="Sort Logo" /> Choose Sorting Option
+                    <img class="logo" src="../assets/sort.png" alt="Sort Logo" /> Choose Sorting Option
                 </label>
             </div>
 
@@ -80,7 +80,7 @@
                     <!-- Add more filter options here -->
                 </select>
                 <label>
-                    <img class="logo" src="assets/filter.png" alt="Filter Logo" /> Choose Filtering Option
+                    <img class="logo" src="../assets/filter.png" alt="Filter Logo" /> Choose Filtering Option
                 </label>
             </div>
 
@@ -93,7 +93,7 @@
                     <option value="Awareness" <?php echo (isset($_GET['eventType']) && $_GET['eventType'] == 'Awareness') ? 'selected' : ''; ?>>Awareness</option>
                 </select>
                 <label>
-                    <img class="logo" src="assets/filter_type.png" alt="Event Type Logo" /> Choose Event Type
+                    <img class="logo" src="../assets/filter_type.png" alt="Event Type Logo" /> Choose Event Type
                 </label>
             </div>
         </div>

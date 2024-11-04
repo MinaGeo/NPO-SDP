@@ -61,7 +61,7 @@ class EventController
         $events = $this->sortingContext->sortData($events);
 
         // Make sure $events is available in the included file
-        include "./views/EventView.php";
+        require_once "./views/EventView.php";
     }
 }
 
