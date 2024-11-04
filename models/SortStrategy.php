@@ -20,7 +20,7 @@ class SortByDateDescStrategy implements ISort {
 class SortByNameAscStrategy implements ISort {
     public function sort(array $data): array {
         usort($data, function($a, $b) {
-            return strcmp($a->name, $b->name); // Access the 'name' property of each Event object
+            return strcmp($a->name, $b->name);
         });
         return $data;
     }
@@ -37,7 +37,7 @@ class SortByNameDescStrategy implements ISort {
 class SortByPriceAscStrategy implements ISort {
     public function sort(array $data): array {
         usort($data, function($a, $b) {
-            return $a['price'] <=> $b['price'];
+            return $a->price <=> $b->price;
         });
         return $data;
     }
@@ -46,7 +46,7 @@ class SortByPriceAscStrategy implements ISort {
 class SortByPriceDescStrategy implements ISort {
     public function sort(array $data): array {
         usort($data, function($a, $b) {
-            return $b['price'] <=> $a['price'];
+            return $b->price <=> $a->price;
         });
         return $data;
     }
