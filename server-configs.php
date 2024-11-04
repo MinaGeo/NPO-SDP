@@ -5,14 +5,14 @@ return (object) array(
     // App Data
     'SITE_NAME'     => "Rotarct Cairo North",
     'APP_ROOT'      => dirname(dirname(__FILE__)),
-    'URL_ROOT'      => 'Rotaract-Cairo-North',
+    'URL_ROOT'      => 'NPO',
     'URL_SUBFOLDER' => 'index.php',
 
     // DB Data
     'DB_HOST' => 'localhost',
     'DB_USER' => 'root',
     'DB_PASS' => '',
-    'DB_NAME' => 'website',
+    'DB_NAME' => 'npo',
 
     // DB Tables
     'DB_USERS_TABLE'      => 'user',
@@ -26,13 +26,19 @@ return (object) array(
         ''               => 'TestController@show',
         '/'              => 'TestController@show',
         '/test'          => 'TestController@show',
-        '/test/{arg}'    => 'TestController@show',
         '/login'         => 'LoginController@show',
-        '/shop/{userId}' => 'ShopController@show',
-        '/cart/{userId}' => 'ShopController@showCart',
-        '/event/{eventId}' => 'EventController@show',
-        // '/user/{userId}' => 'UserController@show',
-        // Other routes...
+        '/shop' => 'ShopController@show',
+        '/deleteShopItem' => 'ShopController@shopDeleteItem',
+        '/showAddItem' => 'ShopController@showAddItem',
+        '/addShopItem' => 'ShopController@shopAddItem',
+        '/cart' => 'ShopController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
+        '/event' => 'EventController@show',
+        '/addEventView' => 'EventController@showAddEvent',
+        '/addEvent' => 'EventController@addNewEvent',
+        '/deleteEvent' => 'EventController@deleteEvent',
+
     ],
+    
 
 );
+

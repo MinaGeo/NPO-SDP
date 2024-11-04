@@ -2,44 +2,47 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-include "../models/EventModel.php";
-include '../models/IFilter.php';
-include '../models/FilterStrategy.php';
-include '../models/FilteringContext.php';
-include '../models/ISort.php';
-include '../models/SortStrategy.php';
-include '../models/SortingContext.php';
+require_once "./models/EventModel.php";
+require_once './models/IFilter.php';
+require_once './models/FilterStrategy.php';
+require_once './models/FilteringContext.php';
+require_once './models/ISort.php';
+require_once './models/SortStrategy.php';
+require_once './models/SortingContext.php';
 
 class EventController
 {
     private FilteringContext $filteringContext;
     private SortingContext $sortingContext;
 
-    public function __construct() {
+    public function __construct()
+    {
         $this->filteringContext = new FilteringContext();
         $this->sortingContext = new SortingContext();
     }
-
-    public function show() {
+    public function show($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc')
+    {
+        // Retrieve all events
         $events = Event::get_all();
-
-        // Handle Filtering
-        $filterType = $_GET['eventFilter'] ?? 'event_type'; // Get the filter type
-        switch ($filterType) {
+    
+        // Handle Filtering based on the filter type
+        switch ($eventFilter) {
             case 'event_type':
-                $filterStrategy = new FilterByEventTypeStrategy($_GET['eventType'] ?? ''); // Pass the filter criteria
+                // Use the passed eventType query parameter for filtering
+                $filterStrategy = new FilterByEventTypeStrategy($eventType); 
                 break;
             default:
-                $filterStrategy = new FilterByEventTypeStrategy(); // Default strategy
+                // Default filter strategy if none specified
+                $filterStrategy = new FilterByEventTypeStrategy(); 
                 break;
         }
-
+    
+        // Apply the selected filter strategy
         $this->filteringContext->setStrategy($filterStrategy);
         $events = $this->filteringContext->filterData($events);
-
-        // Handle Sorting
-        $sortType = $_GET['eventSort'] ?? 'name_asc';
-        switch ($sortType) {
+    
+        // Handle Sorting based on the sort type
+        switch ($eventSort) {
             case 'name_asc':
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
@@ -53,48 +56,54 @@ class EventController
                 $sortStrategy = new SortByDateDescStrategy();
                 break;
             default:
+                // Default sorting strategy if none specified
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
         }
-
+    
+        // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);
-
-        // Make sure $events is available in the included file
-        include "../views/EventView.php";
+    
+        // Pass filtered and sorted events to the view
+        require_once "./views/EventView.php";
     }
-}
-
-
-$controller = new EventController();
-$controller->show();
-
-
-
-
-if (isset($_POST['deleteEvent'])) {
-    if (!empty($_POST['id'])) {
-        $eventId = (int)$_POST['id']; 
-        if (Event::delete_event($eventId)) {
-            echo json_encode(['success' => true, 'message' => 'Event deleted!']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to delete Event or Event not found.']);
-        }
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+    
+    public function showAddEvent()
+    {
+        echo "Entering showADd";
+        require_once "./views/addEventView.php";
     }
-    exit;
-}
 
 
-
-
-
-if (isset($_POST['addEvent'])) {
-        if (Event::add_event($_POST['name'],$_POST['description'],$_POST['location'],$_POST['type'],$_POST['date'])) {
-            echo json_encode(['success' => true, 'message' => $_POST['name'] .'Event Added!']);
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Failed to add Event or Event already exist.']);
+    public function deleteEvent()
+    {
+        if (isset($_POST['deleteEvent'])) {
+            if (!empty($_POST['id'])) {
+                $eventId = (int)$_POST['id'];
+                if (Event::delete_event($eventId)) {
+                    echo json_encode(['success' => true, 'message' => 'Event deleted!']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Failed to delete Event or Event not found.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+            }
+            exit;
         }
-    exit;
+    }
+
+
+
+    public function addNewEvent()
+    {
+        if (isset($_POST['addEvent'])) {
+            if (Event::add_event($_POST['name'], $_POST['description'], $_POST['location'], $_POST['type'], $_POST['date'])) {
+                echo json_encode(['success' => true, 'message' => $_POST['name'] . 'Event Added!']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to add Event or Event already exist.']);
+            }
+            exit;
+        }
+    }
 }

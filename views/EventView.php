@@ -63,6 +63,7 @@
             <!-- Sorting Dropdown -->
             <div class="input-field">
                 <select id="sortSelect">
+                    <option value="">Sorting Option</option>
                     <option value="name_asc">Sort by Name (Asc)</option>
                     <option value="name_desc">Sort by Name (Desc)</option>
                     <option value="date_asc">Sort by Date (Closest to farthest)</option>
@@ -129,7 +130,7 @@
 
         <div class="row">
             <div class="col s12">
-                <a href="../views/addEventView.php" class="btn waves-effect waves-light green">Add Event</a>
+                <a href="addEventView" class="btn waves-effect waves-light green">Add Event</a>
             </div>
         </div>
     </div>
@@ -165,7 +166,7 @@
         function deleteEvent(eventId) {
             if (confirm('Are you sure you want to delete this event?')) {
                 $.ajax({
-                    url: '../Controllers/EventController.php',
+                    url: 'deleteEvent',
                     type: 'POST',
                     data: {
                         deleteEvent: true,
@@ -182,26 +183,31 @@
                 });
             }
         }
+    document.addEventListener('DOMContentLoaded', function() {
+        const elems = document.querySelectorAll('select');
+        M.FormSelect.init(elems); // Initialize Materialize dropdown
+    });
 
-        // Handle filtering option change
-        document.getElementById('filterSelect').addEventListener('change', function() {
-            const selectedFilter = this.value; //ADD LOCATION/ADDRESS-------------------------->
-            const selectedEventType = document.getElementById('eventTypeSelect').value;
-            window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
-        });
+    // Handle filtering option change
+    document.getElementById('filterSelect').addEventListener('change', function() {
+        const selectedFilter = this.value;
+        const selectedEventType = document.getElementById('eventTypeSelect').value;
+        window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
+    });
 
-        document.getElementById('eventTypeSelect').addEventListener('change', function() {
-            const selectedFilter = document.getElementById('filterSelect').value;
-            const selectedEventType = this.value;
-            window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
-        });
+    document.getElementById('eventTypeSelect').addEventListener('change', function() {
+        const selectedFilter = document.getElementById('filterSelect').value;
+        const selectedEventType = this.value;
+        window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
+    });
 
-        // Handle sorting option change
-        document.getElementById('sortSelect').addEventListener('change', function() {
-            const selectedSort = this.value;
-            window.location.href = `?eventSort=${selectedSort}`; // Reload page with selected sort type
-        });
-    </script>
+    // Handle sorting option change
+    document.getElementById('sortSelect').addEventListener('change', function() {
+        const selectedSort = this.value;
+        window.location.href = `?eventSort=${selectedSort}`;
+    });
+</script>
+
 </body>
 
 </html>
