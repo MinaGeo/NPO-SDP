@@ -18,7 +18,7 @@ return (object) array(
     'DB_USERS_TABLE'      => 'user',
     'DB_ITEMS_TABLE'      => 'shirt',
     'DB_CARTS_TABLE'      => 'cart',
-    'DB_CART_ITEMS_TABLE' => 'cart_item',
+    'DB_CART_ITEMS_TABLE' => 'cart_items',
     'DB_EVENTS_TABLE'     => 'event',
 
     // Routes
@@ -35,10 +35,13 @@ return (object) array(
         //-----------------------SHOP----------------------------//
         '/shop' => 'ShopController@show',
         '/deleteShopItem' => 'ShopController@shopDeleteItem',
+        '/addShopItemToCart'=>'ShopController@shopAddItemToCart',
         '/showAddItem' => 'ShopController@showAddItem',
         '/addShopItem' => 'ShopController@shopAddItem',
-        '/cart' => 'ShopController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
-        //------------------------EVENT--------------------------//
+        //-----------------------CART----------------------------//
+        '/cart' => 'CartController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
+        '/removeCartItem' => 'CartController@removeCartItem',
+        //-----------------------EVENT----------------------------//
         '/event' => 'EventController@show',
         '/addEventView' => 'EventController@showAddEvent',
         '/addEvent' => 'EventController@addNewEvent',
