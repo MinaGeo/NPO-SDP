@@ -20,28 +20,29 @@ class EventController
         $this->filteringContext = new FilteringContext();
         $this->sortingContext = new SortingContext();
     }
-
-    public function show()
+    public function show($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc')
     {
+        // Retrieve all events
         $events = Event::get_all();
-
-        // Handle Filtering
-        $filterType = $_GET['eventFilter'] ?? 'event_type'; // Get the filter type
-        switch ($filterType) {
+    
+        // Handle Filtering based on the filter type
+        switch ($eventFilter) {
             case 'event_type':
-                $filterStrategy = new FilterByEventTypeStrategy($_GET['eventType'] ?? ''); // Pass the filter criteria
+                // Use the passed eventType query parameter for filtering
+                $filterStrategy = new FilterByEventTypeStrategy($eventType); 
                 break;
             default:
-                $filterStrategy = new FilterByEventTypeStrategy(); // Default strategy
+                // Default filter strategy if none specified
+                $filterStrategy = new FilterByEventTypeStrategy(); 
                 break;
         }
-
+    
+        // Apply the selected filter strategy
         $this->filteringContext->setStrategy($filterStrategy);
         $events = $this->filteringContext->filterData($events);
-
-        // Handle Sorting
-        $sortType = $_GET['eventSort'] ?? 'name_asc';
-        switch ($sortType) {
+    
+        // Handle Sorting based on the sort type
+        switch ($eventSort) {
             case 'name_asc':
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
@@ -55,20 +56,22 @@ class EventController
                 $sortStrategy = new SortByDateDescStrategy();
                 break;
             default:
+                // Default sorting strategy if none specified
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
         }
-
+    
+        // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);
-
-        // Make sure $events is available in the included file
+    
+        // Pass filtered and sorted events to the view
         require_once "./views/EventView.php";
     }
+    
     public function showAdd()
     {
         echo "Entering showADd";
-        // Make sure $events is available in the included file
         require_once "./views/addEventView.php";
     }
 

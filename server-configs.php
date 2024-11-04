@@ -38,6 +38,7 @@ return (object) array(
         '/addEvent' => 'EventController@addNewEvent',
         '/deleteEvent' => 'EventController@deleteEvent'
     ],
+    
 
 );
 

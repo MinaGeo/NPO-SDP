@@ -11,24 +11,29 @@ class Router
     }
 
     public function route($url)
-    {
-        echo "Entering $url";
-        foreach ($this->configs->ROUTES as $route => $handler) {
-            $pattern = $this->buildPattern($route);
-            // Debugging: Uncomment the line below to see patterns and URLs
-            echo "<pre>Pattern: $pattern | URL: $url</pre>";
+{
+    // Separate the URL path from the query string--------->RAFIKKKKK
+    $parsedUrl = parse_url($url);
+    $path = $parsedUrl['path'];
+    parse_str($parsedUrl['query'] ?? '', $queryParams); // Get query parameters as an associative array
 
-            if (preg_match($pattern, $url, $matches)) {
-                // Debugging: Uncomment the line below to confirm route match
-                // echo "entered </br>";
+    echo "Entering $path";
+    foreach ($this->configs->ROUTES as $route => $handler) {
+        $pattern = $this->buildPattern($route);
+        
+        // Debugging-------------------->RAFIKKKK
+        echo "<pre>Pattern: $pattern | Path: $path</pre>";
 
-                array_shift($matches); // Remove the full match
-                $this->invokeControllerAction($handler, $matches);
-                return;
-            }
+        if (preg_match($pattern, $path, $matches)) {
+            array_shift($matches); // Remove the full match
+            $params = array_merge($matches, $queryParams); // Combine path params with query params
+            $this->invokeControllerAction($handler, $params);
+            return;
         }
-        echo "404 Not Found";
     }
+    echo "404 Not Found";
+}
+
 
     private function buildPattern($route)
     {
