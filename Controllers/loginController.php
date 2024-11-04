@@ -11,7 +11,7 @@ class LoginController
 }
 
 if (isset($_POST['loginFlag'])) {
-    if (!empty($_POST['email']) && !empty($_POST['password'])) {
+    if (!empty($_POST['email']) && !empty($_POST['password']) && !empty($_POST['loginMethod'])) {
         if (!empty($_POST['loginMethod'])) {
             $authenticators = [
                 'facebook' => new FacebookAuthenticator(),
