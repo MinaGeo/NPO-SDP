@@ -3,8 +3,10 @@
 declare(strict_types=1);
 
 ob_start();
-require_once "./db_setup.php";
+require_once __DIR__."/../db_setup.php";
 ob_end_clean();
+
+// Properties: id, firstName, lastName, email, passwordHash (MD5)
 
 class User
 {
@@ -31,7 +33,6 @@ class User
         // The function queries the database for a user with the given ID, 
         // if the user is found the fetched row is passed to the constructor to create a new User object 
         // The constructor receives the parameters as associative arrays, and assigns them to the object properties
-        
         global $configs;
         $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE id = '$id'");
         return $rows->num_rows > 0 ? new User($rows->fetch_assoc()) : null;
@@ -42,6 +43,12 @@ class User
         global $configs;
         $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email' AND passwordHash = '$md5Hash'");
         return $rows->num_rows > 0 ? new User($rows->fetch_assoc()) : null;
+    }
+    static public function does_email_exist($email): bool
+    {
+        global $configs;
+        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email'");
+        return $rows->num_rows > 0;
     }
     // Creates 
     static public function create_new_user($userData): bool
@@ -72,6 +79,6 @@ class User
         $query = "UPDATE $configs->DB_NAME.$configs->DB_USERS_TABLE SET $setClauseString WHERE id = '$id'";
         return run_query($query);
     }
-
 }
+
 ?>

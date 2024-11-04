@@ -1,8 +1,8 @@
 <?php 
-require_once 'models/ISort.php';
-require_once 'models/SortStrategy.php';
-require_once 'models/SortingContext.php';
-require_once 'models/EventModel.php';
+include __DIR__.'/../models/ISort.php';
+include __DIR__.'/../models/SortStrategy.php';
+include __DIR__.'/../models/SortingContext.php';
+include __DIR__.'/../EventModel.php';
 
 class SortController {
     private SortingContext $context;

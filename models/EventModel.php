@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 ob_start();
-require_once "./db_setup.php";
+require_once __DIR__."/../db_setup.php";
 ob_end_clean();
 
 class Event
@@ -38,8 +38,7 @@ class Event
 
     static public function get_by_id(int $id): ?Event
     {
-        global $configs;
-        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE id = ?", [$id]);
+        $rows = run_select_query("SELECT * FROM `website`.`event` WHERE id = ?", [$id]);
         return $rows && $rows->num_rows > 0 ? new Event($rows->fetch_assoc()) : null;
     }
 
@@ -60,13 +59,12 @@ class Event
     static public function add_event(string $name, string $description, string $location, string $type, string $date): bool
     {
         // Check if event already exists
-        global $configs;    
-        $checkEvent = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `name` = ?", [$name], true);
+        $checkEvent = run_select_query("SELECT * FROM `website`.`event` WHERE `name` = ?", [$name], true);
         
         // Use num_rows to check if there are no results
         if ($checkEvent && $checkEvent->num_rows == 0) {  
             // Insert the new event
-            return run_query("INSERT INTO $configs->DB_NAME.$configs->DB_EVENTS_TABLE (`name`, `description`, `location`, `type`, `date`) VALUES (?, ?, ?, ?, ?)", 
+            return run_query("INSERT INTO `website`.`event` (`name`, `description`, `location`, `type`, `date`) VALUES (?, ?, ?, ?, ?)", 
                 [$name, $description, $location, $type, $date], true);
         }
     
@@ -77,12 +75,11 @@ class Event
     static public function delete_event(int $id): bool
     {
         // Check if event exists
-        global $configs;
-        $result = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `id` = $id");
+        $result = run_select_query("SELECT * FROM `website`.`event` WHERE `id` = $id");
 
         if ($result && $result->num_rows > 0) {
             // Remove the event
-            $success = run_query("DELETE FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `id` = $id");
+            $success = run_query("DELETE FROM `website`.`event` WHERE `id` = $id");
 
             if (!$success) {
                 error_log("Database delete failed..."); // Log the error
