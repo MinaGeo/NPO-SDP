@@ -9,6 +9,7 @@ include './models/FilteringContext.php';
 include './models/ISort.php';
 include './models/SortStrategy.php';
 include './models/SortingContext.php';
+include "./models/CartModel.php";
 
 class ShopController
 {
@@ -18,7 +19,7 @@ class ShopController
     {
         $this->sortingContext = new SortingContext();
     }
-    
+
     public function show($itemSort = 'name_asc')
     {
         // Retrieve all shop items
@@ -43,11 +44,11 @@ class ShopController
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
         }
-    
+
         // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
         $shop_items = $this->sortingContext->sortData($shop_items);
-    
+
         // Pass filtered and sorted shop items to the view
         require_once "./views/ShopView.php";
     }
@@ -56,28 +57,54 @@ class ShopController
         echo "Entering AddItemPage";
         require_once "./views/addShopItemView.php";
     }
-    
-    public function shopDeleteItem() {if (isset($_POST['deleteItem'])) {
-        if (!empty($_POST['id'])) {
-            $itemId = (int)$_POST['id'];
-            if (ShopItem::delete_shop_item($itemId)) {
-                echo json_encode(['success' => true, 'message' => 'Item deleted!']);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to delete item or item not found.']);
-            }
-        } else {
-            echo json_encode(['success' => false, 'message' => 'Invalid input.']);
-        }
-        exit;
-    }}
-    
 
-public function shopAddItem() {if (isset($_POST['addItem'])) {
-    if (ShopItem::add_shop_item($_POST['name'], $_POST['description'], $_POST['price'])) {
-        echo json_encode(['success' => true, 'message' => $_POST['name'] . ' Item Added!']);
-    } else {
-        echo json_encode(['success' => false, 'message' => 'Failed to add item or item already exists.']);
+    public function shopDeleteItem()
+    {
+        if (isset($_POST['deleteItem'])) {
+            if (!empty($_POST['id'])) {
+                $itemId = (int)$_POST['id'];
+                if (ShopItem::delete_shop_item($itemId)) {
+                    echo json_encode(['success' => true, 'message' => 'Item deleted!']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Failed to delete item or item not found.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+            }
+            exit;
+        }
     }
-    exit;
-}}
+
+
+    public function shopAddItem()
+    {
+        if (isset($_POST['addItem'])) {
+            if (ShopItem::add_shop_item($_POST['name'], $_POST['description'], $_POST['price'])) {
+                echo json_encode(['success' => true, 'message' => $_POST['name'] . ' Item Added!']);
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Failed to add item or item already exists.']);
+            }
+            exit;
+        }
+    }
+
+
+    public function shopAddItemToCart()
+    {
+        if (isset($_POST['addToCart'])) {
+            if (!empty($_POST['userId']) && !empty($_POST['itemId'])) {
+                $cart = Cart::get_by_user_id($_POST['userId'])[0];
+                $result = Cart::add_item_to_cart($cart->id, $_POST['itemId']);
+
+                if ($result) {
+                    echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Failed to add item to cart.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+            }
+            exit; // Ensure no further output is sent
+        }
+    }
 }

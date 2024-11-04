@@ -80,7 +80,9 @@
                             <p><span class="item-detail-label">Price:</span> <span class="item-detail-value">$<?php echo htmlspecialchars($item->price); ?></span></p>
                         </div>
                         <div class="card-action">
-                            <button class="addToCartBtn btn waves-effect waves-light" type="button">
+                            <button 
+                            onclick="addToCart(<?php echo htmlspecialchars($item->id); ?>)"
+                            class="addToCartBtn btn waves-effect waves-light" type="button">
                                 Add to Cart
                             </button>
                             <button
@@ -99,6 +101,12 @@
             <div class="col s12">
                 <a href="showAddItem" class="btn waves-effect waves-light green">Add Item</a>
             </div>
+        </div>
+        <div class="fixed-action-btn">
+                <a 
+                class="btn-floating btn-large blue">
+                <i class="large material-icons">shopping_cart</i>
+                </a>
         </div>
     </div>
 
@@ -130,6 +138,18 @@
             );
         });
 
+        function addToCart(itemId){
+            $.ajax({
+                url: 'addShopItemToCart',
+                type: 'POST',   
+                data: {
+                    addToCart: true,
+                    userId: 1,
+                    itemId: itemId,
+                },
+            });
+        };
+
         function deleteItem(itemId) {
             if (confirm('Are you sure you want to delete this item?')) {
                 $.ajax({
@@ -149,6 +169,7 @@
                 });
             }
         }
+        
 
         // Handle sorting option change
         document.getElementById('itemSort').addEventListener('change', function() {
