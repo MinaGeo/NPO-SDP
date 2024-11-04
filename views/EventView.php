@@ -63,6 +63,7 @@
             <!-- Sorting Dropdown -->
             <div class="input-field">
                 <select id="sortSelect">
+                    <option value="">Sorting Option</option>
                     <option value="name_asc">Sort by Name (Asc)</option>
                     <option value="name_desc">Sort by Name (Desc)</option>
                     <option value="date_asc">Sort by Date (Closest to farthest)</option>
