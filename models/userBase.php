@@ -10,12 +10,14 @@ ob_end_clean();
 
 class User
 {
+    /* ------------------- Attributes -------------------  */ 
     private int $id;
     private string $firstName;
     private string $lastName;
     private string $email;
     private string $passwordHash;
 
+    /* ------------------- Constructor and toString -------------------  */ 
     private function __construct(array $properties)
     {
         foreach ($properties as $prop => $value) {
@@ -32,7 +34,39 @@ class User
         return $str . '</pre>';
     }
 
-    // Creates and returns a User object given an ID that exists in the database, otherwise null
+    /* ------------------- Getters and Setters -------------------  */ 
+    // Getter for id
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    // Getter for firstName
+    public function getFirstName(): string
+    {
+        return $this->firstName;
+    }
+
+    // Getter for lastName
+    public function getLastName(): string
+    {
+        return $this->lastName;
+    }
+
+    // Getter for email
+    public function getEmail(): string
+    {
+        return $this->email;
+    }
+
+    // Getter for passwordHash
+    public function getPasswordHash(): string
+    {
+        return $this->passwordHash;
+    }
+
+    /* ------------------- Static Database Manipulation Functions -------------------  */ 
+    // Creates and returns a User object given an ID if the user exists, otherwise null
     static public function get_by_id(int $id): ?User
     {
         global $configs;
@@ -48,6 +82,7 @@ class User
         return $rows->num_rows > 0 ? new User($rows->fetch_assoc()) : null;
     }
 
+    // Checks if a user with a given email exists, returns true if they do, otherwise false
     static public function does_email_exist(string $email): bool
     {
         global $configs;
@@ -55,7 +90,7 @@ class User
         return $rows->num_rows > 0;
     }
 
-    // Creates a new user
+    // Creates a new user in the database given an associative array of user data, returns true if successful, otherwise false
     static public function create_new_user(array $userData): bool
     {
         global $configs;
