@@ -71,6 +71,7 @@ class EventController
         echo $_SESSION['USER_ID'];
         echo $_SESSION['USER_TYPE'];
         // Pass filtered and sorted events to the view
+<<<<<<< HEAD
         switch ((int)$_SESSION['USER_TYPE']) {
             case 0:
                 require_once "./views/EventViewAdmin.php";
@@ -84,6 +85,10 @@ class EventController
                 require_once "./views/EventViewGuest.php";
                 break;
         }
+=======
+        require_once "./views/Navbar.php";
+        require_once "./views/EventView.php";
+>>>>>>> homepage
     }
 
 
@@ -92,7 +97,6 @@ class EventController
         //echo "Entering showADd";
         require_once "./views/addEventView.php";
     }
-
 
     public function deleteEvent()
     {
@@ -111,6 +115,7 @@ class EventController
         }
     }
 
+<<<<<<< HEAD
     public function removeMyEvent()
     {
         if (isset($_POST['removeMyEvent'])) {
@@ -134,6 +139,8 @@ class EventController
 
 
 
+=======
+>>>>>>> homepage
     public function addNewEvent()
     {
         if (isset($_POST['addEvent'])) {

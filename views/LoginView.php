@@ -41,6 +41,9 @@
                     console.log(response);
                     const res = JSON.parse(response);
                     alert(res['message']);
+                    if (res['success']) {
+                        location.href = 'home';
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error("An error occurred:", error);

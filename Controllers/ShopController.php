@@ -51,6 +51,7 @@ class ShopController
         $shop_items = $this->sortingContext->sortData($shop_items);
 
         // Pass filtered and sorted shop items to the view
+        require_once "./views/Navbar.php";
         require_once "./views/ShopView.php";
     }
     public function showAddItem()

@@ -10,7 +10,6 @@ class LoginController
         require_once "./views/LoginView.php";
     }
 
-
     public function validateLogin()
     {
         if (isset($_POST['loginFlag'])) {
@@ -27,12 +26,16 @@ class LoginController
                     if ($user) {
                         $userId = $user->get_id();
                         $_SESSION['USER_ID'] = $userId;
+<<<<<<< HEAD
                         if($user->getType()==1){
                             (int)$_SESSION['USER_TYPE'] = 1;
                         } else {
                             (int)$_SESSION['USER_TYPE'] = 0;
                         }
 
+=======
+                        $_SESSION['USERNAME'] = $user->getFirstName();
+>>>>>>> homepage
                         echo json_encode([
                             'success' => true,
                             'message' => $_POST['email'] . ' logged in successful'
@@ -56,3 +59,4 @@ class LoginController
         }
     }
 }
+?>
