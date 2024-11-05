@@ -34,6 +34,7 @@ if ($result->num_rows == 0) {
         $createUserTableQuery = "
             CREATE TABLE IF NOT EXISTS `user` (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                type BOOL,
                 firstName VARCHAR(50) NULL DEFAULT NULL,
                 lastName VARCHAR(50) NULL DEFAULT NULL,
                 email VARCHAR(50) NULL,
@@ -91,14 +92,18 @@ if ($result->num_rows == 0) {
 
         //////////////////////Insert Data//////////////////////
         // Insert User Data
-        $insertUserQuery = "
-            INSERT INTO `user` (firstName, lastName, email, passwordHash)
+        $insertAdminQuery = "
+            INSERT INTO `user` (type, firstName, lastName, email, passwordHash)
             VALUES
-                ('GitHub','User','github.user@github.com','25d55ad283aa400af464c76d713c07ad'),
-                ('Google','User','google.user@google.com','25d55ad283aa400af464c76d713c07ad'),
-                ('Facebook','User','facebook.user@meta.com','25d55ad283aa400af464c76d713c07ad'),
-                ('7amada','Belganzabeel','7amada@belganzabeel.com','25d55ad283aa400af464c76d713c07ad'),
-                ('7amada','Tany','5ales@depression.inc','25d55ad283aa400af464c76d713c07ad')";
+                (0,'Admin','Admin','admin@admin.com','25d55ad283aa400af464c76d713c07ad')";
+        $insertUserQuery = "
+            INSERT INTO `user` (type, firstName, lastName, email, passwordHash)
+            VALUES
+                (1,'GitHub','User','github.user@github.com','25d55ad283aa400af464c76d713c07ad'),
+                (1,'Google','User','google.user@google.com','25d55ad283aa400af464c76d713c07ad'),
+                (1,'Facebook','User','facebook.user@meta.com','25d55ad283aa400af464c76d713c07ad'),
+                (1,'7amada','Belganzabeel','7amada@belganzabeel.com','25d55ad283aa400af464c76d713c07ad'),
+                (1,'7amada','Tany','5ales@depression.inc','25d55ad283aa400af464c76d713c07ad')";
         // Insert Event Data
         $insertEventQuery = "
             INSERT INTO `event` (name, description, location, type, date)
@@ -126,6 +131,7 @@ if ($result->num_rows == 0) {
         ////////////////////////////////////////////////////////////////////////////
 
         if (
+            $conn->query($insertAdminQuery) === TRUE &&
             $conn->query($insertUserQuery) === TRUE &&
             $conn->query($insertEventQuery) === TRUE &&
             $conn->query($insertShopItemsQuery) === TRUE &&
