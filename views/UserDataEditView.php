@@ -87,8 +87,8 @@
         </div>
         <div class="center-align" style="margin-top: 20px;">
             <p style="font-size: small;">
-                Need to go back? 
-                <a href="dashboard">Dashboard</a>
+                Finished updating your info? 
+                <a href="login">Log in</a>
             </p>
         </div>
     </div>

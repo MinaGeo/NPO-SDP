@@ -1,5 +1,5 @@
 <?php
-require_once './models/UserBase.php';
+require_once './models/userBase.php';
 session_start();
 
 // Update id=1 with _SESSION in a future commit
@@ -8,7 +8,7 @@ class UserDataEditController
 {
     public function show()
     {   
-        $user = User::get_by_id(1);
+        $user = User::get_by_id($_SESSION['USER_ID']);
         if(!$user) {
             echo 'User not found!';
             exit;
@@ -35,7 +35,7 @@ class UserDataEditController
                     'passwordHash' => md5($_POST['password'])
                 ];
 
-                if(User::update_by_id(1, $user_data)){
+                if(User::update_by_id($_SESSION['USER_ID'], $user_data)){
                     echo json_encode([
                         'success' => true,
                         'message' => $_POST['email'] . ' got updated successfully!'
