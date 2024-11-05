@@ -80,17 +80,25 @@
                             <p><span class="item-detail-label">Price:</span> <span class="item-detail-value">$<?php echo htmlspecialchars($item->price); ?></span></p>
                         </div>
                         <div class="card-action">
-                            <button 
-                            onclick="addToCart(<?php echo htmlspecialchars($item->id); ?>)"
-                            class="addToCartBtn btn waves-effect waves-light" type="button">
+                        <?php if ($userType === 1): ?>
+
+                            <button
+                                onclick="addToCart(<?php echo htmlspecialchars($item->id); ?>)"
+                                class="addToCartBtn btn waves-effect waves-light" type="button">
                                 Add to Cart
                             </button>
-                            <button
-                                onclick="deleteItem(<?php echo htmlspecialchars($item->id); ?>)"
-                                class="deleteBtn btn red waves-effect waves-light" type="button"
-                                data-item-id="<?php echo $item->id; ?>">
-                                Delete
-                            </button>
+                            <?php endif; ?>
+
+                            <?php if ($userType === 0): ?>
+                                <button
+
+                                    onclick="deleteItem(<?php echo htmlspecialchars($item->id); ?>)"
+                                    class="deleteBtn btn red waves-effect waves-light" type="button"
+                                    data-item-id="<?php echo $item->id; ?>">
+                                    Delete
+                                </button>
+                            <?php endif; ?>
+
                         </div>
                     </div>
                 </div>
@@ -99,14 +107,20 @@
 
         <div class="row">
             <div class="col s12">
-                <a href="showAddItem" class="btn waves-effect waves-light green">Add Item</a>
+                <?php if ($userType === 0): ?>
+                    <a href="showAddItem" class="btn waves-effect waves-light green">Add Item</a>
+                <?php endif; ?>
             </div>
         </div>
+
         <div class="fixed-action-btn">
-                <a href="cart"
+        <?php if ($userType === 1): ?>
+            <a href="cart"
                 class="btn-floating btn-large blue">
                 <i class="large material-icons">shopping_cart</i>
-                </a>
+            </a>
+            <?php endif; ?>
+
         </div>
     </div>
 
@@ -138,10 +152,10 @@
             );
         });
 
-        function addToCart(itemId){
+        function addToCart(itemId) {
             $.ajax({
                 url: 'addShopItemToCart',
-                type: 'POST',   
+                type: 'POST',
                 data: {
                     addToCart: true,
                     itemId: itemId,
@@ -168,7 +182,7 @@
                 });
             }
         }
-        
+
 
         // Handle sorting option change
         document.getElementById('itemSort').addEventListener('change', function() {

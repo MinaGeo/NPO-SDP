@@ -14,6 +14,7 @@ include "./models/CartModel.php";
 
 class ShopController
 {
+
     private SortingContext $sortingContext;
 
     public function __construct()
@@ -23,6 +24,7 @@ class ShopController
 
     public function show($itemSort = 'name_asc')
     {
+        $userType = $_SESSION['USER_TYPE'];
         // Retrieve all shop items
         $shop_items = ShopItem::get_all();
 
@@ -56,7 +58,6 @@ class ShopController
     }
     public function showAddItem()
     {
-        echo "Entering AddItemPage";
         require_once "./views/addShopItemView.php";
     }
 
