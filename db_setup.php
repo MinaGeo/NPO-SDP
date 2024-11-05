@@ -114,7 +114,8 @@ if ($result->num_rows == 0) {
                 (1,'Google','User','google.user@google.com','25d55ad283aa400af464c76d713c07ad'),
                 (1,'Facebook','User','facebook.user@meta.com','25d55ad283aa400af464c76d713c07ad'),
                 (1,'7amada','Belganzabeel','7amada@belganzabeel.com','25d55ad283aa400af464c76d713c07ad'),
-                (1,'7amada','Tany','5ales@depression.inc','25d55ad283aa400af464c76d713c07ad')";
+                (1,'7amada','Tany','5ales@depression.inc','25d55ad283aa400af464c76d713c07ad'),
+                (1, 'r', 'r', 'r', '4b43b0aee35624cd95b910189b3dc231')";
         // Insert Event Data
         $insertEventQuery = "
             INSERT INTO `event` (name, description, location, type, date)
@@ -139,6 +140,14 @@ if ($result->num_rows == 0) {
                 (3),
                 (4),
                 (5)";
+        $insertVolunteerEvent = "
+        INSERT INTO `volunteer_events` (volunteer_id, event_id) VALUES
+(7, 1),
+(6, 1),
+(7, 2),
+(6, 2),
+(5, 2),
+(5, 1)";
         ////////////////////////////////////////////////////////////////////////////
 
         if (
@@ -146,7 +155,8 @@ if ($result->num_rows == 0) {
             $conn->query($insertUserQuery) === TRUE &&
             $conn->query($insertEventQuery) === TRUE &&
             $conn->query($insertShopItemsQuery) === TRUE &&
-            $conn->query($insertCartQuery) === TRUE
+            $conn->query($insertCartQuery) === TRUE &&
+            $conn->query($insertVolunteerEvent) === TRUE
         ) {
             // echo "Data inserted successfully<br/><hr/>";
         } else {

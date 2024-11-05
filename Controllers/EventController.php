@@ -69,7 +69,7 @@ class EventController
         $events = $this->sortingContext->sortData($events);
 
         require_once "./views/Navbar.php";
-        
+
         if ((int)$_SESSION['USER_ID'] === -1) {
             require_once "./views/EventViewGuest.php";
         } else {
@@ -154,10 +154,16 @@ class EventController
         if (isset($_POST['registerEvent']) && !empty($_SESSION['USER_ID']) && !empty($_POST['event_id'])) {
             $volunteerId = (int)$_SESSION['USER_ID'];
             $eventId = (int)$_POST['event_id'];
-            if (VolunteerEvent::register($volunteerId, $eventId)) {
-                echo json_encode(['success' => true, 'message' => 'Successfully registered for the event!']);
+            $users = VolunteerEvent::get_volunteers_by_event($eventId);
+            // echo "registering";
+            foreach ($users as $user) {
+                echo $user;
+            }
+            $registered = VolunteerEvent::register($volunteerId, $eventId);
+            if ($registered) {
+                json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $users]);
             } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to register for the event.']);
+                json_encode(['success' => false, 'message' => 'Failed to register for the event.']);
             }
             exit;
         }

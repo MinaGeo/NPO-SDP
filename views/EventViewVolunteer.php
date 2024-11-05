@@ -116,6 +116,11 @@
             </div>
         </div>
     </div>
+    <div style="margin-top: 20px; padding: 10px; background-color: #f9f9f9; border-radius: 8px;">
+        <h5>Notifications</h5>
+        <div id="notificationArea" style="margin-top: 10px;"></div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -162,6 +167,40 @@
                     event_id: eventId,
                 },
                 success: function(response) {
+                    const notificationArea = document.getElementById('notificationArea');
+                    notificationArea.innerHTML = ''; // Clear existing notifications
+
+                    // Parse response and wrap each notification with inline styles
+                    const notifications = response.split('<pre>').map(item => item.replace('</pre>', '')).filter(Boolean);
+                    notifications.pop();
+                    notifications.forEach(notification => {
+                        notificationArea.innerHTML += `
+                    <div style="
+                        margin: 10px 0;
+                        padding: 15px;
+                        border-left: 5px solid #2196F3;
+                        background-color: #fff;
+                        border-radius: 4px;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+                        opacity: 0;
+                        transform: translateY(10px);
+                        transition: opacity 0.3s ease, transform 0.3s ease;
+                    ">
+                        <i class="material-icons" style="margin-right: 10px; vertical-align: middle; color: #2196F3;">
+                            notifications
+                        </i>
+                        <span style="font-weight: bold;">Notifying:</br> ${notification}</span>
+                    </div>
+                `;
+                    });
+
+                    // Apply fade-in effect
+                    setTimeout(() => {
+                        document.querySelectorAll('#notificationArea > div').forEach(card => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        });
+                    }, 100);
                     M.toast({
                         html: 'Successfully registered for the event!',
                         displayLength: 1000,

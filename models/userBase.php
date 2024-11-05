@@ -76,7 +76,9 @@ class User
     {
         return $this->type;
     }   
-
+    public static function create(array $data): User {
+        return new self($data);
+    }
 
     /* ------------------- Static Database Manipulation Functions -------------------  */
     // Creates and returns a User object given an ID if the user exists, otherwise null
