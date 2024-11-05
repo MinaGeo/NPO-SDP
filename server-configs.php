@@ -24,6 +24,7 @@ return (object) array(
 
     // Routes
     'ROUTES' => [
+        '' => 'HomepageController@show',
         '/test'          => 'TestController@show',
         '/home'         => 'HomepageController@show',
         '/logout' => 'HomepageController@logout',
