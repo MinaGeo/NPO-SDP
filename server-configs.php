@@ -51,6 +51,9 @@ return (object) array(
         '/addEventView' => 'EventController@showAddEvent',
         '/addEvent' => 'EventController@addNewEvent',
         '/deleteEvent' => 'EventController@deleteEvent',
+        '/registerForEvent'=> 'EventController@registerForEvent',
+        '/myEventsView' => 'EventController@showVolunteerEvents',
+        '/removeMyEvent' => 'EventController@removeMyEvent'
 
     ],
 

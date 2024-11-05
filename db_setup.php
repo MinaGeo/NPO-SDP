@@ -76,6 +76,16 @@ if ($result->num_rows == 0) {
                 FOREIGN KEY (cart_id) REFERENCES `NPO`.`cart`(id) on DELETE CASCADE,
                 FOREIGN KEY (item_id) REFERENCES `NPO`.`shop_items`(id)
             )";
+        // 
+        $createVolunteerEventsTableQuery = "
+            CREATE TABLE IF NOT EXISTS volunteer_events (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                volunteer_id INT NOT NULL,
+                event_id INT NOT NULL,
+                FOREIGN KEY (volunteer_id) REFERENCES user(id) ON DELETE CASCADE,
+                FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE
+            )";
+
         ////////////////////////////////////////////////////////////////////////////
 
         if (
@@ -83,7 +93,8 @@ if ($result->num_rows == 0) {
             $conn->query($createEventTableQuery) === TRUE &&
             $conn->query($createShopItemsTableQuery) === TRUE &&
             $conn->query($createCartTableQuery) === TRUE &&
-            $conn->query($createCartItemsTableQuery) === TRUE
+            $conn->query($createCartItemsTableQuery) === TRUE &&
+            $conn->query($createVolunteerEventsTableQuery) === TRUE
         ) {
             // echo "Tables created successfully<br/><hr/>";
         } else {

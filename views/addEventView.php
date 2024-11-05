@@ -134,7 +134,7 @@
                 },
                 success: function (response) {
                     alert("Event Added!");
-                    window.location.href = "event";
+                    window.location.href = "event?usertype=admin";
                 },
                 error: function (xhr, status, error) {
                     M.toast({ html: 'Error adding event.', classes: 'rounded red' });

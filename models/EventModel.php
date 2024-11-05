@@ -36,6 +36,11 @@ class Event
         return $str . '</pre>';
     }
 
+    // RAFIK----> To Use with volunteer's Tables
+    public static function create(array $data): Event {
+        return new self($data);
+    }
+
     static public function get_by_id(int $id): ?Event
     {
         global $configs;

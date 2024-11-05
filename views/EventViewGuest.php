@@ -54,7 +54,7 @@
         <div class="row">
             <div class="col s12">
                 <h5>Welcome to <?php echo "Events" ?>!</h5>
-                <h6>What would you like to attend?</h6>
+                <h6>Login to attend!</h6>
             </div>
         </div>
 
@@ -113,26 +113,12 @@
                             <p><span class="event-detail-label">Date:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->date); ?></span></p>
                         </div>
                         <div class="card-action">
-                            <button class="attendBtn btn waves-effect waves-light" type="button">
-                                Attend
-                            </button>
-                            <button
-                                onclick="deleteEvent(<?php echo htmlspecialchars($event->id); ?>)"
-                                class="deleteBtn btn red waves-effect waves-light" type="button"
-                                data-event-id="<?php echo $event->id; ?>">
-                                Delete
-                            </button>
                         </div>
                     </div>
                 </div>
             <?php endforeach; ?>
         </div>
 
-        <div class="row">
-            <div class="col s12">
-                <a href="addEventView" class="btn waves-effect waves-light green">Add Event</a>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -163,26 +149,6 @@
             );
         });
 
-        function deleteEvent(eventId) {
-            if (confirm('Are you sure you want to delete this event?')) {
-                $.ajax({
-                    url: 'deleteEvent',
-                    type: 'POST',
-                    data: {
-                        deleteEvent: true,
-                        id: eventId,
-                    },
-                    success: function(response) {
-                        // Reload the page after successful deletion
-                        location.reload();
-                    },
-                    error: function(xhr, status, error) {
-                        // Optional: Handle any errors here
-                        console.error("An error occurred:", error);
-                    }
-                });
-            }
-        }
     document.addEventListener('DOMContentLoaded', function() {
         const elems = document.querySelectorAll('select');
         M.FormSelect.init(elems); // Initialize Materialize dropdown
