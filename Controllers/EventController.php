@@ -21,8 +21,10 @@ class EventController
         $this->filteringContext = new FilteringContext();
         $this->sortingContext = new SortingContext();
     }
-    public function show($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc', $usertype = '')
+    public function show($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc')
     {
+
+        $volunteerId = $_SESSION['USER_ID'];
         // Retrieve all events
         $events = Event::get_all();
 
@@ -66,14 +68,15 @@ class EventController
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);
         //echo $usertype;
-
+        echo $_SESSION['USER_ID'];
+        echo $_SESSION['USER_TYPE'];
         // Pass filtered and sorted events to the view
-        switch ($usertype) {
-            case 'admin':
+        switch ((int)$_SESSION['USER_TYPE']) {
+            case 0:
                 require_once "./views/EventViewAdmin.php";
                 break;
 
-            case 'user':
+            case 1:
                 require_once "./views/EventViewVolunteer.php";
                 break;
 
@@ -111,9 +114,9 @@ class EventController
     public function removeMyEvent()
     {
         if (isset($_POST['removeMyEvent'])) {
-            if (!empty($_POST['eventId']) && !empty($_POST['volunteerId'])) {
+            if (!empty($_POST['eventId']) && !empty($_SESSION['USER_ID'])) {
                 $eventId = (int)$_POST['eventId'];
-                $volunteerId = (int)$_POST['volunteerId'];
+                $volunteerId = (int)$_SESSION['USER_ID'];
 
                 $result = VolunteerEvent::removeVolunteerFromEvent($volunteerId, $eventId);
 
@@ -145,8 +148,8 @@ class EventController
 
     public function registerForEvent()
     {
-        if (isset($_POST['registerEvent']) && !empty($_POST['volunteer_id']) && !empty($_POST['event_id'])) {
-            $volunteerId = (int)$_POST['volunteer_id'];
+        if (isset($_POST['registerEvent']) && !empty($_SESSION['USER_ID']) && !empty($_POST['event_id'])) {
+            $volunteerId = (int)$_SESSION['USER_ID'];
             $eventId = (int)$_POST['event_id'];
             if (VolunteerEvent::register($volunteerId, $eventId)) {
                 echo json_encode(['success' => true, 'message' => 'Successfully registered for the event!']);
@@ -157,9 +160,11 @@ class EventController
         }
     }
 
-    public function showVolunteerEvents($volunteerId, $eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc', $usertype = '')
+    public function showVolunteerEvents($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc')
     {
-        $volunteerEvents = VolunteerEvent::get_events_by_volunteer($volunteerId);
+        $usertype = $_SESSION['USER_TYPE'];
+        $volunteerId = $_SESSION['USER_ID'];
+        $volunteerEvents = VolunteerEvent::get_events_by_volunteer($_SESSION['USER_ID']);
         // echo "<br> Controller:<br> ";
         // print_r($volunteerEvents);
 

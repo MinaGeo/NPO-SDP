@@ -107,7 +107,7 @@
                             </p>
                         </div>
                         <div class="card-action">
-                            <button class="removeBtn btn red waves-effect waves-light" type="button" onclick="removeEvent(<?php echo htmlspecialchars($event->id); ?>)">
+                            <button class="removeBtn btn red waves-effect waves-light" type="button" onclick="removeVolunteerFromEvent(<?php echo htmlspecialchars($event->id); ?>)">
                                 Remove
                             </button>
                         </div>
@@ -138,7 +138,7 @@
         document.getElementById('filterSelect').addEventListener('change', function() {
             const selectedFilter = this.value;
             const selectedEventType = document.getElementById('eventTypeSelect').value;
-            const volunteerId = "<?php echo 1; ?>"; //  $volunteerId Include the volunteer ID ----------------->
+            const volunteerId = "<?php echo htmlspecialchars($volunteerId); ?>"; //  $volunteerId Include the volunteer ID ----------------->
             window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&volunteerId=${volunteerId}`;
         });
 
@@ -146,43 +146,38 @@
         document.getElementById('eventTypeSelect').addEventListener('change', function() {
             const selectedFilter = document.getElementById('filterSelect').value;
             const selectedEventType = this.value;
-            const volunteerId = "<?php echo 1; ?>"; // Include the volunteer ID ------------------->
+            const volunteerId = "<?php echo htmlspecialchars($volunteerId); ?>"; // Include the volunteer ID ------------------->
             window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&volunteerId=${volunteerId}`;
         });
 
         // Event handler for the sort select dropdown
         document.getElementById('sortSelect').addEventListener('change', function() {
             const selectedSort = this.value;
-            const volunteerId = "<?php echo 1; ?>"; // Include the volunteer ID ------------>
+            const volunteerId = "<?php echo htmlspecialchars($volunteerId); ?>"; // Include the volunteer ID ------------>
             window.location.href = `?eventSort=${selectedSort}&volunteerId=${volunteerId}`;
         });
 
         function removeVolunteerFromEvent(eventId) {
-        if (confirm('Are you sure you want to remove yourself from this event?')) {
-            $.ajax({
-                url: 'removeMyEvent',
-                type: 'POST',
-                data: {
-                    removeMyEvent: true,
-                    eventId: eventId, 
-                    volunteerId: <?php echo 1 ; ?>, //volunteer's ID $volunteerId --------->
-                },
-                success: function(response) {
-                    var result = JSON.parse(response);
-                    if (result.success) {
+            if (confirm('Are you sure you want to remove yourself from this event?')) {
+                $.ajax({
+                    url: 'removeMyEvent',
+                    type: 'POST',
+                    data: {
+                        removeMyEvent: true,
+                        eventId: eventId,
+                    },
+                    success: function(response) {
+                        console.log(response);
                         alert('You have been removed from the event.');
                         location.reload();
-                    } else {
-                        alert('Failed to remove from event: ' + result.message);
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred:", error);
+                        alert('There was an error removing you from the event. Please try again.');
                     }
-                },
-                error: function(xhr, status, error) {
-                    console.error("An error occurred:", error);
-                    alert('There was an error removing you from the event. Please try again.');
-                }
-            });
+                });
+            }
         }
-    }
     </script>
 
 

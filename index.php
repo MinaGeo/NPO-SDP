@@ -3,7 +3,7 @@
 // Enable error reporting for debugging (disable in production)
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
-
+session_start();
 // Autoload classes (if not using Composer, you'll need to implement an autoloader or require files manually)
 spl_autoload_register(function ($class_name) {
     $paths = [

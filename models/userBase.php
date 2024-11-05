@@ -12,6 +12,7 @@ class User
 {
     /* ------------------- Attributes -------------------  */
     private int $id;
+    private int $type;
     private string $firstName;
     private string $lastName;
     private string $email;
@@ -71,6 +72,11 @@ class User
     {
         return $this->passwordHash;
     }
+    public function getType(): int
+    {
+        return $this->type;
+    }   
+
 
     /* ------------------- Static Database Manipulation Functions -------------------  */
     // Creates and returns a User object given an ID if the user exists, otherwise null

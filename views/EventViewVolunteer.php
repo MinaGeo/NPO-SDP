@@ -160,7 +160,6 @@
                 data: {
                     registerEvent: true,
                     event_id: eventId,
-                    volunteer_id: 1 // "<php echo $volunteerId;" This should be dynamically set based on logged-in volunteer---->RAFIK:MAKE IT WITH USER ID!!
                 },
                 success: function(response) {
                     M.toast({

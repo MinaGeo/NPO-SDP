@@ -1,7 +1,7 @@
 <?php
 require_once './models/authentication-strategies.php';
 $configs = require "server-configs.php";
-session_start(); // Start the session at the beginning
+// session_start(); // Start the session at the beginning
 
 class LoginController
 {
@@ -27,6 +27,12 @@ class LoginController
                     if ($user) {
                         $userId = $user->get_id();
                         $_SESSION['USER_ID'] = $userId;
+                        if($user->getType()==1){
+                            (int)$_SESSION['USER_TYPE'] = 1;
+                        } else {
+                            (int)$_SESSION['USER_TYPE'] = 0;
+                        }
+
                         echo json_encode([
                             'success' => true,
                             'message' => $_POST['email'] . ' logged in successful'

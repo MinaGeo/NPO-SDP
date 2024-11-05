@@ -20,6 +20,7 @@ return (object) array(
     'DB_CARTS_TABLE'      => 'cart',
     'DB_CART_ITEMS_TABLE' => 'cart_items',
     'DB_EVENTS_TABLE'     => 'event',
+    'DB_VOLUNTEER_EVENTS_TABLE' => 'volunteer_events',
 
     // Routes
     'ROUTES' => [

@@ -34,7 +34,7 @@ if ($result->num_rows == 0) {
         $createUserTableQuery = "
             CREATE TABLE IF NOT EXISTS `user` (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-                type BOOL DEFAULT 1,
+                type INT DEFAULT 1,
                 firstName VARCHAR(50) NULL DEFAULT NULL,
                 lastName VARCHAR(50) NULL DEFAULT NULL,
                 email VARCHAR(50) NULL,

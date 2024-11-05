@@ -1,6 +1,6 @@
 <?php
 require_once './models/userBase.php';
-session_start();
+// session_start();
 
 // Update id=1 with _SESSION in a future commit
 

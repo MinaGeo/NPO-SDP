@@ -95,7 +95,6 @@ class VolunteerEvent
 {
     global $configs;
     $result = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_VOLUNTEER_EVENTS_TABLE WHERE volunteer_id = $volunteerId AND event_id = $eventId");
-
     if ($result && $result->num_rows > 0) {
         $success = run_query("DELETE FROM $configs->DB_NAME.$configs->DB_VOLUNTEER_EVENTS_TABLE WHERE volunteer_id = $volunteerId AND event_id = $eventId");
 
