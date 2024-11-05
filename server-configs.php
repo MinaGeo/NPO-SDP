@@ -26,12 +26,16 @@ return (object) array(
         ''               => 'TestController@show',
         '/'              => 'TestController@show',
         '/test'          => 'TestController@show',
-        //----------------------LOGIN------------------------------//
+        //----------------------USER------------------------------//
+        // login
         '/login'         => 'LoginController@show',
-        '/validateLogin'         => 'LoginController@validateLogin',
-        //----------------------REGISTER--------------------------//
+        '/validateLogin' => 'LoginController@validateLogin',
+        // Register
         '/register'         => 'RegisterController@show',
-        '/validateRegister'         => 'RegisterController@validateRegister',
+        '/validateRegister' => 'RegisterController@validateRegister',
+        // Update
+        '/updateUser' => 'UserDataEditController@show',
+        '/updateUserData'=> 'UserDataEditController@updateUserData',
         //-----------------------SHOP----------------------------//
         '/shop' => 'ShopController@show',
         '/deleteShopItem' => 'ShopController@shopDeleteItem',

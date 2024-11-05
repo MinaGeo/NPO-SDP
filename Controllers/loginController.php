@@ -3,7 +3,6 @@ require_once './models/authentication-strategies.php';
 $configs = require "server-configs.php";
 session_start(); // Start the session at the beginning
 
-
 class LoginController
 {
     public function show()
