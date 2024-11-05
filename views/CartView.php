@@ -120,7 +120,6 @@
                     url: 'removeCartItem',
                     type: 'POST',
                     data: {
-                        userId: 1, // Modify as needed
                         itemId: itemId,
                         removeFromCart: true
                     },
@@ -136,13 +135,11 @@
 
 
         function checkout() {
-            console.log("I am here in view");
             if (confirm('Checkout?')) {
                 $.ajax({
                     url: 'checkout',
                     type: 'POST',
                     data: {
-                        userId: 1, // Modify as needed
                         checkoutFlag: true
                     },
                     success: function(response) {

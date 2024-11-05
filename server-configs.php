@@ -8,9 +8,6 @@ return (object) array(
     'URL_ROOT'      => 'NPO',
     'URL_SUBFOLDER' => 'index.php',
 
-    //USER DATA
-    'USER_ID' => isset($_SESSION['USER_ID']) ? $_SESSION['USER_ID'] : -1, // Retrieve USER_ID from session if set
-
     // DB Data
     'DB_HOST' => 'localhost',
     'DB_USER' => 'root',

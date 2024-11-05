@@ -29,7 +29,7 @@ class LoginController
                         $userId = $user->get_id();
                         $_SESSION['USER_ID'] = $userId;
                         echo json_encode([
-                            'sucess' => true,
+                            'success' => true,
                             'message' => $_POST['email'] . ' logged in successful'
                         ]);
                     } else {

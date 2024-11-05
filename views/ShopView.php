@@ -144,7 +144,6 @@
                 type: 'POST',   
                 data: {
                     addToCart: true,
-                    userId: 1,
                     itemId: itemId,
                 },
             });

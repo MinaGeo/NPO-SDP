@@ -1,6 +1,7 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+session_start();
 
 include "./models/ShopModel.php";
 include './models/IFilter.php';
@@ -93,7 +94,7 @@ class ShopController
     {
         if (isset($_POST['addToCart'])) {
             if (!empty($_POST['userId']) && !empty($_POST['itemId'])) {
-                $cart = Cart::get_by_user_id($_POST['userId'])[0];
+                $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
                 $result = Cart::add_item_to_cart($cart->id, $_POST['itemId']);
 
                 if ($result) {
