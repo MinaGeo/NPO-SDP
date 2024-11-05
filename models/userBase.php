@@ -23,6 +23,11 @@ class User
         }
     }
 
+    public function get_id(): int
+    {
+        return $this->id;
+    }
+    
     public function __toString(): string
     {
         $str = '<pre>';

@@ -1,5 +1,7 @@
 <?php
 require_once './models/authentication-strategies.php';
+$configs = require "server-configs.php";
+session_start(); // Start the session at the beginning
 
 
 class LoginController
@@ -24,6 +26,8 @@ class LoginController
                     $context = new ContextAuthenticator($authenticators[$_POST['loginMethod']]);
                     $user = $context->login($_POST['email'], $_POST['password']);
                     if ($user) {
+                        $userId = $user->get_id();
+                        $_SESSION['USER_ID'] = $userId;
                         echo json_encode([
                             'sucess' => true,
                             'message' => $_POST['email'] . ' logged in successful'
