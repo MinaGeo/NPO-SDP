@@ -143,7 +143,7 @@
                     type: 'POST',
                     data: {
                         userId: 1, // Modify as needed
-                        checkout: true
+                        checkoutFlag: true
                     },
                     success: function(response) {
                         location.reload(); // Reload to show updated cart

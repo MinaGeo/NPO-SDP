@@ -134,16 +134,16 @@ class Cart
 
         foreach ($cart_ids as $cart) {
             $cart_id = $cart['id'];
-            // // Delete items in each cart
-            // if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id")) {
-            //     error_log("Failed to delete items for cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
-            //     $success = false;
-            // }
-            // Delete the cart itself
-            if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $cart_id")) {
-                error_log("Failed to delete cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
+            // Delete items in each cart
+            if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id")) {
+                error_log("Failed to delete items for cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
                 $success = false;
             }
+            // // Delete the cart itself
+            // if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $cart_id")) {
+            //     error_log("Failed to delete cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
+            //     $success = false;
+            // }
         }
 
         return $success;

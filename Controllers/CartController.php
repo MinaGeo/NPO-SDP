@@ -10,7 +10,7 @@ class CartController
     public function showCart($userId)
     {
         // Get user data
-        //$user = User::get_by_id($userId);
+        // $user = User::get_by_id($userId);
 
         // Fetch the user's cart (assuming the first cart is used)
         $cart = Cart::get_by_user_id($userId)[0];
@@ -52,15 +52,15 @@ class CartController
 
     public function checkout(){
         echo "I am here";
-        if (isset($_POST['checkout'])) {
+        if (isset($_POST['checkoutFlag'])) {
             if (!empty($_POST['userId'])) {
 
                 $result = Cart::delete_cart_by_user_id($_POST['userId']);
     
                 if ($result) {
-                    echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
+                    echo json_encode(['success' => true, 'message' => 'Successfull checkout!']);
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Failed to add item to cart.']);
+                    echo json_encode(['success' => false, 'message' => 'Failed to checkout.']);
                 }
             } else {
                 echo json_encode(['success' => false, 'message' => 'Invalid input.']);
