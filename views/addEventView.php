@@ -40,9 +40,35 @@
                     <label for="eventDescription">Description</label>
                 </div>
 
-                <!-- Event Location -->
+                <!-- Event Location (Dropdown with Governorates) -->
                 <div class="input-field col s12">
-                    <input id="eventLocation" name="location" type="text" required>
+                    <select id="eventLocation" name="location" required>
+                        <option value="" disabled selected>Choose Event Location</option>
+                        <option value="Cairo">Cairo</option>
+                        <option value="Alexandria">Alexandria</option>
+                        <option value="Giza">Giza</option>
+                        <option value="Luxor">Luxor</option>
+                        <option value="Aswan">Aswan</option>
+                        <option value="Sharm El Sheikh">Sharm El Sheikh</option>
+                        <option value="Hurghada">Hurghada</option>
+                        <option value="Port Said">Port Said</option>
+                        <option value="Ismailia">Ismailia</option>
+                        <option value="Suez">Suez</option>
+                        <option value="Mansoura">Mansoura</option>
+                        <option value="Zagazig">Zagazig</option>
+                        <option value="Tanta">Tanta</option>
+                        <option value="Asyut">Asyut</option>
+                        <option value="Minya">Minya</option>
+                        <option value="Sohag">Sohag</option>
+                        <option value="Beni Suef">Beni Suef</option>
+                        <option value="Damietta">Damietta</option>
+                        <option value="Qena">Qena</option>
+                        <option value="Fayoum">Fayoum</option>
+                        <option value="Beheira">Beheira</option>
+                        <option value="Dakhla">Dakhla</option>
+                        <option value="New Valley">New Valley</option>
+                        <!-- Add more governorates if needed -->
+                    </select>
                     <label for="eventLocation">Location</label>
                 </div>
 

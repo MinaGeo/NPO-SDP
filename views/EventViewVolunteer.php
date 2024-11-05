@@ -68,13 +68,14 @@
             <div class="input-field">
                 <select id="filterSelect">
                     <option value="event_type" <?php echo (isset($_GET['eventFilter']) && $_GET['eventFilter'] == 'event_type') ? 'selected' : ''; ?>>Event Type</option>
+                    <option value="location" <?php echo (isset($_GET['eventFilter']) && $_GET['eventFilter'] == 'location') ? 'selected' : ''; ?>>Location</option>
                 </select>
                 <label>
                     <img class="logo" src="../assets/filter.png" alt="Filter Logo" /> Choose Filtering Option
                 </label>
             </div>
 
-            <div class="input-field">
+            <div class="input-field" id="eventTypeSelectContainer">
                 <select id="eventTypeSelect">
                     <option value="">All Events</option>
                     <option value="Fundraising" <?php echo (isset($_GET['eventType']) && $_GET['eventType'] == 'Fundraising') ? 'selected' : ''; ?>>Fundraising</option>
@@ -84,6 +85,20 @@
                 <label>
                     <img class="logo" src="../assets/filter_type.png" alt="Event Type Logo" /> Choose Event Type
                 </label>
+            </div>
+
+            <div class="input-field" id="locationSelectContainer" style="display:none;">
+                <select id="locationSelect">
+                    <option value="">Choose Location</option>
+                    <?php
+                        $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Tanta', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Qena', 'Shubra', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Dakahlia', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh', 'Red Sea', 'North Sinai', 'South Sinai'];
+                        foreach ($governorates as $governorate) {
+                            $selected = (isset($_GET['location']) && $_GET['location'] == $governorate) ? 'selected' : '';
+                            echo "<option value='$governorate' $selected>$governorate</option>";
+                        }
+                    ?>
+                </select>
+                <label>Choose Location</label>
             </div>
         </div>
 
@@ -126,37 +141,52 @@
         document.addEventListener('DOMContentLoaded', function() {
             var elems = document.querySelectorAll('select');
             M.FormSelect.init(elems);
+
+            // Initialize filter options based on selected filter
+            updateFilterOptions(document.getElementById('filterSelect').value);
+
+            // Event listener for filter selection
+            document.getElementById('filterSelect').addEventListener('change', function() {
+                const selectedFilter = this.value;
+                updateFilterOptions(selectedFilter);
+                const selectedEventType = document.getElementById('eventTypeSelect').value;
+                const selectedLocation = document.getElementById('locationSelect').value;
+                window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&location=${selectedLocation}`;
+            });
+
+            // Event listener for event type selection
+            document.getElementById('eventTypeSelect').addEventListener('change', function() {
+                const selectedFilter = document.getElementById('filterSelect').value;
+                const selectedEventType = this.value;
+                const selectedLocation = document.getElementById('locationSelect').value;
+                window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&location=${selectedLocation}`;
+            });
+
+            // Event listener for location selection
+            document.getElementById('locationSelect').addEventListener('change', function() {
+                const selectedFilter = document.getElementById('filterSelect').value;
+                const selectedEventType = document.getElementById('eventTypeSelect').value;
+                const selectedLocation = this.value;
+                window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&location=${selectedLocation}`;
+            });
+
+            // Event listener for sort selection
+            document.getElementById('sortSelect').addEventListener('change', function() {
+                const selectedSort = this.value;
+                window.location.href = `?eventSort=${selectedSort}`;
+            });
         });
 
-        document.querySelectorAll('.attendBtn').forEach(button => {
-            button.addEventListener('click', () => M.toast({
-                html: 'Event reserved.',
-                displayLength: 1000,
-                classes: 'rounded blue'
-            }));
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const elems = document.querySelectorAll('select');
-            M.FormSelect.init(elems);
-        });
-
-        document.getElementById('filterSelect').addEventListener('change', function() {
-            const selectedFilter = this.value;
-            const selectedEventType = document.getElementById('eventTypeSelect').value;
-            window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
-        });
-
-        document.getElementById('eventTypeSelect').addEventListener('change', function() {
-            const selectedFilter = document.getElementById('filterSelect').value;
-            const selectedEventType = this.value;
-            window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
-        });
-
-        document.getElementById('sortSelect').addEventListener('change', function() {
-            const selectedSort = this.value;
-            window.location.href = `?eventSort=${selectedSort}`;
-        });
+        // Function to update the visibility of the dropdowns
+        function updateFilterOptions(selectedFilter) {
+            if (selectedFilter === 'event_type') {
+                document.getElementById('locationSelectContainer').style.display = 'none';
+                document.getElementById('eventTypeSelectContainer').style.display = 'block';
+            } else if (selectedFilter === 'location') {
+                document.getElementById('locationSelectContainer').style.display = 'block';
+                document.getElementById('eventTypeSelectContainer').style.display = 'none';
+            }
+        }
 
         function registerEvent(eventId) {
             $.ajax({

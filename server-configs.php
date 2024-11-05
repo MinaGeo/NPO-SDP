@@ -21,6 +21,7 @@ return (object) array(
     'DB_CART_ITEMS_TABLE' => 'cart_items',
     'DB_EVENTS_TABLE'     => 'event',
     'DB_VOLUNTEER_EVENTS_TABLE' => 'volunteer_events',
+    'DB_DONATIONS_TABLE' => 'donations',
 
     // Routes
     'ROUTES' => [
@@ -55,7 +56,10 @@ return (object) array(
         '/deleteEvent' => 'EventController@deleteEvent',
         '/registerForEvent'=> 'EventController@registerForEvent',
         '/myEventsView' => 'EventController@showVolunteerEvents',
-        '/removeMyEvent' => 'EventController@removeMyEvent'
+        '/removeMyEvent' => 'EventController@removeMyEvent',
+        //-----------------------DONATION----------------------------//
+        '/donation' => 'DonationController@show',
+        '/processDonation' =>'DonationController@processDonation'
 
     ],
 );

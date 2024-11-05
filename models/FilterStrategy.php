@@ -60,5 +60,29 @@ class FilterByRatingStrategy implements IFilter {
         });
     }
 }
+class FilterByLocationStrategy implements IFilter
+{
+    private string $location;
+
+    public function __construct(string $location = '')
+    {
+        $this->location = $location;
+    }
+
+    public function filter(array $events): array
+    {
+        if (empty($this->location)) {
+            return $events; 
+        }
+
+        return array_filter($events, function($event) {
+            return $event->location === $this->location;
+        });
+    }
+}
+
+
+
+
 
 ?>
