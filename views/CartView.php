@@ -97,18 +97,17 @@
         <!-- Cart Total -->
         <div class="row">
             <div class="col s12 total-price-section">
-            <span class="card-title">Total Price: <?php echo '$' . $cart->get_total_cart_price(); ?></span>
-            <br>
-            <span class="card-title">Total Price After Taxes and Shipping: <?php echo '$' . $cart->get_total_price_after_decoration(); ?></span>
-
+                <span class="card-title">Total Price: <?php echo '$' . $cart->get_total_cart_price(); ?></span>
+                <br>
+                <span class="card-title">Total Price After Taxes and Shipping: <?php echo '$' . $cart->get_total_price_after_decoration(); ?></span>
             </div>
         </div>
         <!-- Checkout Button -->
         <div class="row">
             <div class="col s12">
                 <button
-                onclick="checkout()"
-                class="btn waves-effect waves-light green">Proceed to Checkout</button>
+                    onclick="checkout()"
+                    class="btn waves-effect waves-light green">Proceed to Checkout</button>
             </div>
         </div>
     </div>

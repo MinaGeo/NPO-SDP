@@ -10,12 +10,14 @@ class CartController
 {
     public function showCart()
     {
-        // Get user data
-        // $user = User::get_by_id($userId);
 
         // Fetch the user's cart (assuming the first cart is used)
-        $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
+        $cartFlag = Cart::cart_exists_for_user($_SESSION['USER_ID']);
 
+        if (!$cartFlag) {
+            Cart::add_new_cart($_SESSION['USER_ID']);
+        }
+        $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
         // Fetch each item in the cart along with its details
         $cart_items = [];
         foreach ($cart->items as $itemId => $quantity) {

@@ -30,6 +30,30 @@ class Cart
         }
         return $str;
     }
+    public static function cart_exists_for_user(int $user_id): bool
+    {
+        global $configs;
+
+        // Correct SQL query using prepared statement syntax for safety
+        $query = "SELECT COUNT(*) as cart_count FROM {$configs->DB_NAME}.{$configs->DB_CARTS_TABLE} WHERE user_id = $user_id";
+
+        $result = run_select_query($query);
+
+        if ($result && is_object($result)) {
+            $row = $result->fetch_assoc();
+            return $row['cart_count'] > 0; // Return true if there's at least one cart
+        }
+
+        return false; // Return false if no results or error
+    }
+
+
+
+    public static function add_new_cart(int $user_id): void
+    {
+        global $configs;
+        run_query("INSERT INTO $configs->DB_NAME.$configs->DB_CARTS_TABLE (user_id) VALUES ($user_id)");
+    }
     public function get_total_cart_price(): float
     {
         $price = 0;
@@ -50,7 +74,7 @@ class Cart
         return $decoratedPrice;
     }
     // Get a cart via its ID
-    static public function get_by_id($id): Cart
+    /*static public function get_by_id($id): Cart
     {
         global $configs;
         $cart = new Cart(run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $id")->fetch_assoc());
@@ -61,7 +85,7 @@ class Cart
             $cart->items[$item['item_id']] = $item['quantity'];
         }
         return $cart;
-    }
+    }*/
 
     // Get carts owned by a user via the user's ID
     static public function get_by_user_id($user_id): array
@@ -132,19 +156,15 @@ class Cart
         // Get all cart IDs associated with the user
         $cart_ids = run_select_query("SELECT id FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $user_id")->fetch_all(MYSQLI_ASSOC);
 
-        foreach ($cart_ids as $cart) {
+        foreach ($cart_ids as $cart)
             $cart_id = $cart['id'];
-            // Delete items in each cart
-            if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id")) {
-                error_log("Failed to delete items for cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
-                $success = false;
-            }
-            // // Delete the cart itself
-            // if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $cart_id")) {
-            //     error_log("Failed to delete cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
-            //     $success = false;
-            // }
+
+        // Delete the cart itself
+        if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $cart_id")) {
+            error_log("Failed to delete cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
+            $success = false;
         }
+
 
         return $success;
     }

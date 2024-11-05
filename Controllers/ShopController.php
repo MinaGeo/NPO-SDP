@@ -92,8 +92,13 @@ class ShopController
 
     public function shopAddItemToCart()
     {
+        $cartFlag = Cart::cart_exists_for_user($_SESSION['USER_ID']);
+
+        if (!$cartFlag) {
+            Cart::add_new_cart($_SESSION['USER_ID']);
+        }
         if (isset($_POST['addToCart'])) {
-            if (!empty($_POST['userId']) && !empty($_POST['itemId'])) {
+            if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
                 $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
                 $result = Cart::add_item_to_cart($cart->id, $_POST['itemId']);
 
