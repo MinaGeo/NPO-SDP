@@ -80,7 +80,7 @@
                             <p><span class="item-detail-label">Price:</span> <span class="item-detail-value">$<?php echo htmlspecialchars($item->price); ?></span></p>
                         </div>
                         <div class="card-action">
-                        <?php if ($userType === 1): ?>
+                        <?php if ($userType === 1 && $userId !== -1): ?>
 
                             <button
                                 onclick="addToCart(<?php echo htmlspecialchars($item->id); ?>)"
@@ -89,7 +89,7 @@
                             </button>
                             <?php endif; ?>
 
-                            <?php if ($userType === 0): ?>
+                            <?php if ($userType === 0 && $userId !== -1): ?>
                                 <button
 
                                     onclick="deleteItem(<?php echo htmlspecialchars($item->id); ?>)"
@@ -107,14 +107,14 @@
 
         <div class="row">
             <div class="col s12">
-                <?php if ($userType === 0): ?>
+                <?php if ($userType === 0 && $userId !== -1): ?>
                     <a href="showAddItem" class="btn waves-effect waves-light green">Add Item</a>
                 <?php endif; ?>
             </div>
         </div>
 
         <div class="fixed-action-btn">
-        <?php if ($userType === 1): ?>
+        <?php if ($userType === 1 && $userId !== -1): ?>
             <a href="cart"
                 class="btn-floating btn-large blue">
                 <i class="large material-icons">shopping_cart</i>

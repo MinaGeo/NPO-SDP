@@ -67,25 +67,27 @@ class EventController
         // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);
-        //echo $usertype;
-        echo $_SESSION['USER_ID'];
-        echo $_SESSION['USER_TYPE'];
-        // Pass filtered and sorted events to the view
-        switch ((int)$_SESSION['USER_TYPE']) {
-            case 0:
-                require_once "./views/EventViewAdmin.php";
-                break;
 
-            case 1:
-                require_once "./views/EventViewVolunteer.php";
-                break;
-
-            default:
-                require_once "./views/EventViewGuest.php";
-                break;
-        }
         require_once "./views/Navbar.php";
-        require_once "./views/EventView.php";
+        
+        if ((int)$_SESSION['USER_ID'] === -1) {
+            require_once "./views/EventViewGuest.php";
+        } else {
+            // Pass filtered and sorted events to the view
+            switch ((int)$_SESSION['USER_TYPE']) {
+                case 0:
+                    require_once "./views/EventViewAdmin.php";
+                    break;
+
+                case 1:
+                    require_once "./views/EventViewVolunteer.php";
+                    break;
+
+                default:
+                    require_once "./views/EventViewGuest.php";
+                    break;
+            }
+        }
     }
 
 

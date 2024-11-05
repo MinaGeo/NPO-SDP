@@ -25,6 +25,7 @@ class ShopController
     public function show($itemSort = 'name_asc')
     {
         $userType = $_SESSION['USER_TYPE'];
+        $userId = $_SESSION['USER_ID'];
         // Retrieve all shop items
         $shop_items = ShopItem::get_all();
 

@@ -24,10 +24,9 @@ return (object) array(
 
     // Routes
     'ROUTES' => [
-        // ''               => 'HomepageController@show',
-        // '/'              => 'HomepageController@show',
         '/test'          => 'TestController@show',
         '/home'         => 'HomepageController@show',
+        '/logout' => 'HomepageController@logout',
         //----------------------USER------------------------------//
         // login
         '/login'         => 'LoginController@show',
@@ -45,7 +44,7 @@ return (object) array(
         '/showAddItem' => 'ShopController@showAddItem',
         '/addShopItem' => 'ShopController@shopAddItem',
         //-----------------------CART----------------------------//
-        '/cart' => 'CartController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
+        '/cart' => 'CartController@showCart',
         '/removeCartItem' => 'CartController@removeCartItem',
         '/checkout'=>'CartController@checkout',
         //-----------------------EVENT----------------------------//
@@ -58,6 +57,4 @@ return (object) array(
         '/removeMyEvent' => 'EventController@removeMyEvent'
 
     ],
-
-
 );
