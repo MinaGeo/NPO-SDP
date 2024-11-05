@@ -21,30 +21,34 @@ class EventController
         $this->filteringContext = new FilteringContext();
         $this->sortingContext = new SortingContext();
     }
-    public function show($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc')
+    public function show($eventFilter = '', $eventType = '', $eventSort = 'name_asc', $location = '')
     {
-
         $volunteerId = $_SESSION['USER_ID'];
+        
         // Retrieve all events
-        $events = Event::get_all();
-
+        $events = Event::get_all();  
+    
         // Handle Filtering based on the filter type
         switch ($eventFilter) {
             case 'event_type':
                 // Use the passed eventType query parameter for filtering
                 $filterStrategy = new FilterByEventTypeStrategy($eventType);
                 break;
+            case 'location':
+                // Use the passed location query parameter for filtering
+                $filterStrategy = new FilterByLocationStrategy($location);
+                break;
             default:
-                // Default filter strategy if none specified
+                // Default filter strategy if none specified (using event type filter as default)
                 $filterStrategy = new FilterByEventTypeStrategy();
                 break;
         }
-
+    
         // Apply the selected filter strategy
         $this->filteringContext->setStrategy($filterStrategy);
-        $events = $this->filteringContext->filterData($events);
-
-        // Handle Sorting based on the sort type
+        $events = $this->filteringContext->filterData($events);  // Filter the events
+    
+        // Handle Sorting (as before)
         switch ($eventSort) {
             case 'name_asc':
                 $sortStrategy = new SortByNameAscStrategy();
@@ -63,11 +67,12 @@ class EventController
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
         }
-
+    
         // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
-        $events = $this->sortingContext->sortData($events);
-
+        $events = $this->sortingContext->sortData($events);  // Sort the events
+    
+        // Render the view based on user type
         require_once "./views/Navbar.php";
         
         if ((int)$_SESSION['USER_ID'] === -1) {
@@ -78,18 +83,17 @@ class EventController
                 case 0:
                     require_once "./views/EventViewAdmin.php";
                     break;
-
                 case 1:
                     require_once "./views/EventViewVolunteer.php";
                     break;
-
                 default:
                     require_once "./views/EventViewGuest.php";
                     break;
             }
         }
     }
-
+    
+    
 
     public function showAddEvent()
     {
@@ -165,24 +169,29 @@ class EventController
 
     public function showVolunteerEvents($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc')
     {
-        $usertype = $_SESSION['USER_TYPE'];
         $volunteerId = $_SESSION['USER_ID'];
-        $volunteerEvents = VolunteerEvent::get_events_by_volunteer($_SESSION['USER_ID']);
-        // echo "<br> Controller:<br> ";
-        // print_r($volunteerEvents);
-
+        $volunteerEvents = VolunteerEvent::get_events_by_volunteer($volunteerId);
+        
+        // Handle filtering based on the selected filter type
         switch ($eventFilter) {
             case 'event_type':
                 $filterStrategy = new FilterByEventTypeStrategy($eventType);
                 break;
+            case 'location':
+                // Retrieve location from query parameter
+                $location = $_GET['location'] ?? ''; 
+                $filterStrategy = new FilterByLocationStrategy($location);
+                break;
             default:
+                // Default filter strategy if none specified
                 $filterStrategy = new FilterByEventTypeStrategy();
                 break;
         }
-
+    
         $this->filteringContext->setStrategy($filterStrategy);
-        $volunteerEvents = $this->filteringContext->filterData($volunteerEvents);
-
+        $volunteerEvents = $this->filteringContext->filterData($volunteerEvents);  // Apply filtering
+    
+        // Handle sorting (unchanged)
         switch ($eventSort) {
             case 'name_asc':
                 $sortStrategy = new SortByNameAscStrategy();
@@ -200,10 +209,14 @@ class EventController
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
         }
-
+    
         $this->sortingContext->setStrategy($sortStrategy);
-        $volunteerEvents = $this->sortingContext->sortData($volunteerEvents);
-
+        $volunteerEvents = $this->sortingContext->sortData($volunteerEvents);  // Apply sorting
+    
+        // Render the view
         require_once "./views/myEventsView.php";
     }
+    
+    
+    
 }

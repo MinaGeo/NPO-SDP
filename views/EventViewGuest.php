@@ -78,7 +78,7 @@
             <div class="input-field">
                 <select id="filterSelect">
                     <option value="event_type" <?php echo (isset($_GET['eventFilter']) && $_GET['eventFilter'] == 'event_type') ? 'selected' : ''; ?>>Event Type</option>
-                    <!-- Add more filter options here -->
+                    <option value="location" <?php echo (isset($_GET['eventFilter']) && $_GET['eventFilter'] == 'location') ? 'selected' : ''; ?>>Location</option>
                 </select>
                 <label>
                     <img class="logo" src="../assets/filter.png" alt="Filter Logo" /> Choose Filtering Option
@@ -86,7 +86,7 @@
             </div>
 
             <!-- Event Type Dropdown -->
-            <div class="input-field">
+            <div class="input-field" id="eventTypeSelectContainer">
                 <select id="eventTypeSelect">
                     <option value="">All Events</option>
                     <option value="Fundraising" <?php echo (isset($_GET['eventType']) && $_GET['eventType'] == 'Fundraising') ? 'selected' : ''; ?>>Fundraising</option>
@@ -96,6 +96,21 @@
                 <label>
                     <img class="logo" src="../assets/filter_type.png" alt="Event Type Logo" /> Choose Event Type
                 </label>
+            </div>
+
+            <!-- Location Dropdown (Hidden by default) -->
+            <div class="input-field" id="locationSelectContainer" style="display:none;">
+                <select id="locationSelect">
+                    <option value="">Choose Location</option>
+                    <?php
+                        $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Tanta', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Qena', 'Shubra', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Dakahlia', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh', 'Red Sea', 'North Sinai', 'South Sinai'];
+                        foreach ($governorates as $governorate) {
+                            $selected = (isset($_GET['location']) && $_GET['location'] == $governorate) ? 'selected' : '';
+                            echo "<option value='$governorate' $selected>$governorate</option>";
+                        }
+                    ?>
+                </select>
+                <label>Choose Location</label>
             </div>
         </div>
 
@@ -112,8 +127,6 @@
                             <p><span class="event-detail-label">Event Type:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->type); ?></span></p>
                             <p><span class="event-detail-label">Date:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->date); ?></span></p>
                         </div>
-                        <div class="card-action">
-                        </div>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -125,54 +138,59 @@
         document.addEventListener('DOMContentLoaded', function() {
             var elems = document.querySelectorAll('select');
             M.FormSelect.init(elems); // Initialize Materialize dropdown
+
+            // Initial setup based on selected filter
+            updateFilterOptions(document.getElementById('filterSelect').value);
         });
 
-        document.querySelectorAll('.attendBtn').forEach(button => {
-            button.addEventListener(
-                'click',
-                () => M.toast({
-                    html: 'Event reserved.',
-                    displayLength: 1000,
-                    classes: 'rounded blue'
-                })
-            );
+        // Handle filtering option change
+        document.getElementById('filterSelect').addEventListener('change', function() {
+            const selectedFilter = this.value;
+            updateFilterOptions(selectedFilter);
+            const selectedEventType = document.getElementById('eventTypeSelect').value;
+            const selectedLocation = document.getElementById('locationSelect').value;
+            window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&location=${selectedLocation}`;
         });
 
-        document.querySelectorAll('.deleteBtn').forEach(button => {
-            button.addEventListener(
-                'click',
-                () => M.toast({
-                    html: 'Event Deleted!',
-                    displayLength: 1000,
-                    classes: 'rounded red'
-                })
-            );
+        // Handle event type change
+        document.getElementById('eventTypeSelect').addEventListener('change', function() {
+            const selectedFilter = document.getElementById('filterSelect').value;
+            const selectedEventType = this.value;
+            const selectedLocation = document.getElementById('locationSelect').value;
+            window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&location=${selectedLocation}`;
         });
 
-    document.addEventListener('DOMContentLoaded', function() {
-        const elems = document.querySelectorAll('select');
-        M.FormSelect.init(elems); // Initialize Materialize dropdown
-    });
+        // Handle location change
+        document.getElementById('locationSelect').addEventListener('change', function() {
+            const selectedFilter = document.getElementById('filterSelect').value;
+            const selectedEventType = document.getElementById('eventTypeSelect').value;
+            const selectedLocation = this.value;
+            window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}&location=${selectedLocation}`;
+        });
 
-    // Handle filtering option change
-    document.getElementById('filterSelect').addEventListener('change', function() {
-        const selectedFilter = this.value;
-        const selectedEventType = document.getElementById('eventTypeSelect').value;
-        window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
-    });
+        // Handle sorting option change
+        document.getElementById('sortSelect').addEventListener('change', function() {
+            const selectedSort = this.value;
+            window.location.href = `?eventSort=${selectedSort}`;
+        });
 
-    document.getElementById('eventTypeSelect').addEventListener('change', function() {
-        const selectedFilter = document.getElementById('filterSelect').value;
-        const selectedEventType = this.value;
-        window.location.href = `?eventFilter=${selectedFilter}&eventType=${selectedEventType}`;
-    });
-
-    // Handle sorting option change
-    document.getElementById('sortSelect').addEventListener('change', function() {
-        const selectedSort = this.value;
-        window.location.href = `?eventSort=${selectedSort}`;
-    });
-</script>
+        // Update the filter options visibility based on selection
+        function updateFilterOptions(selectedFilter) {
+            if (selectedFilter === 'event_type') {
+                // Show event type dropdown and hide location dropdown
+                document.getElementById('locationSelectContainer').style.display = 'none';
+                document.getElementById('eventTypeSelectContainer').style.display = 'block';
+            } else if (selectedFilter === 'location') {
+                // Show location dropdown and hide event type dropdown
+                document.getElementById('locationSelectContainer').style.display = 'block';
+                document.getElementById('eventTypeSelectContainer').style.display = 'none';
+            } else {
+                // Hide both dropdowns if no valid filter is selected
+                document.getElementById('locationSelectContainer').style.display = 'none';
+                document.getElementById('eventTypeSelectContainer').style.display = 'none';
+            }
+        }
+    </script>
 
 </body>
 
