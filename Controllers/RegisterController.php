@@ -1,5 +1,5 @@
 <?php
-require_once './models/UserBase.php';
+require_once './models/userBase.php';
 
 class RegisterController
 {
@@ -25,7 +25,8 @@ class RegisterController
                         'success' => false,
                         'message' => $_POST['email'] . ' already exists!'
                     ]);
-                } else {
+                } 
+                else {
                     User::create_new_user($user_data);
                     echo json_encode([
                         'success' => true,

@@ -66,6 +66,7 @@ class EventController
         $events = $this->sortingContext->sortData($events);
     
         // Pass filtered and sorted events to the view
+        require_once "./views/Navbar.php";
         require_once "./views/EventView.php";
     }
     
@@ -74,7 +75,6 @@ class EventController
         echo "Entering showADd";
         require_once "./views/addEventView.php";
     }
-
 
     public function deleteEvent()
     {
@@ -92,8 +92,6 @@ class EventController
             exit;
         }
     }
-
-
 
     public function addNewEvent()
     {

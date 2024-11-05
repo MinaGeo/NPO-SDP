@@ -31,6 +31,7 @@
                     password: password
                 },
                 success: function(response) {
+                    console.log(response);
                     const res = JSON.parse(response);
                     alert(res['message']);
                     location.reload();

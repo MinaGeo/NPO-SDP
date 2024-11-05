@@ -23,9 +23,10 @@ return (object) array(
 
     // Routes
     'ROUTES' => [
-        ''               => 'TestController@show',
-        '/'              => 'TestController@show',
+        // ''               => 'HomepageController@show',
+        // '/'              => 'HomepageController@show',
         '/test'          => 'TestController@show',
+        '/home'         => 'HomepageController@show',
         //----------------------USER------------------------------//
         // login
         '/login'         => 'LoginController@show',
