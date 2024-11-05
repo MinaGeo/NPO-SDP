@@ -86,6 +86,17 @@ if ($result->num_rows == 0) {
                 FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE
             )";
 
+        $createDonationTableQuery = "
+            CREATE TABLE donations (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                donator_name VARCHAR(100) NOT NULL,
+                donation_type ENUM('monetary', 'nonMonetary') NOT NULL,
+                donation_amount DOUBLE,
+                donated_item VARCHAR(255),
+                payment_type ENUM('paypal', 'creditCard'),
+                donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )";
+
         ////////////////////////////////////////////////////////////////////////////
 
         if (
@@ -94,7 +105,8 @@ if ($result->num_rows == 0) {
             $conn->query($createShopItemsTableQuery) === TRUE &&
             $conn->query($createCartTableQuery) === TRUE &&
             $conn->query($createCartItemsTableQuery) === TRUE &&
-            $conn->query($createVolunteerEventsTableQuery) === TRUE
+            $conn->query($createVolunteerEventsTableQuery) === TRUE &&
+            $conn->query($createDonationTableQuery) === TRUE
         ) {
             // echo "Tables created successfully<br/><hr/>";
         } else {
