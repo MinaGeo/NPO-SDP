@@ -72,7 +72,7 @@ if ($result->num_rows == 0) {
                 cart_id INT NOT NULL,
                 item_id INT NOT NULL,
                 quantity INT NOT NULL DEFAULT 1,
-                FOREIGN KEY (cart_id) REFERENCES `NPO`.`cart`(id),
+                FOREIGN KEY (cart_id) REFERENCES `NPO`.`cart`(id) on DELETE CASCADE,
                 FOREIGN KEY (item_id) REFERENCES `NPO`.`shop_items`(id)
             )";
         ////////////////////////////////////////////////////////////////////////////

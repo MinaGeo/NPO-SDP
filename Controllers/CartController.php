@@ -49,4 +49,25 @@ class CartController
             exit; // Ensure no further output is sent
         }
     }
+
+    public function checkout(){
+        echo "I am here";
+        if (isset($_POST['checkout'])) {
+            if (!empty($_POST['userId'])) {
+
+                $result = Cart::delete_cart_by_user_id($_POST['userId']);
+    
+                if ($result) {
+                    echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
+                } else {
+                    echo json_encode(['success' => false, 'message' => 'Failed to add item to cart.']);
+                }
+            } else {
+                echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+            }
+            exit; // Ensure no further output is sent
+        }
+    }
+
+    
 }

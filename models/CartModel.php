@@ -6,6 +6,7 @@ ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
 // require_once "./models/ShopItem.php";
+require_once "./models/CartDecorater.php";
 class Cart
 {
     // Define properties
@@ -34,10 +35,19 @@ class Cart
         $price = 0;
         foreach ($this->items as $item_id => $quantity) {
             $shopItem = ShopItem::get_by_id($item_id); //model byklm model
-            // $price += $quantity * (new SHIP2EGDecorator(new EGVATDecorator(new USD2EGPDecorator($shirt))))->calc_price();
-            $price += $quantity*$shopItem->price;
+
+            $price += $quantity * $shopItem->price;
         }
         return $price;
+    }
+    public function get_total_price_after_decoration(): float
+    {
+        $decoratedPrice = 0;
+        foreach ($this->items as $item_id => $quantity) {
+            $shopItem = ShopItem::get_by_id($item_id); //model byklm model
+            $decoratedPrice += $quantity * (new ShippingDecorator(new VATDecorator($shopItem)))->calc_price();
+        }
+        return $decoratedPrice;
     }
     // Get a cart via its ID
     static public function get_by_id($id): Cart
@@ -60,7 +70,7 @@ class Cart
         global $configs;
         $carts = [];
         foreach (run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $user_id")->fetch_all(MYSQLI_ASSOC) as $cart) {
-            $carts[] = new Cart($cart); 
+            $carts[] = new Cart($cart);
         }
         foreach ($carts as $cart) {
             $cart_items = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart->id")->fetch_all(MYSQLI_ASSOC);
@@ -88,13 +98,13 @@ class Cart
     static public function remove_item_from_cart($cart_id, $item_id): bool
     {
         global $configs;
-    
+
         // Check if item exists in the cart
         $result = run_select_query("SELECT quantity FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id AND `item_id` = $item_id");
         if ($result->num_rows > 0) {
             // Fetch the current quantity
             $currentQuantity = (int) $result->fetch_assoc()['quantity'];
-    
+
             if ($currentQuantity > 1) {
                 // Decrement the quantity if more than 1
                 $success = run_query("UPDATE $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE SET `quantity` = `quantity` - 1 WHERE `cart_id` = $cart_id AND `item_id` = $item_id");
@@ -113,5 +123,29 @@ class Cart
         }
         return false; // Return false if item does not exist
     }
-    
+    // Delete all carts and their items owned by a specific user via the user's ID
+    static public function delete_cart_by_user_id(int $user_id): bool
+    {
+        global $configs;
+        $success = true;
+
+        // Get all cart IDs associated with the user
+        $cart_ids = run_select_query("SELECT id FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $user_id")->fetch_all(MYSQLI_ASSOC);
+
+        foreach ($cart_ids as $cart) {
+            $cart_id = $cart['id'];
+            // // Delete items in each cart
+            // if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id")) {
+            //     error_log("Failed to delete items for cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
+            //     $success = false;
+            // }
+            // Delete the cart itself
+            if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $cart_id")) {
+                error_log("Failed to delete cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
+                $success = false;
+            }
+        }
+
+        return $success;
+    }
 }

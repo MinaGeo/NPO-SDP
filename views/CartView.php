@@ -97,14 +97,18 @@
         <!-- Cart Total -->
         <div class="row">
             <div class="col s12 total-price-section">
-            <span class="card-title">Total: <?php echo '$' . $cart->get_total_cart_price(); ?></span>
+            <span class="card-title">Total Price: <?php echo '$' . $cart->get_total_cart_price(); ?></span>
+            <br>
+            <span class="card-title">Total Price After Taxes and Shipping: <?php echo '$' . $cart->get_total_price_after_decoration(); ?></span>
+
             </div>
         </div>
-
         <!-- Checkout Button -->
         <div class="row">
             <div class="col s12">
-                <a href="checkout" class="btn waves-effect waves-light green">Proceed to Checkout</a>
+                <button
+                onclick="checkout()"
+                class="btn waves-effect waves-light green">Proceed to Checkout</button>
             </div>
         </div>
     </div>
@@ -125,6 +129,27 @@
                     },
                     error: function(xhr, status, error) {
                         console.error("Error removing item:", error);
+                    }
+                });
+            }
+        }
+
+
+        function checkout() {
+            console.log("I am here in view");
+            if (confirm('Checkout?')) {
+                $.ajax({
+                    url: 'checkout',
+                    type: 'POST',
+                    data: {
+                        userId: 1, // Modify as needed
+                        checkout: true
+                    },
+                    success: function(response) {
+                        location.reload(); // Reload to show updated cart
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("Error checkout:", error);
                     }
                 });
             }

@@ -41,6 +41,7 @@ return (object) array(
         //-----------------------CART----------------------------//
         '/cart' => 'CartController@showCart', //----------->RAFIK: Don't write the arguments here, JUST SEND THE ARGUMENTS NORMALLY
         '/removeCartItem' => 'CartController@removeCartItem',
+        '/checkout'=>'CartController@checkout',
         //-----------------------EVENT----------------------------//
         '/event' => 'EventController@show',
         '/addEventView' => 'EventController@showAddEvent',
