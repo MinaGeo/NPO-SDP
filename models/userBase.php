@@ -10,18 +10,20 @@ ob_end_clean();
 
 class User
 {
-    /* ------------------- Attributes -------------------  */ 
+    /* ------------------- Attributes -------------------  */
     private int $id;
     private string $firstName;
     private string $lastName;
     private string $email;
     private string $passwordHash;
 
-    /* ------------------- Constructor and toString -------------------  */ 
+    /* ------------------- Constructor and toString -------------------  */
     private function __construct(array $properties)
     {
         foreach ($properties as $prop => $value) {
-            $this->{$prop} = $value;
+            if (property_exists($this, $prop)) {
+                $this->{$prop} = $value;
+            }
         }
     }
 
@@ -29,7 +31,7 @@ class User
     {
         return $this->id;
     }
-    
+
     public function __toString(): string
     {
         $str = '<pre>';
@@ -39,7 +41,7 @@ class User
         return $str . '</pre>';
     }
 
-    /* ------------------- Getters and Setters -------------------  */ 
+    /* ------------------- Getters and Setters -------------------  */
     // Getter for id
     public function getId(): int
     {
@@ -70,7 +72,7 @@ class User
         return $this->passwordHash;
     }
 
-    /* ------------------- Static Database Manipulation Functions -------------------  */ 
+    /* ------------------- Static Database Manipulation Functions -------------------  */
     // Creates and returns a User object given an ID if the user exists, otherwise null
     static public function get_by_id(int $id): ?User
     {
