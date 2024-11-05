@@ -26,16 +26,13 @@ class LoginController
                     if ($user) {
                         $userId = $user->get_id();
                         $_SESSION['USER_ID'] = $userId;
-<<<<<<< HEAD
                         if($user->getType()==1){
                             (int)$_SESSION['USER_TYPE'] = 1;
                         } else {
                             (int)$_SESSION['USER_TYPE'] = 0;
                         }
 
-=======
                         $_SESSION['USERNAME'] = $user->getFirstName();
->>>>>>> homepage
                         echo json_encode([
                             'success' => true,
                             'message' => $_POST['email'] . ' logged in successful'
