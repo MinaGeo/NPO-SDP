@@ -24,13 +24,13 @@ class LoginController
                     $context = new ContextAuthenticator($authenticators[$_POST['loginMethod']]);
                     $user = $context->login($_POST['email'], $_POST['password']);
                     if ($user) {
-                        $userId = $user->get_id();
-                        $_SESSION['USER_ID'] = $userId;
-                        if($user->getType()==1){
-                            (int)$_SESSION['USER_TYPE'] = 1;
-                        } else {
-                            (int)$_SESSION['USER_TYPE'] = 0;
-                        }
+                        $_SESSION['USER_ID'] = $user->get_id();
+                        (int)$_SESSION['USER_TYPE'] = $user->getType();
+                        // if($user->getType()==1){
+                        //     (int)$_SESSION['USER_TYPE'] = 1;
+                        // } else {
+                        //     (int)$_SESSION['USER_TYPE'] = 0;
+                        // }
 
                         $_SESSION['USERNAME'] = $user->getFirstName();
                         echo json_encode([

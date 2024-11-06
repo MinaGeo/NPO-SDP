@@ -72,6 +72,8 @@ class User
     {
         return $this->passwordHash;
     }
+
+    // Getter for user type (0 for guest user, 1 for admin)
     public function getType(): int
     {
         return $this->type;

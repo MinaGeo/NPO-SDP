@@ -21,7 +21,7 @@
         </ul>
         <ul id="nav-mobile" class="right hide-on-med-and-down">
             <?php if ($_SESSION['USER_ID'] != -1): ?>
-                <li><a>Welcome, <?php echo htmlspecialchars($_SESSION['USERNAME']); ?></a></li>
+                <li><a href="updateUser">Welcome, <?php echo htmlspecialchars($_SESSION['USERNAME']); ?></a></li>
                 <li><a href="logout">Logout</a></li>
             <?php else: ?>
                 <li><a href="login">Login</a></li>
