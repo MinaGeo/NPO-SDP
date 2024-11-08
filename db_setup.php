@@ -138,7 +138,8 @@ class Database
                     (1, 'Google', 'User', 'google.user@google.com', '25d55ad283aa400af464c76d713c07ad'),
                     (1, 'Facebook', 'User', 'facebook.user@meta.com', '25d55ad283aa400af464c76d713c07ad'),
                     (1, '7amada', 'Belganzabeel', '7amada@belganzabeel.com', '25d55ad283aa400af464c76d713c07ad'),
-                    (1, '7amada', 'Tany', '5ales@depression.inc', '25d55ad283aa400af464c76d713c07ad')
+                    (1, '7amada2', 'Tany', '5ales@depression.inc', '25d55ad283aa400af464c76d713c07ad'),
+                    (1, 'r', 'r', 'r', '4b43b0aee35624cd95b910189b3dc231')
             ");
         }
 

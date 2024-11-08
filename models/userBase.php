@@ -82,6 +82,10 @@ class User
         return new self($data);
     }
 
+    public function sendnotification(string $msg) {
+        echo "Notifying user: $this->firstName with message: $msg </br>";
+    }
+
     /* ------------------- Static Database Manipulation Functions -------------------  */
     // Creates and returns a User object given an ID if the user exists, otherwise null
     static public function get_by_id(int $id): ?User
@@ -137,4 +141,5 @@ class User
         $query = "UPDATE $configs->DB_NAME.$configs->DB_USERS_TABLE SET $setClauseString WHERE id = '$id'";
         return run_query($query);
     }
+
 }

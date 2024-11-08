@@ -15,11 +15,13 @@ class EventController
 {
     private FilteringContext $filteringContext;
     private SortingContext $sortingContext;
+    private $users;
 
     public function __construct()
     {
         $this->filteringContext = new FilteringContext();
         $this->sortingContext = new SortingContext();
+        $this->users = [];
     }
     public function show($eventFilter = '', $eventType = '', $eventSort = 'name_asc', $location = '')
     {
@@ -158,14 +160,15 @@ class EventController
         if (isset($_POST['registerEvent']) && !empty($_SESSION['USER_ID']) && !empty($_POST['event_id'])) {
             $volunteerId = (int)$_SESSION['USER_ID'];
             $eventId = (int)$_POST['event_id'];
-            $users = VolunteerEvent::get_volunteers_by_event($eventId);
+            $this->users = VolunteerEvent::get_volunteers_by_event($eventId);
             // echo "registering";
-            foreach ($users as $user) {
-                echo $user;
-            }
+            // foreach ($this->users as $user) {
+            //     $this->attach($user);
+            // }
+            $this->notifyUsers("User with ID: $volunteerId joined event with ID: $eventId");
             $registered = VolunteerEvent::register($volunteerId, $eventId);
             if ($registered) {
-                json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $users]);
+                json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $this->users]);
             } else {
                 json_encode(['success' => false, 'message' => 'Failed to register for the event.']);
             }
@@ -223,6 +226,21 @@ class EventController
         require_once "./views/myEventsView.php";
     }
     
+    public function attach(User $user): void
+    {
+        $name = $user->getFirstName();
+        echo "Event: Adding User: $name .</br>";
+        $this->users[] = $user;
+    }
+
+    public function notifyUsers(string $msg): void
+    {
+        $size = count($this->users);
+        echo "Notifying Users $size...</br>";
+        foreach ($this->users as $user) {
+            $user->sendnotification($msg);
+        }
+    }
     
     
 }
