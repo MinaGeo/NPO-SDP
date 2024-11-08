@@ -6,9 +6,11 @@ ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
 
+require_once "./models/IMessagble.php";
+
 // Properties: id, firstName, lastName, email, passwordHash (MD5)
 
-class User
+class User implements IMEssagable
 {
     /* ------------------- Attributes -------------------  */
     private int $id;

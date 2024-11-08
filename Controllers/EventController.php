@@ -10,8 +10,9 @@ require_once './models/FilteringContext.php';
 require_once './models/ISort.php';
 require_once './models/SortStrategy.php';
 require_once './models/SortingContext.php';
+require_once "./models/IEventSubject.php";
 
-class EventController
+class EventController implements IObservable
 {
     private FilteringContext $filteringContext;
     private SortingContext $sortingContext;
@@ -26,10 +27,10 @@ class EventController
     public function show($eventFilter = '', $eventType = '', $eventSort = 'name_asc', $location = '')
     {
         $volunteerId = $_SESSION['USER_ID'];
-        
+
         // Retrieve all events
-        $events = Event::get_all();  
-    
+        $events = Event::get_all();
+
         // Handle Filtering based on the filter type
         switch ($eventFilter) {
             case 'event_type':
@@ -45,11 +46,11 @@ class EventController
                 $filterStrategy = new FilterByEventTypeStrategy();
                 break;
         }
-    
+
         // Apply the selected filter strategy
         $this->filteringContext->setStrategy($filterStrategy);
         $events = $this->filteringContext->filterData($events);  // Filter the events
-    
+
         // Handle Sorting (as before)
         switch ($eventSort) {
             case 'name_asc':
@@ -69,11 +70,11 @@ class EventController
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
         }
-    
+
         // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);  // Sort the events
-    
+
         // Render the view based on user type
         require_once "./views/Navbar.php";
 
@@ -94,8 +95,8 @@ class EventController
             }
         }
     }
-    
-    
+
+
 
     public function showAddEvent()
     {
@@ -142,7 +143,6 @@ class EventController
     }
 
 
-
     public function addNewEvent()
     {
         if (isset($_POST['addEvent'])) {
@@ -180,7 +180,7 @@ class EventController
     {
         $volunteerId = $_SESSION['USER_ID'];
         $volunteerEvents = VolunteerEvent::get_events_by_volunteer($volunteerId);
-        
+
         // Handle filtering based on the selected filter type
         switch ($eventFilter) {
             case 'event_type':
@@ -188,7 +188,7 @@ class EventController
                 break;
             case 'location':
                 // Retrieve location from query parameter
-                $location = $_GET['location'] ?? ''; 
+                $location = $_GET['location'] ?? '';
                 $filterStrategy = new FilterByLocationStrategy($location);
                 break;
             default:
@@ -196,10 +196,10 @@ class EventController
                 $filterStrategy = new FilterByEventTypeStrategy();
                 break;
         }
-    
+
         $this->filteringContext->setStrategy($filterStrategy);
         $volunteerEvents = $this->filteringContext->filterData($volunteerEvents);  // Apply filtering
-    
+
         // Handle sorting (unchanged)
         switch ($eventSort) {
             case 'name_asc':
@@ -218,19 +218,29 @@ class EventController
                 $sortStrategy = new SortByNameAscStrategy();
                 break;
         }
-    
+
         $this->sortingContext->setStrategy($sortStrategy);
         $volunteerEvents = $this->sortingContext->sortData($volunteerEvents);  // Apply sorting
-    
+
         // Render the view
         require_once "./views/myEventsView.php";
     }
-    
-    public function attach(User $user): void
+
+
+    public function attach(IMEssagable $messagable): void
     {
-        $name = $user->getFirstName();
+        $name = $messagable->getFirstName();
         echo "Event: Adding User: $name .</br>";
-        $this->users[] = $user;
+        $this->users[] = $messagable;
+    }
+
+    public function detach(int $idx)
+    {
+        // Let's say we want to remove the element at index 2
+        unset($this->users[$idx]);
+
+        // To reindex the array after removal
+        $this->users = array_values($this->users);
     }
 
     public function notifyUsers(string $msg): void
@@ -241,6 +251,4 @@ class EventController
             $user->sendnotification($msg);
         }
     }
-    
-    
 }
