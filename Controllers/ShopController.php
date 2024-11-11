@@ -59,6 +59,7 @@ class ShopController
     }
     public function showAddItem()
     {
+        require_once "./views/Navbar.php";
         require_once "./views/addShopItemView.php";
     }
 

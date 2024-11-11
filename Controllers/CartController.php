@@ -31,6 +31,7 @@ class CartController
             }
         }
         // Pass the items to the cart view
+        require_once "./views/Navbar.php";
         require_once "./views/CartView.php";
     }
 

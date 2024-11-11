@@ -6,44 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo "Events" ?></title>
-    <style>
-        /* Style the description in cyan */
-        .event-detail-label {
-            font-weight: bold;
-            margin-right: 5px;
-        }
-
-        .event-detail-value {
-            color: red;
-            display: inline;
-        }
-
-        /* Styles for dropdown container and dropdowns */
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .input-field {
-            flex: 1;
-            /* Make dropdowns take equal space */
-            margin-right: 10px;
-            /* Spacing between dropdowns */
-            min-width: 150px;
-            /* Minimum width for smaller dropdowns */
-        }
-
-        /* Make logos smaller */
-        .logo {
-            width: 20px;
-            /* Adjust size as needed */
-            margin-right: 5px;
-            /* Space between logo and label */
-            vertical-align: middle;
-            /* Align logo with text */
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/eventStyle.css">
 </head>
 
 <body>

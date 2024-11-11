@@ -1,20 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
+
     <style>
+        body {
+            background-color: #DAF4F5;
+        }
+
         .btn-floating img {
             width: 24px;
             height: 24px;
         }
+
         .logo {
             width: 20px;
             vertical-align: middle;
         }
     </style>
 </head>
+
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
@@ -87,10 +95,11 @@
         </div>
         <div class="center-align" style="margin-top: 20px;">
             <p style="font-size: small;">
-                Don't have an account? 
+                Don't have an account?
                 <a href="register">Create a new account</a>
             </p>
         </div>
     </div>
 </body>
+
 </html>

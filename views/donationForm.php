@@ -7,6 +7,8 @@
     <title>Donation Form</title>
     <!-- Materialize CSS -->
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../assets/eventStyle.css">
+
     <style>
         /* Custom Styles */
         .logo {

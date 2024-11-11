@@ -6,6 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Add New Item</title>
+    <link rel="stylesheet" href="../assets/eventStyle.css">
+
     <style>
         .logo {
             width: 20px;

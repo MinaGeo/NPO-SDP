@@ -6,44 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo "Events" ?> Admin</title>
-    <style>
-        /* Style the description in cyan */
-        .event-detail-label {
-            font-weight: bold;
-            margin-right: 5px;
-        }
-
-        .event-detail-value {
-            color: red;
-            display: inline;
-        }
-
-        /* Styles for dropdown container and dropdowns */
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .input-field {
-            flex: 1;
-            /* Make dropdowns take equal space */
-            margin-right: 10px;
-            /* Spacing between dropdowns */
-            min-width: 150px;
-            /* Minimum width for smaller dropdowns */
-        }
-
-        /* Make logos smaller */
-        .logo {
-            width: 20px;
-            /* Adjust size as needed */
-            margin-right: 5px;
-            /* Space between logo and label */
-            vertical-align: middle;
-            /* Align logo with text */
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/eventStyle.css">
 </head>
 
 <body>
@@ -53,13 +16,13 @@
     <div class="container">
         <div class="row">
             <div class="col s12">
-                <h5>Welcome to <?php echo "Events" ?> Admin!</h5>
-                <h6>What would you like to do?</h6>
+                <h5 style="text-align: center;">Welcome to <?php echo "Events" ?> Admin!</h5>
+                <h6 style="text-align: center;">What would you like to do?</h6>
             </div>
         </div>
 
-        <!-- Dropdowns in a flex container -->
-        <div class="dropdown-container">
+         <!-- Dropdowns in a flex container -->
+         <div class="dropdown-container">
             <!-- Sorting Dropdown -->
             <div class="input-field">
                 <select id="sortSelect">
@@ -114,6 +77,7 @@
             </div>
         </div>
 
+        <!-- Event Cards -->
         <div class="row">
             <?php foreach ($events as $event): ?>
                 <div class="col s12 m6 l4">
@@ -130,9 +94,9 @@
                         <div class="card-action">
                             <button
                                 onclick="deleteEvent(<?php echo htmlspecialchars($event->id); ?>)"
-                                class="deleteBtn btn red waves-effect waves-light" type="button"
+                                class="deleteBtn btn waves-effect waves-light" type="button"
                                 data-event-id="<?php echo $event->id; ?>">
-                                Delete
+                                <i class="material-icons left">delete</i>Delete
                             </button>
                         </div>
                     </div>
@@ -140,9 +104,12 @@
             <?php endforeach; ?>
         </div>
 
+        <!-- Add Event Button -->
         <div class="row">
             <div class="col s12">
-                <a href="addEventView" class="btn waves-effect waves-light green">Add Event</a>
+                <a href="addEventView" class="btn waves-effect waves-light green">
+                    <i class="material-icons left">add</i>Add Event
+                </a>
             </div>
         </div>
     </div>

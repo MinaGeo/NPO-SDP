@@ -13,7 +13,7 @@ class ShopItem implements Billable
     public int $id;
     public string $name;
     public string $description;
-    public int $price;
+    public float $price;
 
     // Constructor that initializes properties with type casting
     private function __construct(array $properties)
@@ -21,7 +21,7 @@ class ShopItem implements Billable
         $this->id = (int)($properties['id'] ?? 0); // Cast to int
         $this->name = $properties['name'] ?? '';
         $this->description = $properties['description'] ?? '';
-        $this->price = (int)($properties['price'] ?? 0);
+        $this->price = (float)($properties['price'] ?? 0);
     }
 
     public function __toString(): string
@@ -57,7 +57,7 @@ class ShopItem implements Billable
     }
 
     // Add an Shop Item
-    static public function add_shop_item(string $name, string $description, int $price): bool
+    static public function add_shop_item(string $name, string $description, float $price): bool
     {
         // Check if Shop Item already exists
         $checkShopItem = run_select_query("SELECT * FROM `NPO`.`shop_items` WHERE `name` = ?", [$name], true);

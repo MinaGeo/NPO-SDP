@@ -5,13 +5,8 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo "Events" ?></title>
-    <style>
-        .event-detail-label { font-weight: bold; margin-right: 5px; }
-        .event-detail-value { color: red; display: inline; }
-        .dropdown-container { display: flex; justify-content: space-between; margin-bottom: 20px; }
-        .input-field { flex: 1; margin-right: 10px; min-width: 150px; }
-        .logo { width: 20px; margin-right: 5px; vertical-align: middle; }
-    </style>
+    <link rel="stylesheet" href="../assets/eventStyle.css">
+
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
@@ -20,8 +15,8 @@
     <div class="container">
         <div class="row">
             <div class="col s12">
-                <h5>Welcome to your <?php echo "Events" ?>!</h5>
-                <h6>Are you ready to attend?</h6>
+                <h5 style="text-align: center;">Welcome to your <?php echo "Events" ?>!</h5>
+                <h6 style="text-align: center;">Are you ready to attend?</h6>
             </div>
         </div>
 
@@ -109,6 +104,31 @@
     </div>
 
     <script>
+
+function removeVolunteerFromEvent(eventId) {
+            if (confirm('Are you sure you want to remove yourself from this event?')) {
+                $.ajax({
+                    url: 'removeMyEvent',
+                    type: 'POST',
+                    data: {
+                        removeMyEvent: true,
+                        eventId: eventId,
+                    },
+                    success: function(response) {
+                        console.log(response);
+                        alert('You have been removed from the event.');
+                        location.reload();
+                    },
+                    error: function(xhr, status, error) {
+                        console.error("An error occurred:", error);
+                        alert('There was an error removing you from the event. Please try again.');
+                    }
+                });
+            }
+        }
+
+
+
         document.addEventListener('DOMContentLoaded', function() {
             var elems = document.querySelectorAll('select');
             M.FormSelect.init(elems);

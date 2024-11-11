@@ -101,6 +101,7 @@ class EventController implements IObservable
     public function showAddEvent()
     {
         //echo "Entering showADd";
+        require_once "./views/Navbar.php";
         require_once "./views/addEventView.php";
     }
 
@@ -223,6 +224,7 @@ class EventController implements IObservable
         $volunteerEvents = $this->sortingContext->sortData($volunteerEvents);  // Apply sorting
 
         // Render the view
+        require_once "./views/Navbar.php";
         require_once "./views/myEventsView.php";
     }
 

@@ -71,7 +71,7 @@ class Cart
             $shopItem = ShopItem::get_by_id($item_id); //model byklm model
             $decoratedPrice += $quantity * (new ShippingDecorator(new VATDecorator($shopItem)))->calc_price();
         }
-        return $decoratedPrice;
+        return round($decoratedPrice, 2);
     }
     // Get a cart via its ID
     /*static public function get_by_id($id): Cart

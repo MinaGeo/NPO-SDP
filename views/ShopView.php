@@ -6,37 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo "Shop" ?></title>
-    <style>
-        /* Style adjustments for shop items */
-        .item-detail-label {
-            font-weight: bold;
-            margin-right: 5px;
-        }
+    <link rel="stylesheet" href="../assets/eventStyle.css">
 
-        .item-detail-value {
-            color: red;
-            display: inline;
-        }
-
-        /* Styles for dropdown container and dropdowns */
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .input-field {
-            flex: 1;
-            margin-right: 10px;
-            min-width: 150px;
-        }
-
-        /* Make logos smaller */
-        .logo {
-            width: 20px;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
     </style>
 </head>
 
@@ -47,8 +18,8 @@
     <div class="container">
         <div class="row">
             <div class="col s12">
-                <h5>Welcome to <?php echo "Shop" ?>!</h5>
-                <h6>Browse our items below:</h6>
+                <h5 style="text-align: center;">Welcome to the <?php echo "Shop" ?>!</h5>
+                <h6 style="text-align: center;">Browse our items below:</h6>
             </div>
         </div>
 

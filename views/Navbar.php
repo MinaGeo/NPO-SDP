@@ -2,7 +2,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css">
 <style>
     /* Additional styling */
-    .nav-wrapper { background-color: #00796b; }
+    .nav-wrapper { background: linear-gradient(145deg, #00796b, #80E3A2);}
     .brand-logo { height: 30; }
     .content { text-align: center; margin-top: 50px; }
     .content img { max-width: 100%; height: auto; border-radius: 10px; }

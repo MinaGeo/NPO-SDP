@@ -11,6 +11,7 @@ class DonationController
     // Show donation page
     public function show()
     {
+        require_once "./views/Navbar.php";
         require_once './views/donationForm.php';
     }
 

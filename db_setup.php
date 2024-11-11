@@ -77,7 +77,7 @@ class Database
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 description TEXT,
-                price INT NOT NULL
+                price FLOAT NOT NULL
             )");
 
         $this->conn->query("
@@ -158,9 +158,9 @@ class Database
             $this->conn->query("
                 INSERT INTO `shop_items` (name, description, price) VALUES
                     ('Classic Cotton Tee', 'A timeless cotton t-shirt for everyday wear', 20),
-                    ('Vintage Graphic Tee', 'Retro graphic print, soft touch', 25),
-                    ('Sporty Performance Tee', 'Moisture-wicking for active use', 30),
-                    ('Casual Striped Tee', 'Comfortable striped t-shirt, casual fit', 22)
+                    ('Vintage Graphic Tee', 'Retro graphic print, soft touch', 25.50),
+                    ('Sporty Performance Tee', 'Moisture-wicking for active use', 30.65),
+                    ('Casual Striped Tee', 'Comfortable striped t-shirt, casual fit', 22.00)
             ");
         }
 

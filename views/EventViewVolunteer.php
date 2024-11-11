@@ -6,37 +6,8 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><?php echo "Events" ?></title>
-    <style>
-        /* Style the description in cyan */
-        .event-detail-label {
-            font-weight: bold;
-            margin-right: 5px;
-        }
+    <link rel="stylesheet" href="../assets/eventStyle.css">
 
-        .event-detail-value {
-            color: red;
-            display: inline;
-        }
-
-        /* Styles for dropdown container and dropdowns */
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
-
-        .input-field {
-            flex: 1;
-            margin-right: 10px;
-            min-width: 150px;
-        }
-
-        .logo {
-            width: 20px;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
-    </style>
 </head>
 
 <body>
@@ -46,8 +17,8 @@
     <div class="container">
         <div class="row">
             <div class="col s12">
-                <h5>Welcome to <?php echo "Events" ?>!</h5>
-                <h6>What would you like to attend?</h6>
+                <h5 style="text-align: center;">Welcome to the <?php echo "Events" ?>!</h5>
+                <h6 style="text-align: center;">What would you like to attend?</h6>
             </div>
         </div>
 
@@ -91,11 +62,11 @@
                 <select id="locationSelect">
                     <option value="">Choose Location</option>
                     <?php
-                        $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Tanta', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Qena', 'Shubra', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Dakahlia', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh', 'Red Sea', 'North Sinai', 'South Sinai'];
-                        foreach ($governorates as $governorate) {
-                            $selected = (isset($_GET['location']) && $_GET['location'] == $governorate) ? 'selected' : '';
-                            echo "<option value='$governorate' $selected>$governorate</option>";
-                        }
+                    $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Tanta', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Qena', 'Shubra', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Dakahlia', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh', 'Red Sea', 'North Sinai', 'South Sinai'];
+                    foreach ($governorates as $governorate) {
+                        $selected = (isset($_GET['location']) && $_GET['location'] == $governorate) ? 'selected' : '';
+                        echo "<option value='$governorate' $selected>$governorate</option>";
+                    }
                     ?>
                 </select>
                 <label>Choose Location</label>
@@ -205,22 +176,13 @@
                     notifications.pop();
                     notifications.forEach(notification => {
                         notificationArea.innerHTML += `
-                    <div style="
-                        margin: 10px 0;
-                        padding: 15px;
-                        border-left: 5px solid #2196F3;
-                        background-color: #fff;
-                        border-radius: 4px;
-                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                        opacity: 0;
-                        transform: translateY(10px);
-                        transition: opacity 0.3s ease, transform 0.3s ease;
-                    ">
-                        <i class="material-icons" style="margin-right: 10px; vertical-align: middle; color: #2196F3;">
-                            notifications
-                        </i>
-                        <span style="font-weight: bold;">Notifying:</br> ${notification}</span>
-                    </div>
+                        <div class="notification-card">
+                            <i class="material-icons notification-icon">notifications</i>
+                            <span class="notification-text">
+                                <strong>Notifying:</strong><br>${notification}
+                            </span>
+                        </div>
+
                 `;
                     });
 

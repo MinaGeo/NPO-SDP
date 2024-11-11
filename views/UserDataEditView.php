@@ -5,6 +5,7 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit User Data</title>
+    <link rel="stylesheet" href="../assets/eventStyle.css">
     <style>
         .input-field label {
             font-weight: bold;
@@ -53,7 +54,7 @@
     <div class="container">
         <div class="row">
             <div class="col s12 m8 offset-m2 l6 offset-l3">
-                <h2 class="center-align">Profile Data</h2>
+                <h2 style="color: black;" class="center-align">Profile Data</h2>
                 <br />
                 <!-- User Data Edit Form -->
                 <form id="edit-user-form" method="POST">
@@ -85,12 +86,12 @@
                 </form>
             </div>
         </div>
-        <div class="center-align" style="margin-top: 20px;">
+        <!-- <div class="center-align" style="margin-top: 20px;">
             <p style="font-size: small;">
                 Finished updating your info? 
                 <a href="login">Log in</a>
             </p>
-        </div>
+        </div> -->
     </div>
 </body>
 </html>

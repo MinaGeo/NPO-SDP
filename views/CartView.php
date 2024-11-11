@@ -6,63 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Shopping Cart</title>
-    <style>
-        /* Style adjustments for cart items */
-        .item-detail-label {
-            font-weight: bold;
-            margin-right: 5px;
-        }
-
-        .item-detail-value {
-            color: red;
-            display: inline;
-        }
-
-        /* List styling for cart items */
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 10px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .cart-item h6 {
-            margin: 0;
-            flex: 1;
-        }
-
-        .cart-item-actions {
-            display: flex;
-            align-items: center;
-        }
-
-        .quantity-label,
-        .price-label {
-            font-weight: bold;
-            color: #555;
-            margin-right: 5px;
-        }
-
-        .quantity,
-        .price {
-            margin-right: 20px;
-            color: #333;
-        }
-
-        .total-price-section {
-            margin-top: 20px;
-            padding: 15px;
-            border-top: 2px solid #e0e0e0;
-            text-align: right;
-            font-size: 1.2em;
-        }
-
-        .total-price {
-            font-weight: bold;
-            color: green;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/eventStyle.css">
 </head>
 
 <body>
@@ -90,16 +34,16 @@
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <p>Your cart is empty.</p>
+                <p style="color: black;">Your cart is empty.</p>
             <?php endif; ?>
         </div>
 
         <!-- Cart Total -->
         <div class="row">
             <div class="col s12 total-price-section">
-                <span class="card-title">Total Price: <?php echo '$' . $cart->get_total_cart_price(); ?></span>
+                <span class="card-title">Total Price: <span style="color: red;"> <?php echo '$' . $cart->get_total_cart_price(); ?> </span></span>
                 <br>
-                <span class="card-title">Total Price After Taxes and Shipping: <?php echo '$' . $cart->get_total_price_after_decoration(); ?></span>
+                <span class="card-title">Total Price After Taxes and Shipping:  <span style="color: red;"> <?php echo '$' . $cart->get_total_price_after_decoration(); ?></span></span>
             </div>
         </div>
         <!-- Checkout Button -->

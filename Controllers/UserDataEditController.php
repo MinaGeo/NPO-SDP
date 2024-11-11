@@ -20,6 +20,7 @@ class UserDataEditController
                 'email' => $user->getEmail(),
                 'passwordHash' => $user->getPasswordHash()
             ];
+            require_once "./views/Navbar.php";
             require_once "./views/UserDataEditView.php";
         }
     }
