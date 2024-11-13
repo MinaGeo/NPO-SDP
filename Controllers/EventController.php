@@ -12,7 +12,7 @@ require_once './models/SortStrategy.php';
 require_once './models/SortingContext.php';
 require_once "./models/IEventSubject.php";
 
-class EventController implements IObservable
+class EventController implements IObservable, IControl
 {
     private FilteringContext $filteringContext;
     private SortingContext $sortingContext;

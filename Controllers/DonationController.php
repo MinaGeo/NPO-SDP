@@ -6,7 +6,7 @@ require_once './models/PaymentClasses.php';
 
 $configs = require "server-configs.php";
 
-class DonationController
+class DonationController implements IControl
 {
     // Show donation page
     public function show()
