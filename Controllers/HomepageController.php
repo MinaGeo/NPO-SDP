@@ -1,6 +1,6 @@
 <?php
 
-class HomepageController
+class HomepageController implements IControl
 {
     public function show()
     {

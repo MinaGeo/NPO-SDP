@@ -12,7 +12,7 @@ include './models/SortStrategy.php';
 include './models/SortingContext.php';
 include "./models/CartModel.php";
 
-class ShopController
+class ShopController implements IControl
 {
 
     private SortingContext $sortingContext;
