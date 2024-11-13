@@ -25,11 +25,11 @@
             <?php if (!empty($cart_items)): ?>
                 <?php foreach ($cart_items as $item): ?>
                     <div class="cart-item">
-                        <h6><?php echo htmlspecialchars($item['item']->name); ?></h6>
+                        <h6><?php echo htmlspecialchars($item['item']->get_name()); ?></h6>
                         <div class="cart-item-actions">
                             <span class="quantity-label">Quantity:</span> <span class="quantity"><?php echo htmlspecialchars($item['quantity']); ?></span>
-                            <span class="price-label">Price:</span> <span class="price">$<?php echo htmlspecialchars($item['item']->price); ?></span>
-                            <button onclick="removeCartItem(<?php echo $item['item']->id; ?>)" class="btn btn-small red"><i class="material-icons">delete</i></button>
+                            <span class="price-label">Price:</span> <span class="price">$<?php echo htmlspecialchars($item['item']->get_price()); ?></span>
+                            <button onclick="removeCartItem(<?php echo $item['item']->get_id(); ?>)" class="btn btn-small red"><i class="material-icons">delete</i></button>
                         </div>
                     </div>
                 <?php endforeach; ?>

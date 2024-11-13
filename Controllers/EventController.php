@@ -12,7 +12,7 @@ require_once './models/SortStrategy.php';
 require_once './models/SortingContext.php';
 require_once "./models/IEventSubject.php";
 
-class EventController implements IObservable, IControl
+class EventController implements IControl
 {
     private FilteringContext $filteringContext;
     private SortingContext $sortingContext;
@@ -229,7 +229,7 @@ class EventController implements IObservable, IControl
     }
 
 
-    public function attach(IMEssagable $messagable): void
+    public function attach(IObserver $messagable): void
     {
         $name = $messagable->getFirstName();
         echo "Event: Adding User: $name .</br>";

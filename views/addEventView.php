@@ -42,37 +42,20 @@
                     <label for="eventDescription">Description</label>
                 </div>
 
+                <?php
+                $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Tanta', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Qena', 'Shubra', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Dakahlia', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh', 'Red Sea', 'North Sinai', 'South Sinai'];
+                ?>
+
                 <!-- Event Location (Dropdown with Governorates) -->
                 <div class="input-field col s12">
                     <select id="eventLocation" name="location" required>
                         <option value="" disabled selected>Choose Event Location</option>
-                        <option value="Cairo">Cairo</option>
-                        <option value="Alexandria">Alexandria</option>
-                        <option value="Giza">Giza</option>
-                        <option value="Luxor">Luxor</option>
-                        <option value="Aswan">Aswan</option>
-                        <option value="Sharm El Sheikh">Sharm El Sheikh</option>
-                        <option value="Hurghada">Hurghada</option>
-                        <option value="Port Said">Port Said</option>
-                        <option value="Ismailia">Ismailia</option>
-                        <option value="Suez">Suez</option>
-                        <option value="Mansoura">Mansoura</option>
-                        <option value="Zagazig">Zagazig</option>
-                        <option value="Tanta">Tanta</option>
-                        <option value="Asyut">Asyut</option>
-                        <option value="Minya">Minya</option>
-                        <option value="Sohag">Sohag</option>
-                        <option value="Beni Suef">Beni Suef</option>
-                        <option value="Damietta">Damietta</option>
-                        <option value="Qena">Qena</option>
-                        <option value="Fayoum">Fayoum</option>
-                        <option value="Beheira">Beheira</option>
-                        <option value="Dakhla">Dakhla</option>
-                        <option value="New Valley">New Valley</option>
-                        <!-- Add more governorates if needed -->
+                        <?php foreach ($governorates as $governorate): ?>
+                            <option value="<?= htmlspecialchars($governorate) ?>"><?= htmlspecialchars($governorate) ?></option>
+                        <?php endforeach; ?>
                     </select>
-                    <label for="eventLocation">Location</label>
                 </div>
+
 
                 <!-- Event Date -->
                 <div class="input-field col s12">
@@ -103,7 +86,7 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             // Initialize Materialize components
             M.AutoInit();
         });
@@ -116,7 +99,10 @@
             const type = document.getElementById('eventType').value;
 
             if (!name || !description || !location || !date || !type) {
-                M.toast({ html: 'Please fill in all fields.', classes: 'rounded red' });
+                M.toast({
+                    html: 'Please fill in all fields.',
+                    classes: 'rounded red'
+                });
                 return false; // Return false if any field is empty
             }
             return true; // All fields are filled
@@ -127,7 +113,10 @@
             const dateFormat = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/;
 
             if (!dateFormat.test(dateInput)) {
-                M.toast({ html: 'Please enter the date in the format YYYY-MM-DD HH:MM:SS.', classes: 'rounded red' });
+                M.toast({
+                    html: 'Please enter the date in the format YYYY-MM-DD HH:MM:SS.',
+                    classes: 'rounded red'
+                });
                 return false;
             }
             return true;
@@ -160,12 +149,15 @@
                     type: type,
                     date: date,
                 },
-                success: function (response) {
+                success: function(response) {
                     alert("Event Added!");
                     window.location.href = "event?usertype=admin";
                 },
-                error: function (xhr, status, error) {
-                    M.toast({ html: 'Error adding event.', classes: 'rounded red' });
+                error: function(xhr, status, error) {
+                    M.toast({
+                        html: 'Error adding event.',
+                        classes: 'rounded red'
+                    });
                     console.error("An error occurred:", error);
                 }
             });

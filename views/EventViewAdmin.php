@@ -84,18 +84,18 @@
                     <div class="card">
                         <div class="card-content">
                             <span class="card-title">
-                                <h5><?php echo htmlspecialchars($event->name); ?></h5>
+                                <h5><?php echo htmlspecialchars($event->get_name()); ?></h5>
                             </span>
-                            <p><span class="event-detail-label">Description:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->description); ?></span></p>
-                            <p><span class="event-detail-label">Location:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->location); ?></span></p>
-                            <p><span class="event-detail-label">Event Type:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->type); ?></span></p>
-                            <p><span class="event-detail-label">Date:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->date); ?></span></p>
+                            <p><span class="event-detail-label">Description:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->get_description()); ?></span></p>
+                            <p><span class="event-detail-label">Location:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->get_location()); ?></span></p>
+                            <p><span class="event-detail-label">Event Type:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->get_type()); ?></span></p>
+                            <p><span class="event-detail-label">Date:</span> <span class="event-detail-value"><?php echo htmlspecialchars($event->get_date()); ?></span></p>
                         </div>
                         <div class="card-action">
                             <button
-                                onclick="deleteEvent(<?php echo htmlspecialchars($event->id); ?>)"
+                                onclick="deleteEvent(<?php echo htmlspecialchars($event->get_id()); ?>)"
                                 class="deleteBtn btn waves-effect waves-light" type="button"
-                                data-event-id="<?php echo $event->id; ?>">
+                                data-event-id="<?php echo $event->get_id(); ?>">
                                 <i class="material-icons left">delete</i>Delete
                             </button>
                         </div>

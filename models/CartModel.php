@@ -10,11 +10,24 @@ require_once "./models/CartDecorater.php";
 class Cart
 {
     // Define properties
-    public int $id;
-    public int $user_id;
+    private int $id;
+    private int $user_id;
+    private $items = [];
 
-    public $items = [];
+    public function get_id(): int
+    {
+        return $this->id;
+    }
 
+    public function get_user_id(): int
+    {
+        return $this->user_id;
+    }
+
+    public function get_items(): array
+    {
+        return $this->items;
+    }
     // Constructor that initializes properties with type casting
     private function __construct(array $properties)
     {
@@ -60,7 +73,7 @@ class Cart
         foreach ($this->items as $item_id => $quantity) {
             $shopItem = ShopItem::get_by_id($item_id); //model byklm model
 
-            $price += $quantity * $shopItem->price;
+            $price += $quantity * $shopItem->get_price();
         }
         return $price;
     }

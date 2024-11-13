@@ -104,7 +104,7 @@ class ShopController implements IControl
         if (isset($_POST['addToCart'])) {
             if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
                 $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
-                $result = Cart::add_item_to_cart($cart->id, $_POST['itemId']);
+                $result = Cart::add_item_to_cart($cart->get_id(), $_POST['itemId']);
 
                 if ($result) {
                     echo json_encode(['success' => true, 'message' => 'Item added to cart!']);

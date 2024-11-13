@@ -19,7 +19,7 @@ class CartController implements IControl
         $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
         // Fetch each item in the cart along with its details
         $cart_items = [];
-        foreach ($cart->items as $itemId => $quantity) {
+        foreach ($cart->get_items() as $itemId => $quantity) {
             // Get details of each shirt using the item ID
             $itemDetails = ShopItem::get_by_id($itemId);
             if ($itemDetails) {
@@ -39,7 +39,7 @@ class CartController implements IControl
         if (isset($_POST['removeFromCart'])) {
             if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
                 $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
-                $result = Cart::remove_item_from_cart($cart->id, $_POST['itemId']);
+                $result = Cart::remove_item_from_cart($cart->get_id(), $_POST['itemId']);
 
                 if ($result) {
                     echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
