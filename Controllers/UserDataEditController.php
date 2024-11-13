@@ -1,10 +1,9 @@
 <?php
 require_once './models/userBase.php';
 // session_start();
-
 // Update id=1 with _SESSION in a future commit
 
-class UserDataEditController
+class UserDataEditController implements IControl
 {
     public function show()
     {   

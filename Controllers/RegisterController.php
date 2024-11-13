@@ -1,13 +1,12 @@
 <?php
 require_once './models/userBase.php';
 
-class RegisterController
+class RegisterController implements IControl
 {
     public function show()
     {
         require_once "./views/RegisterView.php";
     }
-
 
     public function validateRegister()
     {

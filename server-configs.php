@@ -46,7 +46,7 @@ return (object) array(
         '/showAddItem' => 'ShopController@showAddItem',
         '/addShopItem' => 'ShopController@shopAddItem',
         //-----------------------CART----------------------------//
-        '/cart' => 'CartController@showCart',
+        '/cart' => 'CartController@show',
         '/removeCartItem' => 'CartController@removeCartItem',
         '/checkout'=>'CartController@checkout',
         //-----------------------EVENT----------------------------//

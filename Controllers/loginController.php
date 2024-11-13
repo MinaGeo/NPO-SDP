@@ -1,9 +1,10 @@
 <?php
 require_once './models/authentication-strategies.php';
+require_once 'IControl.php';
 $configs = require "server-configs.php";
 // session_start(); // Start the session at the beginning
 
-class LoginController
+class LoginController implements IControl
 {
     public function show()
     {

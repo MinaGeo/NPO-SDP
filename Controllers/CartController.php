@@ -6,11 +6,10 @@ ini_set('display_errors', 1);
 include "./models/ShopModel.php";
 include "./models/CartModel.php";
 
-class CartController
+class CartController implements IControl
 {
-    public function showCart()
+    public function show()
     {
-
         // Fetch the user's cart (assuming the first cart is used)
         $cartFlag = Cart::cart_exists_for_user($_SESSION['USER_ID']);
 
