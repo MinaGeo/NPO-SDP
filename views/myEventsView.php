@@ -77,23 +77,23 @@
                     <div class="card">
                         <div class="card-content">
                             <span class="card-title">
-                                <h5><?php echo htmlspecialchars($event->name); ?></h5>
+                                <h5><?php echo htmlspecialchars($event->get_name()); ?></h5>
                             </span>
                             <p><span class="event-detail-label">Description:</span>
-                                <span class="event-detail-value"><?php echo htmlspecialchars($event->description); ?></span>
+                                <span class="event-detail-value"><?php echo htmlspecialchars($event->get_description()); ?></span>
                             </p>
                             <p><span class="event-detail-label">Location:</span>
-                                <span class="event-detail-value"><?php echo htmlspecialchars($event->location); ?></span>
+                                <span class="event-detail-value"><?php echo htmlspecialchars($event->get_location()); ?></span>
                             </p>
                             <p><span class="event-detail-label">Event Type:</span>
-                                <span class="event-detail-value"><?php echo htmlspecialchars($event->type); ?></span>
+                                <span class="event-detail-value"><?php echo htmlspecialchars($event->get_type()); ?></span>
                             </p>
                             <p><span class="event-detail-label">Date:</span>
-                                <span class="event-detail-value"><?php echo htmlspecialchars($event->date); ?></span>
+                                <span class="event-detail-value"><?php echo htmlspecialchars($event->get_date()); ?></span>
                             </p>
                         </div>
                         <div class="card-action">
-                            <button class="removeBtn btn red waves-effect waves-light" type="button" onclick="removeVolunteerFromEvent(<?php echo htmlspecialchars($event->id); ?>)">
+                            <button class="removeBtn btn red waves-effect waves-light" type="button" onclick="removeVolunteerFromEvent(<?php echo htmlspecialchars($event->get_id()); ?>)">
                                 Remove
                             </button>
                         </div>

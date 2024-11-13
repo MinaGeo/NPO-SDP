@@ -10,10 +10,27 @@ require_once "./models/CartDecorater.php";
 class ShopItem implements Billable
 {
     // Define properties
-    public int $id;
-    public string $name;
-    public string $description;
-    public float $price;
+    private int $id;
+    private string $name;
+    private string $description;
+    private float $price;
+
+    public function get_id(): int
+    {
+        return $this->id;
+    }
+    public function get_name(): string
+    {
+        return $this->name;
+    }
+    public function get_description(): string
+    {
+        return $this->description;
+    }
+    public function get_price(): float
+    {
+        return $this->price;
+    }
 
     // Constructor that initializes properties with type casting
     private function __construct(array $properties)

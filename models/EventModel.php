@@ -9,12 +9,44 @@ ob_end_clean();
 class Event
 {
     // Define properties
-    public int $id;
-    public string $name;
-    public string $description;
-    public string $location;
-    public string $type;
-    public string $date;
+    private int $id;
+    private string $name;
+    private string $description;
+    private string $location;
+    private string $type;
+    private string $date;
+
+
+    public function get_id(): int
+    {
+        return $this->id;
+    }
+    public function get_name(): string
+    {
+        return $this->name;
+    }
+    public function get_description(): string
+    {
+        return $this->description;
+    }
+    public function get_location(): string
+    {
+        return $this->location;
+    }   
+    public function get_type(): string
+    {
+        return $this->type;
+    }
+    public function get_date(): string
+    {
+        return $this->date;
+    }
+
+
+
+
+
+
 
     // Constructor that initializes properties with type casting
     private function __construct(array $properties)

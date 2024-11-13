@@ -45,16 +45,16 @@
                     <div class="card">
                         <div class="card-content">
                             <span class="card-title">
-                                <h5><?php echo htmlspecialchars($item->name); ?></h5>
+                                <h5><?php echo htmlspecialchars($item->get_name()); ?></h5>
                             </span>
-                            <p><span class="item-detail-label">Description:</span> <span class="item-detail-value"><?php echo htmlspecialchars($item->description); ?></span></p>
-                            <p><span class="item-detail-label">Price:</span> <span class="item-detail-value">$<?php echo htmlspecialchars($item->price); ?></span></p>
+                            <p><span class="item-detail-label">Description:</span> <span class="item-detail-value"><?php echo htmlspecialchars($item->get_description()); ?></span></p>
+                            <p><span class="item-detail-label">Price:</span> <span class="item-detail-value">$<?php echo htmlspecialchars($item->get_price()); ?></span></p>
                         </div>
                         <div class="card-action">
                         <?php if ($userType === 1 && $userId !== -1): ?>
 
                             <button
-                                onclick="addToCart(<?php echo htmlspecialchars($item->id); ?>)"
+                                onclick="addToCart(<?php echo htmlspecialchars($item->get_id()); ?>)"
                                 class="addToCartBtn btn waves-effect waves-light" type="button">
                                 Add to Cart
                             </button>
@@ -63,9 +63,9 @@
                             <?php if ($userType === 0 && $userId !== -1): ?>
                                 <button
 
-                                    onclick="deleteItem(<?php echo htmlspecialchars($item->id); ?>)"
+                                    onclick="deleteItem(<?php echo htmlspecialchars($item->get_id()); ?>)"
                                     class="deleteBtn btn red waves-effect waves-light" type="button"
-                                    data-item-id="<?php echo $item->id; ?>">
+                                    data-item-id="<?php echo $item->get_id(); ?>">
                                     Delete
                                 </button>
                             <?php endif; ?>

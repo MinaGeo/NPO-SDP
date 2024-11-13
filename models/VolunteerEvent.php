@@ -9,9 +9,23 @@ require_once "./models/userBase.php";
 
 class VolunteerEvent
 {
-    public int $id;
-    public int $volunteer_id;
-    public int $event_id;
+    private int $id;
+    private int $volunteer_id;
+    private int $event_id;
+
+    public function get_id(): int
+    {
+        return $this->id;
+    }
+    public function get_volunteer_id(): int
+    {
+        return $this->volunteer_id;
+    }
+    public function get_event_id(): int
+    {
+        return $this->event_id;
+    }
+
 
     private function __construct(array $properties)
     {

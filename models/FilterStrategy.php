@@ -24,7 +24,7 @@ class FilterByEventTypeStrategy implements IFilter {
             return $data; // Return all if no event type is set
         }
         return array_filter($data, function($event) {
-            return $event->type === $this->eventType; // Filter events by type
+            return $event->get_type() === $this->eventType; // Filter events by type
         });
     }
 }
@@ -76,7 +76,7 @@ class FilterByLocationStrategy implements IFilter
         }
 
         return array_filter($events, function($event) {
-            return $event->location === $this->location;
+            return $event->get_location() === $this->location;
         });
     }
 }
