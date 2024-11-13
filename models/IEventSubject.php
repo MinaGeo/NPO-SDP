@@ -1,10 +1,10 @@
     <?php
 
-require_once "./models/IMessagble.php";
-    interface IObservable
+    require_once "./models/IObserver.php";
+    interface ISubject
     {
         // Attach an observer to the subject.
-        public function attach(IMEssagable $messagable);
+        public function attach(IObserver $messagable);
 
         // Detach an observer from the subject.
         public function detach(int $idx);
