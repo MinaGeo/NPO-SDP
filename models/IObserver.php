@@ -3,5 +3,6 @@
 interface IObserver
 {
     public function sendnotification(string $msg);
-    public function getFirstName();
+    public function getMessage();
+    public function setMessage(string $msg);
 }

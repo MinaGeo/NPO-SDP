@@ -170,21 +170,12 @@
                 success: function(response) {
                     const notificationArea = document.getElementById('notificationArea');
                     notificationArea.innerHTML = ''; // Clear existing notifications
+                    console.log(response);
+                    const jsonResponse = JSON.parse(response);
+                    console.log(jsonResponse['notifications']);
 
                     // Parse response and wrap each notification with inline styles
-                    const notifications = response.split('<pre>').map(item => item.replace('</pre>', '')).filter(Boolean);
-                    notifications.pop();
-                    notifications.forEach(notification => {
-                        notificationArea.innerHTML += `
-                        <div class="notification-card">
-                            <i class="material-icons notification-icon">notifications</i>
-                            <span class="notification-text">
-                                <strong>Notifying:</strong><br>${notification}
-                            </span>
-                        </div>
-
-                `;
-                    });
+                    const notifications = jsonResponse.notifications.split('<\/br>').filter(notification => notification.trim() !== ''); notifications.forEach(notification => { notificationArea.innerHTML += ` <div class="notification-card"> <i class="material-icons notification-icon">notifications</i> <span class="notification-text"> <strong>Notifying:</strong><br>${notification} </span> </div> `; });
 
                     // Apply fade-in effect
                     setTimeout(() => {

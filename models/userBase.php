@@ -10,7 +10,7 @@ require_once "./models/IObserver.php";
 
 // Properties: id, firstName, lastName, email, passwordHash (MD5)
 
-class User implements IObserver
+class User
 {
     /* ------------------- Attributes -------------------  */
     private int $id;
@@ -79,13 +79,10 @@ class User implements IObserver
     public function getType(): int
     {
         return $this->type;
-    }   
-    public static function create(array $data): User {
-        return new self($data);
     }
-
-    public function sendnotification(string $msg) {
-        echo "Notifying user: $this->firstName with message: $msg </br>";
+    public static function create(array $data): User
+    {
+        return new self($data);
     }
 
     /* ------------------- Static Database Manipulation Functions -------------------  */
@@ -143,5 +140,16 @@ class User implements IObserver
         $query = "UPDATE $configs->DB_NAME.$configs->DB_USERS_TABLE SET $setClauseString WHERE id = '$id'";
         return run_query($query);
     }
+    static public function get_all_users(): array
+    {
+        global $configs;
+        $users = [];
+        $result = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE");
 
+        while ($row = $result->fetch_assoc()) {
+            $users[] = new User($row);
+        }
+
+        return $users;
+    }
 }

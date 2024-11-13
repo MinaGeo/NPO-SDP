@@ -11,18 +11,30 @@ require_once './models/ISort.php';
 require_once './models/SortStrategy.php';
 require_once './models/SortingContext.php';
 require_once "./models/IEventSubject.php";
+require_once "./models/EventSubject.php";
+require_once "./models/NotificationObserver.php";
 
-class EventController implements ISubject
+class EventController
 {
     private FilteringContext $filteringContext;
     private SortingContext $sortingContext;
     private $users;
+    private $eventSubject;
+    private $observerClass;
 
     public function __construct()
     {
+        // echo "Creating constructor </br>";
         $this->filteringContext = new FilteringContext();
         $this->sortingContext = new SortingContext();
-        $this->users = [];
+        // echo "Adding existing users at startup";
+        $this->users = User::get_all_users();
+        if ((int)$_SESSION['USER_TYPE'] == 1) {
+            $this->eventSubject = new EventSubject();
+            $this->observerClass = new SMSObserver($this->eventSubject);
+            $this->observerClass = new EMAILObserver($this->eventSubject);
+            $_SESSION["notifications"] = "";
+        }
     }
     public function show($eventFilter = '', $eventType = '', $eventSort = 'name_asc', $location = '')
     {
@@ -161,17 +173,41 @@ class EventController implements ISubject
         if (isset($_POST['registerEvent']) && !empty($_SESSION['USER_ID']) && !empty($_POST['event_id'])) {
             $volunteerId = (int)$_SESSION['USER_ID'];
             $eventId = (int)$_POST['event_id'];
-            $this->users = VolunteerEvent::get_volunteers_by_event($eventId);
+            $user = User::get_by_id($volunteerId);
+            $user_name = $user->getFirstName();
+            $event = Event::get_by_id($eventId);
+            $event_name = $event->get_name();
             // echo "registering";
             // foreach ($this->users as $user) {
             //     $this->attach($user);
             // }
-            $this->notifyUsers("User with ID: $volunteerId joined event with ID: $eventId");
+            // $this->notifyUsers("User with ID: $volunteerId joined event with ID: $eventId");
+            // $user = User::get_by_id($volunteerId);
+            // $existing = true;
+            // foreach ($this->users as $user) {
+            //     $id = $user->get_id();
+            //     // echo "USer Id: $id </br>";
+            //     if ($volunteerId == $id) {
+            //         echo "Found user </br>";
+            //         $existing = false;
+            //     }
+            // }
+            // if ($existing) {
+            //     echo "Attaching new user";
+            //     $this->attach($user);
+            // }
+            $this->eventSubject->changeMessage("User $user_name attended $event_name </br>");
             $registered = VolunteerEvent::register($volunteerId, $eventId);
+            // echo "Echoing in function </br>";
+            // echo $_SESSION["notifications"];
             if ($registered) {
-                json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $this->users]);
+                // echo "Entered registered";
+                echo json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $_SESSION["notifications"]]);
+                // echo "after encode";
             } else {
-                json_encode(['success' => false, 'message' => 'Failed to register for the event.']);
+                // echo "Entered already registered";
+                echo json_encode(['success' => false, 'message' => 'Failed to register for the event.', "notifications" => ""]);
+                // echo "after encode";
             }
             exit;
         }
@@ -226,31 +262,5 @@ class EventController implements ISubject
         // Render the view
         require_once "./views/Navbar.php";
         require_once "./views/myEventsView.php";
-    }
-
-
-    public function attach(IObserver $messagable): void
-    {
-        $name = $messagable->getFirstName();
-        echo "Event: Adding User: $name .</br>";
-        $this->users[] = $messagable;
-    }
-
-    public function detach(int $idx)
-    {
-        // Let's say we want to remove the element at index 2
-        unset($this->users[$idx]);
-
-        // To reindex the array after removal
-        $this->users = array_values($this->users);
-    }
-
-    public function notifyUsers(string $msg): void
-    {
-        $size = count($this->users);
-        echo "Notifying Users $size...</br>";
-        foreach ($this->users as $user) {
-            $user->sendnotification($msg);
-        }
     }
 }

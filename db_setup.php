@@ -45,7 +45,7 @@ class Database
     }
 
     public function getConnection()
-    {    
+    {
         return $this->conn;
     }
 
@@ -205,7 +205,9 @@ function run_query($query, $params = [], $echo = false): bool
     }
 
     if ($stmt->execute()) {
-        if ($echo) echo "Query ran successfully<br/>";
+        if ($echo) {
+            //echo "Query ran successfully<br/>";
+        }
         return true;
     } else {
         if ($echo) echo "Error: " . $stmt->error;
@@ -232,15 +234,15 @@ function run_select_query($query, $params = [], $echo = false): mysqli_result|bo
     $result = $stmt->get_result();
 
     if ($echo) {
-        echo '<pre>' . $query . '</pre>';
+        // echo '<pre>' . $query . '</pre>';
         if ($result && $result->num_rows > 0) {
             while ($row = $result->fetch_assoc()) {
-                echo print_r($row, true);
+                // echo print_r($row, true);
             }
         } else {
-            echo "0 results";
+            // echo "0 results";
         }
-        echo "<hr/>";
+        // echo "<hr/>";
     }
 
     return $result;

@@ -10,5 +10,5 @@
         public function detach(int $idx);
 
         // Notify all observers about an event.
-        public function notifyUsers(string $msg);
+        public function notifyUsers();
     }
