@@ -251,6 +251,6 @@ class EventController
         $this->sortingContext->setStrategy($sortStrategy);
         $volunteerEvents = $this->sortingContext->sortData($volunteerEvents);  // Apply sorting
 
-        $this->eventView->showVolunteerEvents($volunteerEvents);
+        $this->eventView->showVolunteerEvents($volunteerEvents,$volunteerId);
     }
 }

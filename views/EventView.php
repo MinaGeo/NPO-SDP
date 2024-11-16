@@ -22,7 +22,7 @@ class EventView{
         require_once "./views/addEventView.php";
     }
 
-    public function showVolunteerEvents($volunteerEvents){
+    public function showVolunteerEvents($volunteerEvents,$volunteerId){
         require_once './views/Navbar.php';
         require_once './views/myEventsView.php';
     }
