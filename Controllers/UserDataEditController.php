@@ -1,6 +1,6 @@
 <?php
 require_once './models/userBase.php';
-require_once './views/UserDataEditView.php';
+require_once './views/UserView.php';
 
 class UserDataEditController implements IControl
 {
@@ -18,7 +18,8 @@ class UserDataEditController implements IControl
                 'passwordHash' => $user->getPasswordHash()
             ];
         }
-        $userDataEditView = new UserDataEditView($userData);
+        $userView = new UserView();
+        $userView->showProfile($userData);
     }
 
     public function updateUserData()

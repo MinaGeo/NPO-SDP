@@ -1,11 +1,14 @@
 <?php
 
-class HomepageController
+require_once 'IControl.php';
+require_once './views/UserView.php';
+
+class HomepageController implements IControl
 {
     public function show()
     {
-        require_once "./views/Navbar.php";
-        require_once "./views/HomepageView.php";
+        $userView = new UserView();
+        $userView->showHome();
     }
 
     public function logout()
