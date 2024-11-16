@@ -3,16 +3,18 @@
 require_once './models/DonationModel.php';
 require_once './models/DonationClasses.php';
 require_once './models/PaymentClasses.php';
+require_once './views/DonationView.php';
 
 $configs = require "server-configs.php";
 
 class DonationController implements IControl
 {
+    private $donationView;
     // Show donation page
     public function show()
     {
-        require_once "./views/Navbar.php";
-        require_once './views/donationForm.php';
+        $this->donationView = new DonationView();
+        $this->donationView->showDonation();
     }
 
     // Process donation

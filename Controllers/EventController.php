@@ -38,13 +38,8 @@ class EventController
             $_SESSION["notifications"] = "";
         }
     }
-    public function show()
+    public function show($eventFilter = '',$eventType = '', $eventSort = 'name_asc',  $location = '')
     {
-        $eventFilter = '';
-        $eventType = '';
-        $eventSort = 'name_asc';
-        $location = '';
-
         $this->eventView = new EventView();
         $volunteerId = $_SESSION['USER_ID'];
         // Retrieve all events

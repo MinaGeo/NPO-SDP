@@ -19,12 +19,12 @@ class EventView{
     public function showAddEvent()
     {
         require_once "./views/Navbar.php";
-        require_once "./views/addEventView.php";
+        require_once "./views/pages/addEventView.php";
     }
 
     public function showVolunteerEvents($volunteerEvents,$volunteerId){
         require_once './views/Navbar.php';
-        require_once './views/myEventsView.php';
+        require_once './views/pages/myEventsView.php';
     }
 }
 ?>
