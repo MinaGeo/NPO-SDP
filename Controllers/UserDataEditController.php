@@ -1,7 +1,6 @@
 <?php
 require_once './models/userBase.php';
-// session_start();
-// Update id=1 with _SESSION in a future commit
+require_once './views/UserDataEditView.php';
 
 class UserDataEditController implements IControl
 {
@@ -9,8 +8,7 @@ class UserDataEditController implements IControl
     {   
         $user = User::get_by_id($_SESSION['USER_ID']);
         if(!$user) {
-            echo 'User not found!';
-            exit;
+            $userData = null;
         }
         else {
             $userData = [
@@ -19,9 +17,8 @@ class UserDataEditController implements IControl
                 'email' => $user->getEmail(),
                 'passwordHash' => $user->getPasswordHash()
             ];
-            require_once "./views/Navbar.php";
-            require_once "./views/UserDataEditView.php";
         }
+        $userDataEditView = new UserDataEditView($userData);
     }
 
     public function updateUserData()

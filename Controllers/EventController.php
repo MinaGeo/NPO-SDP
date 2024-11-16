@@ -13,6 +13,7 @@ require_once './models/SortingContext.php';
 require_once "./models/IEventSubject.php";
 require_once "./models/EventSubject.php";
 require_once "./models/NotificationObserver.php";
+require_once './views/EventView.php';
 
 class EventController
 {
@@ -21,6 +22,7 @@ class EventController
     private $users;
     private $eventSubject;
     private $observerClass;
+    private $eventView;
 
     public function __construct()
     {
@@ -36,10 +38,15 @@ class EventController
             $_SESSION["notifications"] = "";
         }
     }
-    public function show($eventFilter = '', $eventType = '', $eventSort = 'name_asc', $location = '')
+    public function show()
     {
-        $volunteerId = $_SESSION['USER_ID'];
+        $eventFilter = '';
+        $eventType = '';
+        $eventSort = 'name_asc';
+        $location = '';
 
+        $this->eventView = new EventView();
+        $volunteerId = $_SESSION['USER_ID'];
         // Retrieve all events
         $events = Event::get_all();
 
@@ -87,34 +94,18 @@ class EventController
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);  // Sort the events
 
-        // Render the view based on user type
-        require_once "./views/Navbar.php";
-
-        if ((int)$_SESSION['USER_ID'] === -1) {
-            require_once "./views/EventViewGuest.php";
-        } else {
-            // Pass filtered and sorted events to the view
-            switch ((int)$_SESSION['USER_TYPE']) {
-                case 0:
-                    require_once "./views/EventViewAdmin.php";
-                    break;
-                case 1:
-                    require_once "./views/EventViewVolunteer.php";
-                    break;
-                default:
-                    require_once "./views/EventViewGuest.php";
-                    break;
-            }
+        // Pass filtered and sorted events to the view
+        switch ((int)$_SESSION['USER_TYPE']) {
+            case 0:
+                $this->eventView->showAdminPage($events);
+                break;
+            case 1:
+                $this->eventView->showVolunteerPage($events);
+                break;
+            default:
+                $this->eventView->showGuestPage($events);
+                break;
         }
-    }
-
-
-
-    public function showAddEvent()
-    {
-        //echo "Entering showADd";
-        require_once "./views/Navbar.php";
-        require_once "./views/addEventView.php";
     }
 
     public function deleteEvent()
@@ -215,6 +206,7 @@ class EventController
 
     public function showVolunteerEvents($eventFilter = 'event_type', $eventType = '', $eventSort = 'name_asc')
     {
+        $this->eventView = new EventView();
         $volunteerId = $_SESSION['USER_ID'];
         $volunteerEvents = VolunteerEvent::get_events_by_volunteer($volunteerId);
 
@@ -259,8 +251,6 @@ class EventController
         $this->sortingContext->setStrategy($sortStrategy);
         $volunteerEvents = $this->sortingContext->sortData($volunteerEvents);  // Apply sorting
 
-        // Render the view
-        require_once "./views/Navbar.php";
-        require_once "./views/myEventsView.php";
+        $this->eventView->showVolunteerEvents($volunteerEvents);
     }
 }
