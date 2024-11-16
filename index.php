@@ -46,5 +46,3 @@ if ($path === false) {
 
 // Route the request
 $router->route($path);
-
-$_SESSION['USER_ID']=-1;

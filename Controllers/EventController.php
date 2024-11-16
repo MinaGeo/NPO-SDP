@@ -88,18 +88,22 @@ class EventController
         // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);  // Sort the events
-
-        // Pass filtered and sorted events to the view
-        switch ((int)$_SESSION['USER_TYPE']) {
-            case 0:
-                $this->eventView->showAdminPage($events);
-                break;
-            case 1:
-                $this->eventView->showVolunteerPage($events);
-                break;
-            default:
-                $this->eventView->showGuestPage($events);
-                break;
+        
+        if ((int)$_SESSION['USER_ID'] === -1) {
+            $this->eventView->showGuestPage($events);
+        } else {
+            // Pass filtered and sorted events to the view
+            switch ((int)$_SESSION['USER_TYPE']) {
+                case 0:
+                    $this->eventView->showAdminPage($events);
+                    break;
+                case 1:
+                    $this->eventView->showVolunteerPage($events);
+                    break;
+                default:
+                    $this->eventView->showGuestPage($events);
+                    break;
+            }
         }
     }
 
