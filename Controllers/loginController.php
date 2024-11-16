@@ -1,6 +1,6 @@
 <?php
 require_once './models/authentication-strategies.php';
-require_once './views/LoginView.php';
+require_once './views/UserView.php';
 require_once 'IControl.php';
 $configs = require "server-configs.php";
 // session_start(); // Start the session at the beginning
@@ -9,7 +9,8 @@ class LoginController implements IControl
 {
     public function show()
     {
-        $loginView = new LoginView();
+        $userView = new UserView();
+        $userView->showLogin();
     }
 
     public function validateLogin()
