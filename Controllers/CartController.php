@@ -1,13 +1,20 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-// session_start();
 
-include "./models/ShopModel.php";
-include "./models/CartModel.php";
+require_once "./models/ShopModel.php";
+require_once "./models/CartModel.php";
+require_once "./views/CartView.php";
 
 class CartController implements IControl
 {
+    private $cartView;
+
+    public function __construct()
+    {
+        $this->cartView = new cartView();
+    }
+
     public function show()
     {
         // Fetch the user's cart (assuming the first cart is used)
@@ -29,9 +36,7 @@ class CartController implements IControl
                 ];
             }
         }
-        // Pass the items to the cart view
-        require_once "./views/Navbar.php";
-        require_once "./views/CartView.php";
+        $this->cartView->showCart($cart_items, $cart);
     }
 
     public function removeCartItem()

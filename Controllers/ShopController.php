@@ -1,24 +1,25 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-// session_start();
 
-include "./models/ShopModel.php";
-include './models/IFilter.php';
-include './models/FilterStrategy.php';
-include './models/FilteringContext.php';
-include './models/ISort.php';
-include './models/SortStrategy.php';
-include './models/SortingContext.php';
-include "./models/CartModel.php";
+require_once "./models/ShopModel.php";
+require_once './models/IFilter.php';
+require_once './models/FilterStrategy.php';
+require_once './models/FilteringContext.php';
+require_once './models/ISort.php';
+require_once './models/SortStrategy.php';
+require_once './models/SortingContext.php';
+require_once "./models/CartModel.php";
+require_once "./views/ShopView.php";
 
 class ShopController implements IControl
 {
-
     private SortingContext $sortingContext;
+    private $shopView;
 
     public function __construct()
     {
+        $this->shopView = new shopView();
         $this->sortingContext = new SortingContext();
     }
 
@@ -53,14 +54,12 @@ class ShopController implements IControl
         $this->sortingContext->setStrategy($sortStrategy);
         $shop_items = $this->sortingContext->sortData($shop_items);
 
-        // Pass filtered and sorted shop items to the view
-        require_once "./views/Navbar.php";
-        require_once "./views/ShopView.php";
+        $this->shopView->showUserPage($shop_items, $userType, $userId);
     }
+
     public function showAddItem()
     {
-        require_once "./views/Navbar.php";
-        require_once "./views/addShopItemView.php";
+        $this->shopView->ShopAddItemPage();
     }
 
     public function shopDeleteItem()
@@ -79,7 +78,6 @@ class ShopController implements IControl
             exit;
         }
     }
-
 
     public function shopAddItem()
     {
