@@ -31,7 +31,7 @@ class Database
         } else {
             // Database exists, reconnect to it
             $this->conn->select_db($db_name);
-            $this->populateData(); // Ensure data is populated if missing
+            // $this->populateData(); // Ensure data is populated if missing
         }
     }
 
