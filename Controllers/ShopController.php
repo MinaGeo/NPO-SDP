@@ -59,7 +59,7 @@ class ShopController implements IControl
 
     public function showAddItem()
     {
-        $this->shopView->ShopAddItemPage();
+        $this->shopView->shopAddItemPage();
     }
 
     public function shopDeleteItem()

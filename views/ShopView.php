@@ -5,7 +5,7 @@ class ShopView{
         require_once './views/pages/ShopUserPage.php';
     }
 
-    public function ShopAddItemPage(){
+    public function shopAddItemPage(){
         require_once './views/Navbar.php';
         require_once './views/pages/ShopAddItemPage.php';
     }
