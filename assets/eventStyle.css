@@ -173,3 +173,11 @@
     font-weight: bold;
     color: green; /* Retain green for emphasis */
 }
+
+strong{
+    color: #C4FF90;
+}
+
+.history-price{
+    color: #3cff80;
+}

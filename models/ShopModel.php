@@ -7,7 +7,7 @@ require_once "./db_setup.php";
 ob_end_clean();
 require_once "./models/CartDecorater.php";
 
-class ShopItem implements Billable
+class ShopItem
 {
     // Define properties
     private int $id;
@@ -48,11 +48,6 @@ class ShopItem implements Billable
             $str .= "$key: $value<br/>";
         }
         return $str . '</pre>';
-    }
-
-    public function calc_price(): float
-    {
-        return $this->price;
     }
 
     static public function get_by_id(int $id): ?ShopItem

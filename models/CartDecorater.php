@@ -7,7 +7,7 @@ interface Billable
     public function calc_price(): float;
 }
 
-abstract class ItemDecorator implements Billable
+abstract class CartDecorator implements Billable
 {
     protected Billable $billableItem;
 
@@ -19,7 +19,7 @@ abstract class ItemDecorator implements Billable
     abstract public function calc_price(): float;
 }
 
-class ShippingDecorator extends ItemDecorator
+class ShippingDecorator extends CartDecorator
 {
     public function calc_price(): float
     {
@@ -27,7 +27,7 @@ class ShippingDecorator extends ItemDecorator
     }
 }
 
-class VATDecorator extends ItemDecorator
+class VATDecorator extends CartDecorator
 {
     public function calc_price(): float
     {

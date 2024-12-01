@@ -94,14 +94,18 @@ class ShopController implements IControl
 
     public function shopAddItemToCart()
     {
-        $cartFlag = Cart::cart_exists_for_user($_SESSION['USER_ID']);
+        // Ensure there's a "current" cart for the user
+        $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
 
-        if (!$cartFlag) {
-            Cart::add_new_cart($_SESSION['USER_ID']);
+        if (!$cart) {
+            // If no current cart exists, create a new one
+            Cart::create_new_cart($_SESSION['USER_ID']);
+            $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
         }
+
         if (isset($_POST['addToCart'])) {
             if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
-                $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
+                // Add the item to the current cart
                 $result = Cart::add_item_to_cart($cart->get_id(), $_POST['itemId']);
 
                 if ($result) {

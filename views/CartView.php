@@ -4,5 +4,10 @@ class CartView{
         require_once './views/Navbar.php';
         require_once './views/pages/CartPage.php';
     }
+
+    public function showCartHistory($cart_history){
+        require_once './views/Navbar.php';
+        require_once './views/pages/CartHistoryPage.php';
+    }
 }
 ?>

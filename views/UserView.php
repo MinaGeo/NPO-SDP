@@ -18,6 +18,7 @@ class UserView{
 
     // Profile Page 
     function showProfile($userData){
+        require_once "./views/Navbar.php";
         require_once './views/pages/UserDataEditPage.php';
     }
 } 

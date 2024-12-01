@@ -84,6 +84,7 @@ class Database
             CREATE TABLE IF NOT EXISTS `cart` (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
+                status ENUM('current', 'completed') NOT NULL DEFAULT 'current',
                 FOREIGN KEY (user_id) REFERENCES `user`(id)
             )");
 
@@ -163,18 +164,17 @@ class Database
                     ('Casual Striped Tee', 'Comfortable striped t-shirt, casual fit', 22.00)
             ");
         }
-
-        // Insert data into `cart` table
-        if ($cartCheck->num_rows === 0) {
-            $this->conn->query("
-                INSERT INTO `cart` (user_id) VALUES
-                    (1),
-                    (2),
-                    (3),
-                    (4),
-                    (5)
-            ");
-        }
+        // // Insert data into `cart` table
+        // if ($cartCheck->num_rows === 0) {
+        //     $this->conn->query("
+        //         INSERT INTO `cart` (user_id) VALUES
+        //             (1),
+        //             (2),
+        //             (3),
+        //             (4),
+        //             (5)
+        //     ");
+        // }
         if ($cartCheck->num_rows === 0) {
             $this->conn->query("
         INSERT INTO `volunteer_events` (volunteer_id, event_id) VALUES

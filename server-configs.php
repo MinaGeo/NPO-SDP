@@ -49,6 +49,7 @@ return (object) array(
         '/cart' => 'CartController@show',
         '/removeCartItem' => 'CartController@removeCartItem',
         '/checkout'=>'CartController@checkout',
+        '/cartHistory' => 'CartController@showCartHistory',
         //-----------------------EVENT----------------------------//
         '/event' => 'EventController@show',
         '/addEventView' => 'EventController@showAddEvent',

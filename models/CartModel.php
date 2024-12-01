@@ -7,11 +7,13 @@ require_once "./db_setup.php";
 ob_end_clean();
 // require_once "./models/ShopItem.php";
 require_once "./models/CartDecorater.php";
-class Cart
+class Cart implements Billable
 {
     // Define properties
     private int $id;
     private int $user_id;
+    private string $status;
+
     private $items = [];
 
     public function get_id(): int
@@ -28,12 +30,27 @@ class Cart
     {
         return $this->items;
     }
+
+    public function get_status(): string
+    {
+        return $this->status;
+    }
+
+    public function set_status(string $newStatus): void
+    {
+        $this->status = $newStatus;
+    }
+
+
+
     // Constructor that initializes properties with type casting
     private function __construct(array $properties)
     {
         $this->id = (int)($properties['id']); // Cast to int
         $this->user_id = (int)($properties['user_id']); // Cast to int
+        $this->status = $properties['status'];
     }
+
 
     public function __toString(): string
     {
@@ -62,62 +79,170 @@ class Cart
 
 
 
-    public static function add_new_cart(int $user_id): void
+    public function calc_price(): float
     {
-        global $configs;
-        run_query("INSERT INTO $configs->DB_NAME.$configs->DB_CARTS_TABLE (user_id) VALUES ($user_id)");
+        // Use the existing `get_total_cart_price()` for the base price
+        return $this->get_total_cart_price();
     }
+
+
     public function get_total_cart_price(): float
     {
         $price = 0;
         foreach ($this->items as $item_id => $quantity) {
             $shopItem = ShopItem::get_by_id($item_id); //model byklm model
-
             $price += $quantity * $shopItem->get_price();
         }
         return $price;
     }
     public function get_total_price_after_decoration(): float
     {
-        $decoratedPrice = 0;
-        foreach ($this->items as $item_id => $quantity) {
-            $shopItem = ShopItem::get_by_id($item_id); //model byklm model
-            $decoratedPrice += $quantity * (new ShippingDecorator(new VATDecorator($shopItem)))->calc_price();
-        }
-        return round($decoratedPrice, 2);
+        // Wrap the cart with both VAT and Shipping decorators
+        $decoratedCart = new ShippingDecorator(new VATDecorator($this));
+        // Return the final decorated price
+        return round($decoratedCart->calc_price(), 2);
     }
-    // Get a cart via its ID
-    /*static public function get_by_id($id): Cart
+
+    public function get_items_history()
     {
         global $configs;
-        $cart = new Cart(run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $id")->fetch_assoc());
-        //breturn el cart ely 3ayezha bel id
-        $cart_items = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart->id")->fetch_all(MYSQLI_ASSOC);
-        //breturn el items id using cart_item class
-        foreach ($cart_items as $item) {
-            $cart->items[$item['item_id']] = $item['quantity'];
-        }
-        return $cart;
-    }*/
+        // Fetch the items for the current cart from the cart_items table
+        $cart_id = $this->get_id();  // Assuming `get_id()` returns the cart's ID
+        $query = "SELECT item_id, quantity FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id";
 
-    // Get carts owned by a user via the user's ID
-    static public function get_by_user_id($user_id): array
+        // Execute the query to retrieve items and their quantities
+        $result = run_select_query($query);
+
+        $items = [];
+
+        // If the query returns results, loop through and populate the items array
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                // Get item details (assuming there's a method to fetch item details by ID)
+                $item = ShopItem::get_by_id($row['item_id']);
+                if ($item) {
+                    $items[] = [
+                        'item' => $item,  // The actual item object
+                        'quantity' => $row['quantity']  // The quantity for the item
+                    ];
+                }
+            }
+        }
+
+        return $items;
+    }
+
+    static public function get_all_carts_by_user_id($user_id): array
     {
-        //EL USER MOMKEN YB2a 3ndo several carts.
         global $configs;
         $carts = [];
-        foreach (run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $user_id")->fetch_all(MYSQLI_ASSOC) as $cart) {
-            $carts[] = new Cart($cart);
-        }
-        foreach ($carts as $cart) {
-            $cart_items = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart->id")->fetch_all(MYSQLI_ASSOC);
+
+        $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE 
+                  WHERE user_id = $user_id";
+
+        foreach (run_select_query($query)->fetch_all(MYSQLI_ASSOC) as $cartData) {
+            $cart = new Cart($cartData);
+
+            // Fetch items for the cart
+            $cart_items = run_select_query("
+                SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE 
+                WHERE cart_id = {$cart->id}
+            ")->fetch_all(MYSQLI_ASSOC);
+
             foreach ($cart_items as $item) {
                 $cart->items[$item['item_id']] = $item['quantity'];
             }
+
+            $carts[] = $cart;
         }
+
         return $carts;
     }
 
+    static public function get_completed_carts_by_user_id($user_id): array
+    {
+        global $configs;
+        $carts = [];
+
+        $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE 
+              WHERE user_id = $user_id AND status = 'completed'";
+
+        foreach (run_select_query($query)->fetch_all(MYSQLI_ASSOC) as $cartData) {
+            $cart = new Cart($cartData);
+
+            // Fetch items for the cart
+            $cart_items = run_select_query("
+            SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE 
+            WHERE cart_id = {$cart->id}
+        ")->fetch_all(MYSQLI_ASSOC);
+
+            foreach ($cart_items as $item) {
+                $cart->items[$item['item_id']] = $item['quantity'];
+            }
+
+            $carts[] = $cart;
+        }
+
+        return $carts;
+    }
+
+
+    // Get carts owned by a user via the user's ID
+    static public function get_current_cart_by_user_id($user_id): ?Cart
+    {
+        global $configs;
+
+        $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE 
+                  WHERE user_id = $user_id AND status = 'current'";
+
+        $result = run_select_query($query)->fetch_assoc();
+
+        if ($result) {
+            $cart = new Cart($result);
+
+            // Fetch cart items
+            $cart_items = run_select_query("
+                SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE 
+                WHERE cart_id = $cart->id
+            ")->fetch_all(MYSQLI_ASSOC);
+
+            foreach ($cart_items as $item) {
+                $cart->items[$item['item_id']] = $item['quantity'];
+            }
+
+            return $cart;
+        }
+
+        return null; // No current cart
+    }
+
+    public static function checkout_cart(int $cart_id): bool
+    {
+        global $configs;
+
+        // Update cart status to 'completed'
+        $query = "UPDATE $configs->DB_NAME.$configs->DB_CARTS_TABLE 
+              SET status = 'completed' 
+              WHERE id = $cart_id";
+
+        return run_query($query);
+    }
+
+    public static function add_new_cart(int $user_id): void
+    {
+        global $configs;
+        run_query("INSERT INTO $configs->DB_NAME.$configs->DB_CARTS_TABLE (user_id) VALUES ($user_id)");
+    }
+
+    public static function create_new_cart(int $user_id): bool
+    {
+        global $configs;
+
+        $query = "INSERT INTO $configs->DB_NAME.$configs->DB_CARTS_TABLE (user_id, status) 
+                  VALUES ($user_id, 'current')";
+
+        return run_query($query);
+    }
     // Add a certain item to a certain user's cart
     static public function add_item_to_cart($cart_id, $item_id): bool
     {

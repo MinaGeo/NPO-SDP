@@ -5,7 +5,7 @@ ini_set('display_errors', 1);
 require_once "./models/ShopModel.php";
 require_once "./models/CartModel.php";
 require_once "./views/CartView.php";
-
+require_once "./models/PaymentClasses.php";
 class CartController implements IControl
 {
     private $cartView;
@@ -14,20 +14,21 @@ class CartController implements IControl
     {
         $this->cartView = new cartView();
     }
-
     public function show()
     {
-        // Fetch the user's cart (assuming the first cart is used)
-        $cartFlag = Cart::cart_exists_for_user($_SESSION['USER_ID']);
+        // Fetch the user's current cart
+        $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
 
-        if (!$cartFlag) {
-            Cart::add_new_cart($_SESSION['USER_ID']);
+        if (!$cart) {
+            // If no current cart exists, create a new one
+            Cart::create_new_cart($_SESSION['USER_ID']);
+            $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
         }
-        $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
+
         // Fetch each item in the cart along with its details
         $cart_items = [];
         foreach ($cart->get_items() as $itemId => $quantity) {
-            // Get details of each shirt using the item ID
+            // Get details of each item using the item ID
             $itemDetails = ShopItem::get_by_id($itemId);
             if ($itemDetails) {
                 $cart_items[] = [
@@ -39,17 +40,53 @@ class CartController implements IControl
         $this->cartView->showCart($cart_items, $cart);
     }
 
+    public function showCartHistory()
+    {
+        $user_id = $_SESSION['USER_ID'];
+        $carts = Cart::get_completed_carts_by_user_id($user_id);
+
+        $cart_history = [];  // Array to store cart history information
+
+        foreach ($carts as $cart) {
+            $cart_items = [];
+            foreach ($cart->get_items_history() as $itemData) {
+                $item = $itemData['item'];
+                $quantity = $itemData['quantity'];
+
+                $cart_items[] = [
+                    'name' => $item->get_name(),
+                    'price' => $item->get_price(),
+                    'quantity' => $quantity
+                ];
+            }
+            // Add cart details to cart history array
+            $cart_history[] = [
+                'cart' => $cart,
+                'items' => $cart_items,
+                'total_price' => $cart->get_total_cart_price(),
+                'total_price_after_decoration' => $cart->get_total_price_after_decoration()
+            ];
+        }
+
+        // Pass cart history to the view
+        $this->cartView->showCartHistory($cart_history);
+    }
+
+
     public function removeCartItem()
     {
         if (isset($_POST['removeFromCart'])) {
             if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
-                $cart = Cart::get_by_user_id($_SESSION['USER_ID'])[0];
-                $result = Cart::remove_item_from_cart($cart->get_id(), $_POST['itemId']);
-
-                if ($result) {
-                    echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
+                $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
+                if ($cart) {
+                    $result = Cart::remove_item_from_cart($cart->get_id(), $_POST['itemId']);
+                    if ($result) {
+                        echo json_encode(['success' => true, 'message' => 'Item removed from cart!']);
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Failed to remove item from cart.']);
+                    }
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Failed to add item to cart.']);
+                    echo json_encode(['success' => false, 'message' => 'No active cart found.']);
                 }
             } else {
                 echo json_encode(['success' => false, 'message' => 'Invalid input.']);
@@ -58,22 +95,59 @@ class CartController implements IControl
         }
     }
 
+
+
+
     public function checkout()
     {
         if (isset($_POST['checkoutFlag'])) {
             if (!empty($_SESSION['USER_ID'])) {
+                $paymentMethod = $_POST['paymentMethod'];
+                $paymentContext = null;
 
-                $result = Cart::delete_cart_by_user_id($_SESSION['USER_ID']);
+                // Handle payment method details
+                if ($paymentMethod === 'paypal') {
+                    $paypalEmail = $_POST['paypalEmail'];
+                    $paypalPassword = $_POST['paypalPassword'];
+                    if (empty($paypalEmail) || empty($paypalPassword)) {
+                        echo json_encode(['success' => false, 'message' => 'Please fill in all fields.']);
+                        exit;
+                    }
+                    $paymentContext = new PaymentContext(new PayByPaypal($paypalEmail, $paypalPassword));
+                } elseif ($paymentMethod === 'creditCard') {
+                    $cardNumber = $_POST['cardNumber'];
+                    $cvv = $_POST['cvv'];
+                    $expiryDate = $_POST['expiryDate'];
+                    if (empty($cardNumber) || empty($cvv) || empty($expiryDate)) {
+                        echo json_encode(['success' => false, 'message' => 'Please fill in all fields.']);
+                        exit;
+                    }
+                    $paymentContext = new PaymentContext(new PayByCreditCard($cardNumber, $cvv, $expiryDate));
+                }
 
-                if ($result) {
-                    echo json_encode(['success' => true, 'message' => 'Successfull checkout!']);
+                if ($paymentContext) {
+                    $totalPrice = $_POST['totalPrice'];
+                    $paymentSuccess = $paymentContext->doPayment($totalPrice);
+                    if ($paymentSuccess) {
+                        // Mark the current cart as completed
+                        $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
+                        if ($cart) {
+                            Cart::checkout_cart($cart->get_id()); // Update cart status to 'completed'
+                            // Cart::create_new_cart($_SESSION['USER_ID']); // Create a new current cart
+                            echo json_encode(['success' => true, 'message' => 'Checkout successful!']);
+                        } else {
+                            echo json_encode(['success' => false, 'message' => 'No active cart found.']);
+                        }
+                    } else {
+                        echo json_encode(['success' => false, 'message' => 'Payment failed.']);
+                    }
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'Failed to checkout.']);
+                    echo json_encode(['success' => false, 'message' => 'Invalid payment method.']);
                 }
             } else {
-                echo json_encode(['success' => false, 'message' => 'Invalid input.']);
+                echo json_encode(['success' => false, 'message' => 'User not logged in.']);
             }
-            exit; // Ensure no further output is sent
+            exit;
         }
     }
 }

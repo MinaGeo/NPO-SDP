@@ -43,17 +43,53 @@
             <div class="col s12 total-price-section">
                 <span class="card-title">Total Price: <span style="color: red;"> <?php echo '$' . $cart->get_total_cart_price(); ?> </span></span>
                 <br>
-                <span class="card-title">Total Price After Taxes and Shipping:  <span style="color: red;"> <?php echo '$' . $cart->get_total_price_after_decoration(); ?></span></span>
+                <span class="card-title">Total Price After Taxes and Shipping: <span style="color: red;"> <?php echo '$' . $cart->get_total_price_after_decoration(); ?></span></span>
             </div>
         </div>
+        <!-- Payment Method Selection -->
+        <div class="row">
+            <div class="col s12">
+                <label>
+                    <input name="paymentMethod" type="radio" value="paypal" onclick="togglePaymentFields('paypal')" checked />
+                    <span>PayPal</span>
+                </label>
+                <label>
+                    <input name="paymentMethod" type="radio" value="creditCard" onclick="togglePaymentFields('creditCard')" />
+                    <span>Credit Card</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- PayPal Fields -->
+        <div id="paypalFields" class="payment-fields">
+            <div class="input-field">
+                <input type="email" id="paypalEmail" placeholder="PayPal Email">
+            </div>
+            <div class="input-field">
+                <input type="password" id="paypalPassword" placeholder="PayPal Password">
+            </div>
+        </div>
+
+        <!-- Credit Card Fields -->
+        <div id="creditCardFields" class="payment-fields" style="display: none;">
+            <div class="input-field">
+                <input type="text" id="cardNumber" placeholder="Card Number">
+            </div>
+            <div class="input-field">
+                <input type="text" id="cvv" placeholder="CVV">
+            </div>
+            <div class="input-field">
+                <input type="text" id="expiryDate" placeholder="Expiry Date (MM/YY)" maxlength="5">
+            </div>
+        </div>
+
         <!-- Checkout Button -->
         <div class="row">
             <div class="col s12">
-                <button
-                    onclick="checkout()"
-                    class="btn waves-effect waves-light green">Proceed to Checkout</button>
+                <button onclick="checkout()" class="btn waves-effect waves-light green">Proceed to Checkout</button>
             </div>
         </div>
+
     </div>
 
     <script>
@@ -76,15 +112,58 @@
             }
         }
 
+        function togglePaymentFields(method) {
+            // PayPal Fields
+            const paypalFields = document.getElementById('paypalFields');
+            const paypalInputs = paypalFields.querySelectorAll('input');
+
+            // Credit Card Fields
+            const creditCardFields = document.getElementById('creditCardFields');
+            const creditCardInputs = creditCardFields.querySelectorAll('input');
+
+            if (method === 'paypal') {
+                // Show PayPal, hide Credit Card
+                paypalFields.style.display = 'block';
+                creditCardFields.style.display = 'none';
+
+                // Enable PayPal inputs, disable Credit Card inputs
+                paypalInputs.forEach(input => input.disabled = false);
+                creditCardInputs.forEach(input => input.disabled = true);
+            } else {
+                // Show Credit Card, hide PayPal
+                paypalFields.style.display = 'none';
+                creditCardFields.style.display = 'block';
+
+                // Enable Credit Card inputs, disable PayPal inputs
+                paypalInputs.forEach(input => input.disabled = true);
+                creditCardInputs.forEach(input => input.disabled = false);
+            }
+        }
+
 
         function checkout() {
             if (confirm('Checkout?')) {
+
+                const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+                const data = {
+                    checkoutFlag: true,
+                    totalPrice: <?php echo $cart->get_total_price_after_decoration(); ?>,
+                    paymentMethod: paymentMethod,
+                };
+
+                if (paymentMethod === 'paypal') {
+                    data.paypalEmail = document.getElementById('paypalEmail').value;
+                    data.paypalPassword = document.getElementById('paypalPassword').value;
+                } else {
+                    data.cardNumber = document.getElementById('cardNumber').value;
+                    data.cvv = document.getElementById('cvv').value;
+                    data.expiryDate = document.getElementById('expiryDate').value;
+                }
+
                 $.ajax({
                     url: 'checkout',
                     type: 'POST',
-                    data: {
-                        checkoutFlag: true
-                    },
+                    data: data,
                     success: function(response) {
                         location.reload(); // Reload to show updated cart
                     },
