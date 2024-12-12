@@ -1,6 +1,7 @@
 <?php
 
 require_once "./models/IObserver.php";
+require_once "./models/phpmailer.php";
 
 class SMSObserver implements IObserver{
     private ISubject $subj;
@@ -25,21 +26,28 @@ class SMSObserver implements IObserver{
 }
 
 class EMAILObserver implements IObserver{
+    // Attributes 
     private ISubject $subj;
     private string $msg;
+    private MailFacade $mailFacade;
+
     public function __construct(ISubject $subj)
     {
+        $this->mailFacade = new MailFacade();
         $this->subj = $subj;
         $this->subj->attach($this);
     }
 
     public function sendnotification(string $msg){
-        // echo "sending email $msg </br>";
         $_SESSION["notifications"] .= "Sending Email $msg </br>";
-        // echo "echoing session";
-        // echo $_SESSION["notifications"];
-        // echo "Ending echoing";
+        $this->mailFacade->sendEmail(
+            $_SESSION['USER_EMAIL'],
+            '',
+            'Event Notification',
+            $msg
+        );
     }
+
     public function setMessage(string $msg){
         $this->msg = $msg;
     }
