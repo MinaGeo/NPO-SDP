@@ -15,7 +15,6 @@ class SMSObserver implements IObserver{
     public function sendnotification(string $msg){
         // echo "sending sms $msg </br>";
         $_SESSION["notifications"] .= "Sending SMS $msg </br>";
-
     }
     public function setMessage(string $msg){
         $this->msg = $msg;

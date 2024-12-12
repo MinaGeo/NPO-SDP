@@ -186,12 +186,11 @@ class EventController
             //     echo "Attaching new user";
             //     $this->attach($user);
             // }
-            $this->eventSubject->changeMessage("User $user_name attended $event_name </br>");
             $registered = VolunteerEvent::register($volunteerId, $eventId);
             // echo "Echoing in function </br>";
             // echo $_SESSION["notifications"];
             if ($registered) {
-                // echo "Entered registered";
+                $this->eventSubject->changeMessage("User $user_name attended $event_name </br>");
                 echo json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $_SESSION["notifications"]]);
                 // echo "after encode";
             } else {
