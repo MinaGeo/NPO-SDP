@@ -54,24 +54,27 @@ The system uses a well-structured database to manage its core entities:
 ## Team Contributions
 
 | **Name**               | **Responsibilities**                                                                                     |
-|------------------------|--------------------------------------------------------------------------------------------------------- |
-| Rafik Tamer Magdy      | Sorting & Filtering (Strategy), Volunteer (MVC), DB integration                                          |
-| Mark Bassem Heshmat    | Notifications (Observer), Routing                                                                        |
-| Ahmed Wael Ibrahim     | User, Login, Register (Strategy, MVC), Homepage and navigation                                           |
-| Mina Morgan Mounir     | Shop, Cart (Decorator, MVC), Documentation                                                               |
-| Mina George Fawzy      | Database (Singleton), Event (MVC), DB maintenance                                                        |
-| Mostafa Ayman Mostafa  | Donations and Payments (Strategy, MVC)                                                                   |
+|------------------------|---------------------------------------------------------------------------------------------------------|
+| Rafik Tamer Magdy      | Sorting & Filtering (Strategy), Volunteer (MVC), DB integration                                         |
+| Mark Bassem Heshmat    | Notifications (Observer), Routing                                                                      |
+| Ahmed Wael Ibrahim     | User, Login, Register (Strategy, MVC), Homepage and navigation                                         |
+| Mina Morgan Mounir     | Shop, Cart (Decorator, MVC), Documentation                                                             |
+| Mina George Fawzy      | Database (Singleton), Event (MVC), DB maintenance                                                     |
+| Mostafa Ayman Mostafa  | Donations and Payments (Strategy, MVC)                                                                 |
 
 ## Installation
 
 1. Clone the repository:  
+   ```bash
    git clone https://github.com/MinaGeo/NPO-SDP.git
-  
-3. Install dependencies and configure the database connection.
-4. Start the application using your preferred web server or development environment.
+   ```
+2. Install dependencies and configure the database connection.
+3. Start the application using your preferred web server or development environment.
 
 ## Links
 - GitHub Repository: [NPO-SDP](https://github.com/MinaGeo/NPO-SDP)
 - [Class Diagram](https://drive.google.com/file/d/1CuZVmnf1R9mgq_YPSInn_DTIrbERaRsS/view?usp=sharing)
 
-This file is ready to be added directly to your GitHub repository. Let me know if you'd like adjustments or translations!
+---
+
+Feel free to customize further based on the specifics of your repository structure or additional information you'd like to include!
