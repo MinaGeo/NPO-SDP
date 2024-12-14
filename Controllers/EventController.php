@@ -251,4 +251,12 @@ class EventController
 
         $this->eventView->showVolunteerEvents($volunteerEvents,$volunteerId);
     }
+
+    public function showAddEvent()
+    {
+        $this->eventView = new EventView();
+        $this->eventView->showAddEvent();
+    }
+
+
 }
