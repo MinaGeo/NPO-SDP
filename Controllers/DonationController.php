@@ -30,21 +30,23 @@ class DonationController implements IControl
                 $paymentType = $_POST['paymentType'];
     
                 // Initialize the donation context based on the donation type
-                if ($donationType === 'monetary') {
-                    $donationContext = new DonationContext(new MonetaryDonation($donationAmount), $donationAmount);
-                } else {
-                    $paymentType = '';
-                    $donationContext = new DonationContext(new NonMonetaryDonation($donatedItem), 0.0, $donatedItem);
-                }
+                // if ($donationType === 'monetary') {
+                //     // $donationContext = new DonationContext(new MonetaryDonation($donationAmount), $donationAmount);
+                // } else {
+                //     $paymentType = '';
+                //     $donationContext = new DonationContext(new NonMonetaryDonation($donatedItem), 0.0, $donatedItem);
+                // }
     
                 // Process the donation
-                $donationContext->doDonation();
+                // $donationContext->doDonation();
+
                 // Initialize the payment context based on the payment type
                 if ($paymentType === 'paypal') {
                     $paypalEmail = $_POST['paypalEmail'];
                     $paypalPassword = $_POST['paypalPassword'];
                     $paymentContext = new PaymentContext(new PayByPaypal($paypalEmail, $paypalPassword));
-                } else {
+                } 
+                else {
                     $cardNumber = $_POST['cardNumber'];
                     $cvv = $_POST['cvv'];
                     $expiryDate = $_POST['expiryDate'];
@@ -55,23 +57,33 @@ class DonationController implements IControl
                 $paymentSuccess = $paymentContext->doPayment($donationAmount);
     
                 if ($paymentSuccess) {
-                    $result = Donation::saveDonation($donatorName, $donationType, $donationAmount, $donatedItem, $paymentType);
+                    // Store donation in database
+                    $donationData = [
+                        'donatorId' => $_SESSION['USER_ID'],
+                        'donationType' => $donationType,
+                        'donationAmount' => $donationAmount,
+                        'donatedItem' => $donatedItem,
+                        'paymentType' => $paymentType
+                    ];
+                    $result = Donation::create_new_donation($donationData);
                     if ($result) {
                         echo json_encode(['success' => true]);
-                    } else {
+                    } 
+                    else {
                         echo json_encode(['success' => false, 'message' => 'Failed to save donation details']);
                     }
-                } else {
+                } 
+                else {
                     // If payment failed
                     echo json_encode(['success' => false, 'message' => 'Payment failed']);
                 }
-            } else {
+            } 
+            else {
                 // Missing parameters
                 echo json_encode(['success' => false, 'message' => 'Missing required fields']);
             }
         }
         exit; // End the request
     }
-    
 }
 ?>

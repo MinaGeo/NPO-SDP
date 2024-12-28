@@ -108,15 +108,15 @@ class Database
             )");
 
 
-        $this->conn->query("               
+            $this->conn->query("               
             CREATE TABLE IF NOT EXISTS `donations` (
                 id INT AUTO_INCREMENT PRIMARY KEY,
-                donator_name VARCHAR(100) NOT NULL,
-                donation_type ENUM('monetary', 'nonMonetary') NOT NULL,
-                donation_amount DOUBLE,
-                donated_item VARCHAR(255),
-                payment_type ENUM('paypal', 'creditCard'),
-                donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                donatorId INT NOT NULL, 
+                donationtype ENUM('monetary', 'nonMonetary') NOT NULL,
+                donationAmount DOUBLE,
+                donatedItem VARCHAR(100),
+                paymentType ENUM('paypal', 'creditCard'),
+                donationTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )");
     }
 
