@@ -5,7 +5,7 @@ declare(strict_types=1);
 ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
-
+require_once "itemIterator.php";
 class Event
 {
     // Define properties
@@ -42,12 +42,6 @@ class Event
         return $this->date;
     }
 
-
-
-
-
-
-
     // Constructor that initializes properties with type casting
     private function __construct(array $properties)
     {
@@ -59,14 +53,31 @@ class Event
         $this->date = $properties['date'] ?? '';
     }
 
+    public function getIterator(): itemIterator
+    {
+        return new itemIterator([
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'location' => $this->location,
+            'type' => $this->type,
+            'date' => $this->date
+        ]);
+    }
+
     public function __toString(): string
     {
         $str = '<pre>';
-        foreach ($this as $key => $value) {
+        $iterator = $this->getIterator(); // Assuming getIterator() returns a ShopIterator
+        while ($iterator->hasNext()) {
+            $key = $iterator->currentKey();
+            $value = $iterator->current();
             $str .= "$key: $value<br/>";
+            $iterator->next();
         }
         return $str . '</pre>';
     }
+    
 
     // RAFIK----> To Use with volunteer's Tables
     public static function create(array $data): Event {
@@ -87,8 +98,10 @@ class Event
         global $configs;    
         $rows = run_select_query("SELECT * FROM $configs->DB_EVENTS_TABLE")->fetch_all(MYSQLI_ASSOC);
 
-        foreach ($rows as $row) {
-            $events[] = new Event($row); // Corrected variable name
+        $eventIterator = new itemIterator($rows);
+        while ($eventIterator->hasNext()) {
+            $event = Event::create($eventIterator->next());
+            $events[] = $event;
         }
         return $events;
     }

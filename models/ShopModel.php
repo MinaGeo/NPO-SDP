@@ -6,7 +6,7 @@ ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
 require_once "./models/CartDecorater.php";
-
+require_once "itemIterator.php";
 class ShopItem
 {
     // Define properties
@@ -41,14 +41,29 @@ class ShopItem
         $this->price = (float)($properties['price'] ?? 0);
     }
 
+    public function getIterator(): itemIterator
+    {
+        return new itemIterator([
+            'id' => $this->id,
+            'name' => $this->name,
+            'description' => $this->description,
+            'price' => $this->price
+        ]);
+    }
+
     public function __toString(): string
     {
         $str = '<pre>';
-        foreach ($this as $key => $value) {
+        $iterator = $this->getIterator(); // Assuming getIterator() returns a ShopIterator
+        while ($iterator->hasNext()) {
+            $key = $iterator->currentKey();
+            $value = $iterator->current();
             $str .= "$key: $value<br/>";
+            $iterator->next();
         }
         return $str . '</pre>';
     }
+    
 
     static public function get_by_id(int $id): ?ShopItem
     {
@@ -62,8 +77,9 @@ class ShopItem
         $shop_items = [];
         $rows = run_select_query("SELECT * FROM `shop_items`")->fetch_all(MYSQLI_ASSOC);
 
-        foreach ($rows as $row) {
-            $shop_items[] = new ShopItem($row); // Corrected variable name
+        $shopIterator = new itemIterator($rows);
+        while ($shopIterator->hasNext()) {
+            $shop_items[] = new ShopItem($shopIterator->next());
         }
         return $shop_items;
     }
