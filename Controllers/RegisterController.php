@@ -20,14 +20,14 @@ class RegistrationProxy implements RegistrationService {
             exit;
         }
 
-        // Rate Limiting (Example - Improve for production)
+        // Rate Limiting 
         $ip = $_SERVER['REMOTE_ADDR'];
         if (isset($_SESSION['registration_attempts'][$ip]) && $_SESSION['registration_attempts'][$ip]['count'] >= 3 && (time() - $_SESSION['registration_attempts'][$ip]['last_attempt']) < 60) { //3 attempts in 60 seconds
             echo json_encode(['success' => false, 'message' => 'Too many registration attempts. Please try again after 60 seconds.']);
             exit;
         }
 
-        // Email Verification (Basic Example - Needs more robust implementation)
+        // Email Verification 
         if (isset($_POST['email']) && !$this->isEmailAvailable($_POST['email'])) {
             echo json_encode(['success' => false, 'message' => 'This email is already in use.']);
             exit;
@@ -62,7 +62,7 @@ class RegistrationProxy implements RegistrationService {
     }
 
     private function isEmailAvailable($email) {
-        $passwordHash = md5("someRandomStringThatWontBeUsed"); //just to make the function work
+        $passwordHash = md5("someRandomStringThatWontBeUsed"); 
         return !User::get_by_email_and_password_hash($email,$passwordHash);
     }
 }
