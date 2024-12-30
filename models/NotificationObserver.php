@@ -40,6 +40,7 @@ class EMAILObserver implements IObserver
     {
         $this->subj = $subj;
         $this->subj->attach($this);
+        $this->mailAdapter = new NotificationToMailAdapter();
     }
 
     public function sendnotification(string $msg)
