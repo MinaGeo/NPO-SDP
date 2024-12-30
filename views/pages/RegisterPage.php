@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Register</title>
     <style>
-        body{
+        body {
             background-color: #DAF4F5;
         }
         .input-field label {
@@ -35,11 +35,15 @@
                 },
                 success: function(response) {
                     const res = JSON.parse(response);
-                    alert(res['message']);
-                    location.reload();
+                    if (res.success) {
+                        alert(res.message);
+                        window.location.href = "login"; // Redirect to login page after successful registration
+                    } else {
+                        alert(res.message);
+                    }
                 },
                 error: function(xhr, status, error) {
-                    alert('An error occurred!');
+                    alert('An error occurred: ' + error); // More informative error message
                 }
             });
         }
@@ -50,8 +54,7 @@
             <div class="col s12 m8 offset-m2 l6 offset-l3">
                 <h2 class="center-align">Create a new account</h2>
                 <br />
-                
-                <!-- Registration Form -->
+
                 <form id="register-form" method="POST">
                     <div class="input-field">
                         <label for="firstName">First Name:</label>
@@ -69,7 +72,7 @@
                         <label for="password">Password:</label>
                         <input type="password" name="password" id="password" class="validate" required>
                     </div>
-                    <div class="center-align" >
+                    <div class="center-align">
                         <div onclick="register()" class="btn waves-effect waves-light">
                             Register
                         </div>
@@ -79,10 +82,6 @@
         </div>
         <div class="center-align" style="margin-top: 20px;">
             <p style="font-size: small;">
-                Already have an account? 
+                Already have an account?
                 <a href="login">Login here</a>
             </p>
-        </div>
-    </div>    
-</body>
-</html>
