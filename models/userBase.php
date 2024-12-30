@@ -7,7 +7,7 @@ require_once "./db_setup.php";
 ob_end_clean();
 
 require_once "./models/IObserver.php";
-
+require_once "propertyIterator.php";
 // Properties: id, firstName, lastName, email, passwordHash (MD5)
 
 class User
@@ -23,12 +23,18 @@ class User
     /* ------------------- Constructor and toString -------------------  */
     private function __construct(array $properties)
     {
-        foreach ($properties as $prop => $value) {
-            if (property_exists($this, $prop)) {
-                $this->{$prop} = $value;
+        // Use PropertyIterator to iterate through the properties array
+        $propertyIterator = new PropertyIterator($properties);
+    
+        while ($propertyIterator->hasNext()) {
+            $current = $propertyIterator->next();
+    
+            if (property_exists($this, $current['key'])) {
+                $this->{$current['key']} = $current['value'];
             }
         }
     }
+    
 
     public function get_id(): int
     {
@@ -38,11 +44,18 @@ class User
     public function __toString(): string
     {
         $str = '<pre>';
-        foreach ($this as $key => $value) {
-            $str .= "$key: $value<br/>";
+        
+        // Use the iterator to loop through properties
+        $iterator = new PropertyIterator(get_object_vars($this));
+        
+        while ($iterator->hasNext()) {
+            $current = $iterator->next();
+            $str .= "{$current['key']}: {$current['value']}<br/>";
         }
+        
         return $str . '</pre>';
     }
+    
 
     /* ------------------- Getters and Setters -------------------  */
     // Getter for id

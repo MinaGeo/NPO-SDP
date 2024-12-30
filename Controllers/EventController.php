@@ -167,36 +167,12 @@ class EventController
             $user_name = $user->getFirstName();
             $event = Event::get_by_id($eventId);
             $event_name = $event->get_name();
-            // echo "registering";
-            // foreach ($this->users as $user) {
-            //     $this->attach($user);
-            // }
-            // $this->notifyUsers("User with ID: $volunteerId joined event with ID: $eventId");
-            // $user = User::get_by_id($volunteerId);
-            // $existing = true;
-            // foreach ($this->users as $user) {
-            //     $id = $user->get_id();
-            //     // echo "USer Id: $id </br>";
-            //     if ($volunteerId == $id) {
-            //         echo "Found user </br>";
-            //         $existing = false;
-            //     }
-            // }
-            // if ($existing) {
-            //     echo "Attaching new user";
-            //     $this->attach($user);
-            // }
             $registered = VolunteerEvent::register($volunteerId, $eventId);
-            // echo "Echoing in function </br>";
-            // echo $_SESSION["notifications"];
             if ($registered) {
                 $this->eventSubject->changeMessage("User $user_name attended $event_name </br>");
                 echo json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $_SESSION["notifications"]]);
-                // echo "after encode";
             } else {
-                // echo "Entered already registered";
                 echo json_encode(['success' => false, 'message' => 'Failed to register for the event.', "notifications" => ""]);
-                // echo "after encode";
             }
             exit;
         }
