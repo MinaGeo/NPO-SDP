@@ -169,7 +169,7 @@ class EventController
             $event_name = $event->get_name();
             $registered = VolunteerEvent::register($volunteerId, $eventId);
             if ($registered) {
-                $this->eventSubject->changeMessage("User $user_name attended $event_name </br>");
+                $this->eventSubject->sendEventNotification("User $user_name attended $event_name </br>");
                 echo json_encode(['success' => true, 'message' => 'Successfully registered for the event!', "notifications" => $_SESSION["notifications"]]);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Failed to register for the event.', "notifications" => ""]);
