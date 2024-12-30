@@ -4,7 +4,7 @@ require_once "./models/IObserver.php";
 require_once "./models/phpmailer.php";
 
 interface INotification {
-    public function sendNotification(string $msg): void;
+    public function sendNotification(string $title, string $msg): void;
 }
 
 
@@ -16,12 +16,12 @@ class NotificationToMailAdapter implements INotification {
 
     }
 
-    public function sendNotification(string $msg): void {
+    public function sendNotification(string $title, string $msg): void {
         // Delegate email notification to EMAILObserver
         $this->mailFacade->sendEmail(
             $_SESSION['USER_EMAIL'],
             '',
-            'Event Notification',
+            $title,
             $msg
         );
     }

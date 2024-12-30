@@ -2,7 +2,7 @@
 
 interface IObserver
 {
-    public function sendnotification(string $msg);
+    public function sendNotification(string $title, string $msg);
     public function getMessage();
     public function setMessage(string $msg);
 }

@@ -26,11 +26,11 @@ class EventSubject implements ISubject {
         $size = count($this->users);
         // echo "Notifying Media Observers $size...</br>";
         foreach ($this->users as $user) {
-            $user->sendnotification($this->msg);
+            $user->sendNotification("Event Subscription", $this->msg);
         }
     }
 
-    public function changeMessage(string $msg){
+    public function sendEventNotification(string $msg){
         // echo "Changing the message </br>";
         $this->msg = $msg;
         $this->notifyUsers();

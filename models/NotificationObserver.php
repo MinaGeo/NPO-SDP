@@ -14,7 +14,7 @@ class SMSObserver implements IObserver
         $this->subj->attach($this);
     }
 
-    public function sendnotification(string $msg)
+    public function sendNotification(string $title, string $msg)
     {
         // echo "sending sms $msg </br>";
         $_SESSION["notifications"] .= "Sending SMS $msg </br>";
@@ -43,10 +43,10 @@ class EMAILObserver implements IObserver
         $this->mailAdapter = new NotificationToMailAdapter();
     }
 
-    public function sendnotification(string $msg)
+    public function sendNotification(string $title, string $msg)
     {
         $_SESSION["notifications"] .= "Sending Email $msg </br>";
-        $this->mailAdapter->sendNotification($msg);
+        $this->mailAdapter->sendNotification($title, $msg);
     }
 
     public function setMessage(string $msg)
