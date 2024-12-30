@@ -24,7 +24,7 @@ class AuthenticationProxy implements AuthenticationService {
             exit;
         }
 
-        // Example Rate Limiting (very basic - needs improvement for production)
+        // Example Rate Limiting 
         $ip = $_SERVER['REMOTE_ADDR'];
         if (isset($_SESSION['login_attempts'][$ip]) && $_SESSION['login_attempts'][$ip]['count'] >= 5 && (time() - $_SESSION['login_attempts'][$ip]['last_attempt']) < 60) {
             echo json_encode(['success' => false, 'message' => 'Too many login attempts. Please try again after 60 seconds.']);
