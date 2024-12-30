@@ -2,7 +2,7 @@
 
 require_once "./models/IObserver.php";
 require_once "./models/phpmailer.php";
-require_once "./NotificationToMailAdapter.php";
+require_once "./models/NotificationToMailAdapter.php";
 
 class SMSObserver implements IObserver
 {
