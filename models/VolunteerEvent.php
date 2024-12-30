@@ -6,7 +6,7 @@ ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
 require_once "./models/userBase.php";
-
+require_once "itemIterator.php";
 class VolunteerEvent
 {
     private int $id;
@@ -34,14 +34,42 @@ class VolunteerEvent
         $this->event_id = (int)($properties['event_id'] ?? 0);
     }
 
+
+    public function getIterator($items): itemIterator
+    {
+        return new itemIterator($items);
+    }
+
     public function __toString(): string
     {
-        $str = '<pre>';
-        foreach ($this as $key => $value) {
-            $str .= "$key: $value<br/>";
+        global $configs;
+        $dbName = $configs->DB_NAME;
+        $str = '<br/>';
+        $query = "
+        SELECT e.id, e.name, e.description, e.location, e.type, e.date
+        FROM {$dbName}.event e
+        JOIN {$dbName}.volunteer_events ve ON e.id = ve.event_id
+        WHERE ve.volunteer_id = ?
+    ";
+
+        // Fetch results
+        $stmt = run_select_query($query, [$this->volunteer_id]);
+
+        if ($stmt && $stmt instanceof mysqli_result) {
+            $rows = $stmt->fetch_all(MYSQLI_ASSOC);
+            $iterator = $this->getIterator($rows);
         }
-        return $str . '</pre>';
+
+        while ($iterator->hasNext()) {
+            $key = $iterator->currentKey(); // Get the current key
+            $value = $iterator->current();  // Get the current value
+            $str .= "    Item ID #$key: Qty $value<br/>";
+            $iterator->next(); // Move to the next item
+        }
+
+        return $str;
     }
+
 
     public static function register(int $volunteerId, int $eventId): bool
     {
@@ -86,18 +114,10 @@ class VolunteerEvent
         if ($stmt && $stmt instanceof mysqli_result) {
             $rows = $stmt->fetch_all(MYSQLI_ASSOC);
 
-            // // Debugging
-            // echo "Rows returned: " . count($rows) . "<br>";
-
-            // if (count($rows) > 0) {
-            //     var_dump($rows);
-            // } else {
-            //     echo "No events found for this volunteer.<br>";
-            // }
-
-            // create Event objects using the (factory method)
-            foreach ($rows as $row) {
-                $events[] = Event::create($row);
+            $eventVolunteerIterator = new itemIterator($rows);
+            while ($eventVolunteerIterator->hasNext()) {
+                $event = Event::create($eventVolunteerIterator->next());
+                $events[] = $event;
             }
         } else {
             echo "No valid result returned or query failed.<br>";
@@ -106,11 +126,13 @@ class VolunteerEvent
         return $events;
     }
 
+
+    // This function is not used in the current implementation. It is kept for future use.
     public static function get_volunteers_by_event(int $eventId): array
     {
         $volunteers = [];
         global $configs;
-    
+
         // Query to get volunteers associated with a specific event by filtering with event_id
         $dbName = $configs->DB_NAME;
         $query = "
@@ -119,24 +141,25 @@ class VolunteerEvent
             JOIN {$dbName}.volunteer_events ve ON v.id = ve.volunteer_id
             WHERE ve.event_id = ?
         ";
-    
+
         // Fetch results
         $stmt = run_select_query($query, [$eventId]);
-    
+
         if ($stmt && $stmt instanceof mysqli_result) {
             $rows = $stmt->fetch_all(MYSQLI_ASSOC);
-    
-            // Create Volunteer objects or populate the array directly
-            foreach ($rows as $row) {
-                $volunteers[] = User::create($row);  // Assuming a User::create factory method
+
+            $eventVolunteerIterator = new itemIterator($rows);
+            while ($eventVolunteerIterator->hasNext()) {
+                $volunteer = User::create($eventVolunteerIterator->next());
+                $volunteers[] = $volunteer;
             }
         } else {
             echo "No volunteers found for this event or query failed.<br>";
         }
-    
+
         return $volunteers;
     }
-    
+
 
     static public function removeVolunteerFromEvent(int $volunteerId, int $eventId): bool
     {
@@ -167,10 +190,11 @@ class VolunteerEvent
             true
         )->fetch_all(MYSQLI_ASSOC);
 
-        foreach ($rows as $row) {
-            $volunteerEvents[] = new VolunteerEvent($row); // Create VolunteerEvent objects
+        $volunteerEventIterator = new itemIterator($rows);
+        while ($volunteerEventIterator->hasNext()) {
+            $volunteerEvent = new VolunteerEvent($volunteerEventIterator->next());
+            $volunteerEvents[] = $volunteerEvent;
         }
-
         return $volunteerEvents;
     }
 

@@ -27,8 +27,10 @@ class CartController implements IControl
 
         // Fetch each item in the cart along with its details
         $cart_items = [];
-        foreach ($cart->get_items() as $itemId => $quantity) {
-            // Get details of each item using the item ID
+        $itemIterator = new itemIterator($cart->get_items());
+        while ($itemIterator->hasNext()) {
+            $itemId = $itemIterator->currentKey();
+            $quantity = $itemIterator->current();
             $itemDetails = ShopItem::get_by_id($itemId);
             if ($itemDetails) {
                 $cart_items[] = [
@@ -36,6 +38,7 @@ class CartController implements IControl
                     'quantity' => $quantity
                 ];
             }
+            $itemIterator->next();
         }
         $this->cartView->showCart($cart_items, $cart);
     }
@@ -44,20 +47,25 @@ class CartController implements IControl
     {
         $user_id = $_SESSION['USER_ID'];
         $carts = Cart::get_completed_carts_by_user_id($user_id);
-
         $cart_history = [];  // Array to store cart history information
 
-        foreach ($carts as $cart) {
+        $cartsIterator = new itemIterator($carts);
+        while ($cartsIterator->hasNext()) {
+            $cart = $cartsIterator->current();
             $cart_items = [];
-            foreach ($cart->get_items_history() as $itemData) {
-                $item = $itemData['item'];
-                $quantity = $itemData['quantity'];
-
-                $cart_items[] = [
-                    'name' => $item->get_name(),
-                    'price' => $item->get_price(),
-                    'quantity' => $quantity
-                ];
+            $itemIterator = new itemIterator($cart->get_items());
+            while ($itemIterator->hasNext()) {
+                $itemId = $itemIterator->currentKey();
+                $quantity = $itemIterator->current();
+                $itemDetails = ShopItem::get_by_id($itemId);
+                if ($itemDetails) {
+                    $cart_items[] = [
+                        'name' => $itemDetails->get_name(),
+                        'price' => $itemDetails->get_price(),
+                        'quantity' => $quantity
+                    ];
+                }
+                $itemIterator->next();
             }
             // Add cart details to cart history array
             $cart_history[] = [
@@ -66,9 +74,8 @@ class CartController implements IControl
                 'total_price' => $cart->get_total_cart_price(),
                 'total_price_after_decoration' => $cart->get_total_price_after_decoration()
             ];
+            $cartsIterator->next();
         }
-
-        // Pass cart history to the view
         $this->cartView->showCartHistory($cart_history);
     }
 

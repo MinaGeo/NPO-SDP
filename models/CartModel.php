@@ -7,6 +7,7 @@ require_once "./db_setup.php";
 ob_end_clean();
 // require_once "./models/ShopItem.php";
 require_once "./models/CartDecorater.php";
+require_once "./models/itemIterator.php";
 class Cart implements Billable
 {
     // Define properties
@@ -42,6 +43,10 @@ class Cart implements Billable
     }
 
 
+    public function getIterator($items): itemIterator
+    {
+        return new itemIterator($items);
+    }
 
     // Constructor that initializes properties with type casting
     private function __construct(array $properties)
@@ -51,15 +56,22 @@ class Cart implements Billable
         $this->status = $properties['status'];
     }
 
-
     public function __toString(): string
     {
         $str = '<br/>';
-        foreach ($this->items as $key => $value) {
+        $iterator = $this->getIterator($this->items);
+
+        while ($iterator->hasNext()) {
+            $key = $iterator->currentKey(); // Get the current key
+            $value = $iterator->current();  // Get the current value
             $str .= "    Item ID #$key: Qty $value<br/>";
+            $iterator->next(); // Move to the next item
         }
+
         return $str;
     }
+
+
     public static function cart_exists_for_user(int $user_id): bool
     {
         global $configs;
@@ -89,12 +101,17 @@ class Cart implements Billable
     public function get_total_cart_price(): float
     {
         $price = 0;
-        foreach ($this->items as $item_id => $quantity) {
-            $shopItem = ShopItem::get_by_id($item_id); //model byklm model
+        $iterator = $this->getIterator($this->items);
+        while ($iterator->hasNext()) {
+            $item_id = $iterator->currentKey();
+            $quantity = $iterator->current();
+            $shopItem = ShopItem::get_by_id($item_id);
             $price += $quantity * $shopItem->get_price();
+            $iterator->next();
         }
         return $price;
     }
+
     public function get_total_price_after_decoration(): float
     {
         // Wrap the cart with both VAT and Shipping decorators
@@ -137,27 +154,47 @@ class Cart implements Billable
         global $configs;
         $carts = [];
 
+        // Query to get all carts for the user
         $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE 
                   WHERE user_id = $user_id";
 
-        foreach (run_select_query($query)->fetch_all(MYSQLI_ASSOC) as $cartData) {
-            $cart = new Cart($cartData);
+        $cartDataResult = run_select_query($query);
 
-            // Fetch items for the cart
-            $cart_items = run_select_query("
-                SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE 
-                WHERE cart_id = {$cart->id}
-            ")->fetch_all(MYSQLI_ASSOC);
+        if ($cartDataResult) {
+            $cartDataArray = $cartDataResult->fetch_all(MYSQLI_ASSOC);
+            $cartDataIterator = new itemIterator($cartDataArray);
 
-            foreach ($cart_items as $item) {
-                $cart->items[$item['item_id']] = $item['quantity'];
+            // Iterate over cart data using the CartIterator
+            while ($cartDataIterator->hasNext()) {
+                $cartData = $cartDataIterator->current();
+                $cart = new Cart($cartData);
+
+                // Fetch items for the cart using an iterator
+                $itemsQuery = "SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE 
+                               WHERE cart_id = {$cart->id}";
+                $cartItemsResult = run_select_query($itemsQuery);
+
+                if ($cartItemsResult) {
+                    $cartItemsArray = $cartItemsResult->fetch_all(MYSQLI_ASSOC);
+                    $cartItemsIterator = new itemIterator($cartItemsArray);
+
+                    // Iterate over cart items using the CartIterator
+                    while ($cartItemsIterator->hasNext()) {
+                        $item = $cartItemsIterator->current();
+                        $cart->items[$item['item_id']] = $item['quantity'];
+                        $cartItemsIterator->next();
+                    }
+                }
+
+                // Add the cart to the carts array
+                $carts[] = $cart;
+                $cartDataIterator->next();
             }
-
-            $carts[] = $cart;
         }
 
         return $carts;
     }
+
 
     static public function get_completed_carts_by_user_id($user_id): array
     {
@@ -165,22 +202,37 @@ class Cart implements Billable
         $carts = [];
 
         $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE 
-              WHERE user_id = $user_id AND status = 'completed'";
+                  WHERE user_id = $user_id AND status = 'completed'";
 
-        foreach (run_select_query($query)->fetch_all(MYSQLI_ASSOC) as $cartData) {
-            $cart = new Cart($cartData);
+        $result = run_select_query($query);
 
-            // Fetch items for the cart
-            $cart_items = run_select_query("
-            SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE 
-            WHERE cart_id = {$cart->id}
-        ")->fetch_all(MYSQLI_ASSOC);
+        if ($result) {
+            $cartDataArray = $result->fetch_all(MYSQLI_ASSOC);
+            $cartDataIterator = new itemIterator($cartDataArray);
 
-            foreach ($cart_items as $item) {
-                $cart->items[$item['item_id']] = $item['quantity'];
+            while ($cartDataIterator->hasNext()) {
+                $cartData = $cartDataIterator->current();
+                $cart = new Cart($cartData);
+
+                // Fetch items for the cart using an iterator
+                $itemsQuery = "SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE 
+                               WHERE cart_id = {$cart->id}";
+                $cartItemsResult = run_select_query($itemsQuery);
+
+                if ($cartItemsResult) {
+                    $cartItemsArray = $cartItemsResult->fetch_all(MYSQLI_ASSOC);
+                    $cartItemsIterator = new itemIterator($cartItemsArray);
+
+                    while ($cartItemsIterator->hasNext()) {
+                        $item = $cartItemsIterator->current();
+                        $cart->items[$item['item_id']] = $item['quantity'];
+                        $cartItemsIterator->next();
+                    }
+                }
+
+                $carts[] = $cart;
+                $cartDataIterator->next();
             }
-
-            $carts[] = $cart;
         }
 
         return $carts;
@@ -206,8 +258,14 @@ class Cart implements Billable
                 WHERE cart_id = $cart->id
             ")->fetch_all(MYSQLI_ASSOC);
 
-            foreach ($cart_items as $item) {
+            // Create an iterator for the cart items
+            $cartItemsIterator = new itemIterator($cart_items);
+
+            // Use the iterator to add items to the cart
+            while ($cartItemsIterator->hasNext()) {
+                $item = $cartItemsIterator->current();
                 $cart->items[$item['item_id']] = $item['quantity'];
+                $cartItemsIterator->next(); // Move to the next item
             }
 
             return $cart;
@@ -293,14 +351,20 @@ class Cart implements Billable
 
         // Get all cart IDs associated with the user
         $cart_ids = run_select_query("SELECT id FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `user_id` = $user_id")->fetch_all(MYSQLI_ASSOC);
+        // Use the CartIterator to iterate over cart IDs
+        $cartIterator = new itemIterator($cart_ids);
 
-        foreach ($cart_ids as $cart)
+        while ($cartIterator->hasNext()) {
+            $cart = $cartIterator->current();
             $cart_id = $cart['id'];
 
-        // Delete the cart itself
-        if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $cart_id")) {
-            error_log("Failed to delete cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
-            $success = false;
+            // Delete the cart itself
+            if (!run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CARTS_TABLE WHERE `id` = $cart_id")) {
+                error_log("Failed to delete cart ID $cart_id: " . mysqli_error($configs->DB_CONN));
+                $success = false;
+            }
+
+            $cartIterator->next(); // Move to the next cart
         }
 
 
