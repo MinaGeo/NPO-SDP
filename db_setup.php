@@ -62,14 +62,30 @@ class Database
                 UNIQUE INDEX `uq_email` (`email` ASC)
             )");
 
+        $this->conn->query(" 
+            CREATE TABLE IF NOT EXISTS `location` ( 
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, 
+                name VARCHAR(100) NOT NULL
+                )");
+
+        $this->conn->query(" 
+            CREATE TABLE IF NOT EXISTS `location_hierarchy` ( 
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                parent_id INT NOT NULL, 
+                child_id INT NOT NULL,  
+                FOREIGN KEY (parent_id) REFERENCES `location`(id), 
+                FOREIGN KEY (child_id) REFERENCES `location`(id) )");
+
+
         $this->conn->query("
             CREATE TABLE IF NOT EXISTS `event` (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 name VARCHAR(100) NOT NULL,
                 description TEXT,
-                location VARCHAR(50),
+                location_id INT NOT NULL,
                 type VARCHAR(50),
-                date DATETIME
+                date DATETIME,
+                FOREIGN KEY (location_id) REFERENCES `location`(id)
             )");
 
         $this->conn->query("
@@ -125,11 +141,10 @@ class Database
     {
         // Check if tables have data
         $userCheck = $this->conn->query("SELECT 1 FROM `user` LIMIT 1");
-        $eventCheck = $this->conn->query("SELECT 1 FROM `event` LIMIT 1");
         $shopItemsCheck = $this->conn->query("SELECT 1 FROM `shop_items` LIMIT 1");
         $cartCheck = $this->conn->query("SELECT 1 FROM `cart` LIMIT 1");
         $volunteerEventCheck = $this->conn->query("SELECT 1 FROM `volunteer_events` LIMIT 1");
-
+        $locationCheck = $this->conn->query("SELECT 1 FROM `location` LIMIT 1");
         // Insert data into `user` table
         if ($userCheck->num_rows === 0) {
             $this->conn->query("
@@ -144,13 +159,62 @@ class Database
             ");
         }
 
+
+
+        if ($locationCheck->num_rows === 0) {
+            $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Gharbia', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh'];
+            $subLocations = [
+                'Cairo' => ['Nasr City', 'Maadi', 'Heliopolis', 'Dokki', 'Mohandessin', 'Zamalek', 'Ain Shams', 'Shubra', 'Helwan', 'Abbasiya', 'Sayeda Zeinab', 'Garden City', 'Manial', 'Bulaq', 'Imbaba', 'Manshiyat Naser', 'Dar El Salam', 'El Marg', 'El Matareya', 'El Salam City', 'El Sayeda Aisha', 'El Shorouk', 'El Tagamu El Khames', 'El Waily', 'El Zaytoun', 'El Zawya El Hamra', 'El-Nozha', 'Hadayek El Kobba', 'Helmeyet El-Zaitoun', 'Kasr El Nile', 'Korba', 'Madinet Nasr', 'Masr El Qadima', 'New Cairo', 'Old Cairo', 'Rod El-Farag'],
+                'Alexandria' => ['Bacos', 'Bolkly', 'Camp Caesar', 'Camp Shezar', 'Cleopatra', 'Dekhela', 'Downtown', 'El Agami', 'El Amreya', 'El Asafra'],
+                'Giza' => ['6th of October City', 'Agouza', 'Daher', 'Dokki', 'Faisal', 'Giza Square', 'Haram', 'Imbaba', 'Mohandessin', 'Nahia', 'Nasr City', 'Oseem', 'Pyramids', 'Zamalek'],
+                'Port Said' => ['Port Fouad', 'Port Said'],
+                'Suez' => ['Ataqah', 'Faisal', 'Ganayen', 'Ganoub', 'Kuwait', 'Suez'],
+                'Damietta' => ['New Damietta', 'Ras El Bar', 'Zarqa'],
+                'Mansoura' => ['Talkha', 'Dekernes', 'Aga', 'Sherbin'],
+                'Gharbia' => ['Tanta', 'Mahalla', 'Zefta', 'Kafr El Zayat'],
+                'Ismailia' => ['Fayed', 'Qantara'],
+                'Minya' => ['Maghagha', 'Bani Mazar', 'Samalut'],
+                'Luxor' => ['Karnak', 'West Bank'],
+                'Aswan' => ['Kom Ombo', 'Kalabsha'],
+                'Asyut' => ['Abnub', 'Dairut'],
+                'Beni Suef' => ['Nasser'],
+                'Fayoum' => ['Tamiya', 'Yusuf El Sediaq'],
+                'Kafr El Sheikh' => ['Desouk', 'Fuwwah'],
+                'Sharkia' => ['Sharkia'],
+                'Monufia' => ['Monufia'],
+                'Beheira' => ['Beheira'],
+                'Matrouh' => ['Matrouh'],
+            ];
+
+            foreach ($governorates as $governorate) {
+                $this->conn->query("
+                INSERT INTO `location` (name) VALUES 
+                    ('$governorate') ");
+
+                $parentId = $this->conn->insert_id;
+                if (array_key_exists($governorate, $subLocations)) {
+                    foreach ($subLocations[$governorate] as $subLocation) { // Insert sub-location 
+                        $this->conn->query(" 
+                            INSERT INTO `location` (name) VALUES 
+                            ('$subLocation')");
+                        $childId = $this->conn->insert_id;
+                        // Insert relationship into `location_hierarchy` 
+                        $this->conn->query(" 
+                            INSERT INTO `location_hierarchy` (parent_id, child_id) VALUES 
+                                ($parentId, $childId)");
+                    }
+                }
+            }
+        }
+
+        $eventCheck = $this->conn->query("SELECT 1 FROM `event` LIMIT 1");
         // Insert data into `event` table
         if ($eventCheck->num_rows === 0) {
             $this->conn->query("
-                INSERT INTO `event` (name, description, location, type, date) VALUES
-                    ('7ayah kareema', 'An 7ayah kareema event', 'Cairo', 'Fundraising', '2024-12-25 10:00:00'),
-                    ('57357', 'Cancer awareness event', 'Cairo', 'Awareness', '2024-12-26 11:00:00'),
-                    ('Blood Donation', 'A blood donation event', 'Cairo', 'Donation', '2024-12-27 12:00:00')
+                INSERT INTO `event` (name, description, location_id, type, date) VALUES
+                    ('7ayah kareema', 'An 7ayah kareema event', 1, 'Fundraising', '2024-12-25 10:00:00'),
+                    ('57357', 'Cancer awareness event', 2, 'Awareness', '2024-12-26 11:00:00'),
+                    ('Blood Donation', 'A blood donation event', 3, 'Donation', '2024-12-27 12:00:00')
             ");
         }
 

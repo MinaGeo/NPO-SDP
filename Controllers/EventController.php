@@ -38,7 +38,7 @@ class EventController
             $_SESSION["notifications"] = "";
         }
     }
-    public function show($eventFilter = '',$eventType = '', $eventSort = 'name_asc',  $location = '')
+    public function show($eventFilter = '', $eventType = '', $eventSort = 'name_asc',  $location = '')
     {
         $this->eventView = new EventView();
         $volunteerId = $_SESSION['USER_ID'];
@@ -88,7 +88,7 @@ class EventController
         // Apply the selected sorting strategy
         $this->sortingContext->setStrategy($sortStrategy);
         $events = $this->sortingContext->sortData($events);  // Sort the events
-        
+
         if ((int)$_SESSION['USER_ID'] === -1) {
             $this->eventView->showGuestPage($events);
         } else {
@@ -149,7 +149,13 @@ class EventController
     public function addNewEvent()
     {
         if (isset($_POST['addEvent'])) {
-            if (Event::add_event($_POST['name'], $_POST['description'], $_POST['location'], $_POST['type'], $_POST['date'])) {
+
+            $governorate = $_POST['governorate_id']; 
+            $location = $_POST['location_id']; 
+            // Fetch the IDs from the database 
+            $locationHierarchyId = LocationRepository::getLocationHierarchyId($governorate, $location);
+
+            if (Event::add_event($_POST['name'], $_POST['description'], $locationHierarchyId, $_POST['type'], $_POST['date'])) {
                 echo json_encode(['success' => true, 'message' => $_POST['name'] . 'Event Added!']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Failed to add Event or Event already exist.']);
@@ -225,7 +231,7 @@ class EventController
         $this->sortingContext->setStrategy($sortStrategy);
         $volunteerEvents = $this->sortingContext->sortData($volunteerEvents);  // Apply sorting
 
-        $this->eventView->showVolunteerEvents($volunteerEvents,$volunteerId);
+        $this->eventView->showVolunteerEvents($volunteerEvents, $volunteerId);
     }
 
     public function showAddEvent()
@@ -233,6 +239,4 @@ class EventController
         $this->eventView = new EventView();
         $this->eventView->showAddEvent();
     }
-
-
 }

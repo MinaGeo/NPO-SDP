@@ -6,13 +6,17 @@ ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
 require_once "itemIterator.php";
+require_once "LocationComponent.php";
+require_once "SingleLocation.php";
+require_once "CompositeLocation.php";
+require_once "LocationRepository.php"; // Include the LocationRepository
 class Event
 {
     // Define properties
     private int $id;
     private string $name;
     private string $description;
-    private string $location;
+    private int $location_id;
     private string $type;
     private string $date;
 
@@ -31,7 +35,7 @@ class Event
     }
     public function get_location(): string
     {
-        return $this->location;
+        return LocationRepository::getLocationHierarchy($this->location_id);
     }   
     public function get_type(): string
     {
@@ -48,7 +52,7 @@ class Event
         $this->id = (int)($properties['id'] ?? 0); // Cast to int
         $this->name = $properties['name'] ?? '';
         $this->description = $properties['description'] ?? '';
-        $this->location = $properties['location'] ?? '';
+        $this->location_id = (int)($properties['location_id'] ?? 0); // Store location ID
         $this->type = $properties['type'] ?? '';
         $this->date = $properties['date'] ?? '';
     }
@@ -59,7 +63,7 @@ class Event
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
-            'location' => $this->location,
+            'location' => $this->get_location(),
             'type' => $this->type,
             'date' => $this->date
         ]);
@@ -107,7 +111,7 @@ class Event
     }
 
     // Add an event
-    static public function add_event(string $name, string $description, string $location, string $type, string $date): bool
+    static public function add_event(string $name, string $description, int $location_id, string $type, string $date): bool
     {
         // Check if event already exists
         global $configs;    
@@ -116,8 +120,8 @@ class Event
         // Use num_rows to check if there are no results
         if ($checkEvent && $checkEvent->num_rows == 0) {  
             // Insert the new event
-            return run_query("INSERT INTO $configs->DB_NAME.$configs->DB_EVENTS_TABLE (`name`, `description`, `location`, `type`, `date`) VALUES (?, ?, ?, ?, ?)", 
-                [$name, $description, $location, $type, $date], true);
+            return run_query("INSERT INTO $configs->DB_NAME.$configs->DB_EVENTS_TABLE (`name`, `description`, `location_id`, `type`, `date`) VALUES (?, ?, ?, ?, ?)", 
+                [$name, $description, $location_id, $type, $date], true);
         }
     
         return false; // Return false if event already exists

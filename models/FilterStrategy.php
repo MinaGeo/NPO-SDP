@@ -72,16 +72,17 @@ class FilterByLocationStrategy implements IFilter
     public function filter(array $events): array
     {
         if (empty($this->location)) {
-            return $events; 
+            return $events;
         }
 
         return array_filter($events, function($event) {
-            return $event->get_location() === $this->location;
+            $location = $event->get_location();
+            // Extract the governorate part of the location string
+            $governorate = trim(substr($location, strpos($location, ',') + 1));
+            return strcasecmp($governorate, $this->location) == 0;
         });
     }
 }
-
-
 
 
 
