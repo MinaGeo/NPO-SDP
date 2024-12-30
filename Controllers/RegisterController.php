@@ -19,12 +19,12 @@ class RegistrationProxy implements RegistrationService {
             echo json_encode(['success' => false, 'message' => 'Invalid input parameters']);
             exit;
         }
-        // Additional checks can be added here (e.g., rate limiting, email verification)
+       
         return $this->realService->register($userData);
     }
 
     private function isValidInput(array $userData): bool {
-        // More robust input validation (example)
+        // More robust input validation 
         if (empty($userData['firstName']) || empty($userData['lastName']) || empty($userData['email']) || empty($userData['password'])) {
             return false;
         }
