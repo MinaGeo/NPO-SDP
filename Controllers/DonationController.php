@@ -4,6 +4,8 @@ require_once './models/DonationModel.php';
 require_once './models/DonationClasses.php';
 require_once './models/PaymentClasses.php';
 require_once './views/DonationView.php';
+require_once './models/MonetaryDonationProcessor.php';
+require_once './models/NonMonetaryDonationProcessor.php';
 
 $configs = require "server-configs.php";
 
@@ -31,14 +33,15 @@ class DonationController implements IControl
     
                 // Initialize the donation context based on the donation type
                 if ($donationType === 'monetary') {
-                    $donationContext = new DonationContext(new MonetaryDonation($donationAmount), $donationAmount);
+                    $processor = new MonetaryDonationProcessor($donationAmount);
                 } else {
                     $paymentType = '';
-                    $donationContext = new DonationContext(new NonMonetaryDonation($donatedItem), 0.0, $donatedItem);
+                    $processor = new NonMonetaryDonationProcessor($donatedItem);
                 }
     
                 // Process the donation
-                $donationContext->doDonation();
+                $processor->processDonation();
+
                 // Initialize the payment context based on the payment type
                 if ($paymentType === 'paypal') {
                     $paypalEmail = $_POST['paypalEmail'];
