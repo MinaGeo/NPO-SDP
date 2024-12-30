@@ -101,22 +101,24 @@ class VolunteerEvent
 
         // Query to get events related to a specific volunteer by filtering with volunteer_id
         $dbName = $configs->DB_NAME;
-        $query = "
-            SELECT e.id, e.name, e.description, e.location, e.type, e.date
-            FROM {$dbName}.event e
-            JOIN {$dbName}.volunteer_events ve ON e.id = ve.event_id
-            WHERE ve.volunteer_id = ?
-        ";
+        $query = " 
+            SELECT e.id, e.name, e.description, lh.id as location_id, e.type, e.date, pl.name as parent_location, cl.name as child_location 
+            FROM {$dbName}.event e 
+            JOIN {$dbName}.volunteer_events ve ON e.id = ve.event_id 
+            JOIN {$dbName}.location_hierarchy lh ON e.location_id = lh.id 
+            JOIN {$dbName}.location pl ON lh.parent_id = pl.id 
+            JOIN {$dbName}.location cl ON lh.child_id = cl.id WHERE ve.volunteer_id = ? ";
 
         // Fetch results
         $stmt = run_select_query($query, [$volunteerId]);
 
         if ($stmt && $stmt instanceof mysqli_result) {
             $rows = $stmt->fetch_all(MYSQLI_ASSOC);
-
             $eventVolunteerIterator = new itemIterator($rows);
             while ($eventVolunteerIterator->hasNext()) {
-                $event = Event::create($eventVolunteerIterator->next());
+                  $row = $eventVolunteerIterator->next();
+                  $row['location'] = $row['child_location'] . ", " . $row['parent_location'];
+                $event = Event::create($row);
                 $events[] = $event;
             }
         } else {

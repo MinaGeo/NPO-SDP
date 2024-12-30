@@ -43,19 +43,39 @@
                 </div>
 
                 <?php
-                $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Tanta', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Qena', 'Shubra', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Dakahlia', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh', 'Red Sea', 'North Sinai', 'South Sinai'];
+                $governorates = ['Cairo', 'Alexandria', 'Giza', 'Port Said', 'Suez', 'Damietta', 'Mansoura', 'Gharbia', 'Ismailia', 'Minya', 'Luxor', 'Aswan', 'Asyut', 'Beni Suef', 'Fayoum', 'Kafr El Sheikh', 'Sharkia', 'Monufia', 'Beheira', 'Matrouh'];
+                $subLocations = [
+                    'Cairo' => ['Nasr City', 'Maadi', 'Heliopolis', 'Dokki', 'Mohandessin', 'Zamalek', 'Ain Shams', 'Shubra', 'Helwan', 'Abbasiya', 'Sayeda Zeinab', 'Garden City', 'Manial', 'Bulaq', 'Imbaba', 'Manshiyat Naser', 'Dar El Salam', 'El Marg', 'El Matareya', 'El Salam City', 'El Sayeda Aisha', 'El Shorouk', 'El Tagamu El Khames', 'El Waily', 'El Zaytoun', 'El Zawya El Hamra', 'El-Nozha', 'Hadayek El Kobba', 'Helmeyet El-Zaitoun', 'Kasr El Nile', 'Korba', 'Madinet Nasr', 'Masr El Qadima', 'New Cairo', 'Old Cairo', 'Rod El-Farag'],
+                    'Alexandria' => ['Bacos', 'Bolkly', 'Camp Caesar', 'Camp Shezar', 'Cleopatra', 'Dekhela', 'Downtown', 'El Agami', 'El Amreya', 'El Asafra'],
+                    'Giza' => ['6th of October City', 'Agouza', 'Daher', 'Dokki', 'Faisal', 'Giza Square', 'Haram', 'Imbaba', 'Mohandessin', 'Nahia', 'Nasr City', 'Oseem', 'Pyramids', 'Zamalek'],
+                    'Port Said' => ['Port Fouad', 'Port Said'],
+                    'Suez' => ['Ataqah', 'Faisal', 'Ganayen', 'Ganoub', 'Kuwait', 'Suez'],
+                    'Damietta' => ['New Damietta', 'Ras El Bar', 'Zarqa'],
+                    'Mansoura' => ['Talkha', 'Dekernes', 'Aga', 'Sherbin'],
+                    'Gharbia' => ['Tanta', 'Mahalla', 'Zefta', 'Kafr El Zayat'],
+                    'Ismailia' => ['Fayed', 'Qantara'],
+                    'Minya' => ['Maghagha', 'Bani Mazar', 'Samalut'],
+                    'Luxor' => ['Karnak', 'West Bank'],
+                    'Aswan' => ['Kom Ombo', 'Kalabsha'],
+                    'Asyut' => ['Abnub', 'Dairut'],
+                    'Beni Suef' => ['Nasser'],
+                    'Fayoum' => ['Tamiya', 'Yusuf El Sediaq'],
+                    'Kafr El Sheikh' => ['Desouk', 'Fuwwah'],
+                    'Sharkia' => ['Sharkia'],
+                    'Monufia' => ['Monufia'],
+                    'Beheira' => ['Beheira'],
+                    'Matrouh' => ['Matrouh'],
+                ];
                 ?>
-
-                <!-- Event Location (Dropdown with Governorates) -->
-                <div class="input-field col s12">
-                    <select id="eventLocation" name="location" required>
-                        <option value="" disabled selected>Choose Event Location</option>
-                        <?php foreach ($governorates as $governorate): ?>
-                            <option value="<?= htmlspecialchars($governorate) ?>"><?= htmlspecialchars($governorate) ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-
+                <!-- Governorates Dropdown -->
+                <div class="input-field col s12"> <select id="governorateSelect" name="governorate_id" required>
+                        <option value="" disabled selected>Choose Governorate</option> <?php foreach ($governorates as $governorate): ?> <option value="<?= htmlspecialchars($governorate) ?>"><?= htmlspecialchars($governorate) ?></option> <?php endforeach; ?>
+                    </select> <label for="governorateSelect">Governorate</label> </div> 
+                    
+                    <!-- Sub-locations Dropdown -->
+                <div class="input-field col s12"> <select id="subLocationSelect" name="location_id" required>
+                        <option value="" disabled selected>Choose Sub-location</option>
+                    </select> <label for="subLocationSelect">Sub-location</label> </div>
 
                 <!-- Event Date -->
                 <div class="input-field col s12">
@@ -89,16 +109,39 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Initialize Materialize components
             M.AutoInit();
+            // Handle governorate selection change
+            document.getElementById('governorateSelect').addEventListener('change', function() {
+                const selectedGovernorate = this.value;
+                const subLocationSelect = document.getElementById('subLocationSelect');
+
+                // Clear current options
+                subLocationSelect.innerHTML = '<option value="" disabled selected>Choose Sub-location</option>';
+
+                // Populate sub-location dropdown based on selected governorate
+                const subLocations = <?php echo json_encode($subLocations); ?>;
+                if (subLocations[selectedGovernorate]) {
+                    subLocations[selectedGovernorate].forEach(function(subLocation) {
+                        const option = document.createElement('option');
+                        option.value = subLocation;
+                        option.text = subLocation;
+                        subLocationSelect.add(option);
+                    });
+                }
+
+                // Re-initialize the sub-location select with Materialize
+                M.FormSelect.init(subLocationSelect);
+            });
         });
 
         function validateInputs() {
             const name = document.getElementById('eventName').value;
             const description = document.getElementById('eventDescription').value;
-            const location = document.getElementById('eventLocation').value;
+            const governorate = document.getElementById('governorateSelect').value;
+            const location = document.getElementById('subLocationSelect').value;
             const date = document.getElementById('eventDate').value;
             const type = document.getElementById('eventType').value;
 
-            if (!name || !description || !location || !date || !type) {
+            if (!name || !description ||!governorate ||!location || !date || !type) {
                 M.toast({
                     html: 'Please fill in all fields.',
                     classes: 'rounded red'
@@ -129,15 +172,16 @@
             // Gather form data
             const name = document.getElementById('eventName').value;
             const description = document.getElementById('eventDescription').value;
-            const location = document.getElementById('eventLocation').value;
+            const governorate_id = document.getElementById('governorateSelect').value;
+            const location_id = document.getElementById('subLocationSelect').value;
             const date = document.getElementById('eventDate').value;
             const type = document.getElementById('eventType').value;
 
             // Call addEvent function with form data
-            addEvent(name, description, location, type, date);
+            addEvent(name, description,governorate_id, location_id, type, date);
         }
 
-        function addEvent(name, description, location, type, date) {
+        function addEvent(name, description,governorate_id, location_id, type, date) {
             $.ajax({
                 url: 'addEvent',
                 type: 'POST',
@@ -145,7 +189,8 @@
                     addEvent: true,
                     name: name,
                     description: description,
-                    location: location,
+                    governorate_id: governorate_id,
+                    location_id: location_id,
                     type: type,
                     date: date,
                 },

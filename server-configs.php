@@ -22,6 +22,8 @@ return (object) array(
     'DB_EVENTS_TABLE'     => 'event',
     'DB_VOLUNTEER_EVENTS_TABLE' => 'volunteer_events',
     'DB_DONATIONS_TABLE' => 'donations',
+    'DB_LOCATIONS_TABLE' => 'location',
+    'DB_LOCATION_HIERARCHY_TABLE' => 'location_hierarchy',
 
     // Routes
     'ROUTES' => [
