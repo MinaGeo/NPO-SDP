@@ -27,7 +27,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script>
-        function login(loginMethod) {
+        function submitLoginForm(loginMethod) {
             const email = $('#email').val();
             const password = $('#password').val();
 
@@ -46,7 +46,6 @@
                     password: password
                 },
                 success: function(response) {
-                    console.log(response);
                     const res = JSON.parse(response);
                     alert(res['message']);
                     if (res['success']) {
@@ -55,6 +54,7 @@
                 },
                 error: function(xhr, status, error) {
                     console.error("An error occurred:", error);
+                    alert("An error occurred during login.");
                 }
             });
         }
@@ -74,32 +74,16 @@
                         <input type="password" name="password" id="password" class="validate" required>
                     </div>
                     <div class="row center-align">
-                        <button type="button" onclick="login('google')" class="btn-floating btn-large waves-effect waves-light red">
+                        <button type="button" onclick="submitLoginForm('google')" class="btn-floating btn-large waves-effect waves-light red">
                             <img class="logo" src="../assets/google.png" alt="Google Logo" />
                         </button>
-                        <button type="button" onclick="login('facebook')" class="btn-floating btn-large waves-effect waves-light blue">
+                        <button type="button" onclick="submitLoginForm('facebook')" class="btn-floating btn-large waves-effect waves-light blue">
                             <img class="logo" src="../assets/facebook.png" alt="Facebook Logo" />
                         </button>
-                        <button type="button" onclick="login('github')" class="btn-floating btn-large waves-effect waves-light white">
+                        <button type="button" onclick="submitLoginForm('github')" class="btn-floating btn-large waves-effect waves-light white">
                             <img class="logo" src="../assets/github.png" alt="GitHub Logo" />
                         </button>
                     </div>
                     <div class="center-align">
-                        <button type="button" class="btn waves-effect waves-light" onclick="login('database')">
-                            <img class="logo" src="../assets/web.png" alt="Login Logo" />
-                            Login with Database
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-        <div class="center-align" style="margin-top: 20px;">
-            <p style="font-size: small;">
-                Don't have an account?
-                <a href="register">Create a new account</a>
-            </p>
-        </div>
-    </div>
-</body>
-
-</html>
+                        <button type="button" class="btn waves-effect waves-light" onclick="submitLoginForm('database')">
+                            <img class="logo" src="../assets/web.png" alt="
