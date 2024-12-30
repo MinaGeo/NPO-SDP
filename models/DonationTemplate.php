@@ -3,14 +3,14 @@
 abstract class DonationTemplate
 {
     // Template Design Pattern
-    public function processDonation()
+    public function processDonation(string $donatorName)
     {
         $this->processPayment();
-        $this->sendReceipt();
+        $this->sendReceipt($donatorName);
     }
 
     // Abstract methods
     abstract protected function processPayment();
-    abstract protected function sendReceipt();
+    abstract protected function sendReceipt(string $donatorName);
 }
 ?>

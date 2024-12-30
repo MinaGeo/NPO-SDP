@@ -33,41 +33,14 @@ class DonationController implements IControl
     
                 // Initialize the donation context based on the donation type
                 if ($donationType === 'monetary') {
-                    $processor = new MonetaryDonationProcessor($donationAmount);
+                    $processor = new MonetaryDonationProcessor($donatorName, $donationType, $donationAmount, $paymentType);
                 } else {
-                    $paymentType = '';
-                    $processor = new NonMonetaryDonationProcessor($donatedItem);
+                    $processor = new NonMonetaryDonationProcessor($donatorName, $donationType, $donatedItem);
                 }
     
                 // Process the donation
-                $processor->processDonation();
+                $processor->processDonation($donatorName);
 
-                // Initialize the payment context based on the payment type
-                if ($paymentType === 'paypal') {
-                    $paypalEmail = $_POST['paypalEmail'];
-                    $paypalPassword = $_POST['paypalPassword'];
-                    $paymentContext = new PaymentContext(new PayByPaypal($paypalEmail, $paypalPassword));
-                } else {
-                    $cardNumber = $_POST['cardNumber'];
-                    $cvv = $_POST['cvv'];
-                    $expiryDate = $_POST['expiryDate'];
-                    $paymentContext = new PaymentContext(new PayByCreditCard($cardNumber, $cvv, $expiryDate));
-                }
-                
-                // Attempt payment processing
-                $paymentSuccess = $paymentContext->doPayment($donationAmount);
-    
-                if ($paymentSuccess) {
-                    $result = Donation::saveDonation($donatorName, $donationType, $donationAmount, $donatedItem, $paymentType);
-                    if ($result) {
-                        echo json_encode(['success' => true]);
-                    } else {
-                        echo json_encode(['success' => false, 'message' => 'Failed to save donation details']);
-                    }
-                } else {
-                    // If payment failed
-                    echo json_encode(['success' => false, 'message' => 'Payment failed']);
-                }
             } else {
                 // Missing parameters
                 echo json_encode(['success' => false, 'message' => 'Missing required fields']);

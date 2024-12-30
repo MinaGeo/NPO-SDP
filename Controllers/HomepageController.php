@@ -14,6 +14,7 @@ class HomepageController implements IControl
     public function logout()
     {
         $_SESSION['USER_ID'] = -1;
+        $_SESSION['USER_EMAIL'] = null;
         $this -> show();
     }
 }
