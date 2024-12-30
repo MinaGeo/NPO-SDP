@@ -4,109 +4,121 @@ require_once './views/UserView.php';
 require_once 'IControl.php';
 
 interface RegistrationService {
-    public function register(array $userData);
+    public function register(array $userData): bool;
 }
 
 class RegistrationProxy implements RegistrationService {
-    private $realService;
+    private RegistrationService $realService;
 
     public function __construct() {
         $this->realService = new RealRegistrationService();
     }
 
-    public function register(array $userData) {
+    public function register(array $userData): bool {
         if (!$this->isValidInput($userData)) {
-            echo json_encode(['success' => false, 'message' => 'Invalid input parameters']);
-            exit;
+            $this->respondWithError('Invalid input parameters', 400);
+            return false; // Important: Return false on error
         }
 
-        // Rate Limiting 
         $ip = $_SERVER['REMOTE_ADDR'];
-        if (isset($_SESSION['registration_attempts'][$ip]) && $_SESSION['registration_attempts'][$ip]['count'] >= 3 && (time() - $_SESSION['registration_attempts'][$ip]['last_attempt']) < 60) { //3 attempts in 60 seconds
-            echo json_encode(['success' => false, 'message' => 'Too many registration attempts. Please try again after 60 seconds.']);
-            exit;
-        }
+        $this->handleRateLimiting($ip);
 
-        // Email Verification 
-        if (isset($_POST['email']) && !$this->isEmailAvailable($_POST['email'])) {
-            echo json_encode(['success' => false, 'message' => 'This email is already in use.']);
-            exit;
+        if (!$this->isEmailAvailable($userData['email'])) {
+            $this->respondWithError('This email is already in use.', 400);
+            return false;
         }
 
         $result = $this->realService->register($userData);
 
-        if ($result === false) { // Registration failed
-            if (!isset($_SESSION['registration_attempts'][$ip])) {
-                $_SESSION['registration_attempts'][$ip] = ['count' => 0, 'last_attempt' => time()];
-            }
-            $_SESSION['registration_attempts'][$ip]['count']++;
-            $_SESSION['registration_attempts'][$ip]['last_attempt'] = time();
+        if (!$result) {
+            $this->incrementRegistrationAttempts($ip);
         } else {
-            unset($_SESSION['registration_attempts'][$ip]); // Reset on successful registration
+            $this->resetRegistrationAttempts($ip);
         }
+
         return $result;
     }
 
     private function isValidInput(array $userData): bool {
-        if (empty($userData['firstName']) || empty($userData['lastName']) || empty($userData['email']) || empty($userData['password'])) {
-            return false;
-        }
-        if (strlen($userData['firstName']) > 255 || strlen($userData['lastName']) > 255 || strlen($userData['email']) > 255 || strlen($userData['password']) < 6 ) {
-            return false;
-        }
-
-        if (!filter_var($userData['email'], FILTER_VALIDATE_EMAIL)) {
-            return false;
-        }
-        return true;
+        return !empty($userData['firstName']) && !empty($userData['lastName']) && !empty($userData['email']) && !empty($userData['password']) &&
+               strlen($userData['firstName']) <= 255 && strlen($userData['lastName']) <= 255 && strlen($userData['email']) <= 255 && strlen($userData['password']) >= 6 &&
+               filter_var($userData['email'], FILTER_VALIDATE_EMAIL);
     }
 
-    private function isEmailAvailable($email) {
-        $passwordHash = md5("someRandomStringThatWontBeUsed"); 
-        return !User::get_by_email_and_password_hash($email,$passwordHash);
+    private function handleRateLimiting(string $ip): void {
+        if (isset($_SESSION['registration_attempts'][$ip]) && $_SESSION['registration_attempts'][$ip]['count'] >= 3 && (time() - $_SESSION['registration_attempts'][$ip]['last_attempt']) < 60) {
+            $this->respondWithError('Too many registration attempts. Please try again after 60 seconds.', 429);
+        }
+    }
+
+    private function incrementRegistrationAttempts(string $ip): void {
+        if (!isset($_SESSION['registration_attempts'][$ip])) {
+            $_SESSION['registration_attempts'][$ip] = ['count' => 0, 'last_attempt' => time()];
+        }
+        $_SESSION['registration_attempts'][$ip]['count']++;
+        $_SESSION['registration_attempts'][$ip]['last_attempt'] = time();
+    }
+
+    private function resetRegistrationAttempts(string $ip): void {
+        unset($_SESSION['registration_attempts'][$ip]);
+    }
+
+    private function isEmailAvailable(string $email): bool {
+        $passwordHash = password_hash("someRandomStringThatWontBeUsed",PASSWORD_DEFAULT); //This will not be used in query
+        return !User::get_by_email_and_password_hash($email, $passwordHash);
+    }
+
+    private function respondWithError(string $message, int $statusCode): void {
+        http_response_code($statusCode);
+        echo json_encode(['success' => false, 'message' => $message]);
+        exit;
     }
 }
 
 class RealRegistrationService implements RegistrationService {
-    public function register(array $user_data){
-         if (User::get_by_email_and_password_hash($user_data['email'], $user_data['passwordHash'])) {
-            return false; // Indicate failure
-        } 
-        else {
+    public function register(array $user_data): bool {
+        if (User::get_by_email_and_password_hash($user_data['email'], $user_data['passwordHash'])) {
+            return false;
+        } else {
             User::create_new_user($user_data);
-            return true; // Indicate success
+            return true;
         }
     }
 }
-class RegisterController implements IControl
-{
-    public function show()
-    {
+
+class RegisterController implements IControl {
+    public function show() {
         $userView = new UserView();
         $userView->showRegister();
     }
 
-    public function validateRegister()
-    {
+    public function validateRegister() {
         if (isset($_POST['registerFlag'])) {
             if (!empty($_POST['firstName']) && !empty($_POST['lastName']) && !empty($_POST['email']) && !empty($_POST['password'])) {
                 $user_data = [
                     'firstName' => $_POST['firstName'],
                     'lastName' => $_POST['lastName'],
                     'email' => $_POST['email'],
-                    'passwordHash' => md5($_POST['password'])
+                    'passwordHash' => password_hash($_POST['password'], PASSWORD_DEFAULT) // Use password_hash
                 ];
 
                 $registrationService = new RegistrationProxy();
-                $registrationService->register($user_data);
+                $result = $registrationService->register($user_data);
+
+                if ($result)
+                {
+                    echo json_encode(['success' => true, 'message' => 'Registration successful!']);
+                }
+                else
+                {
+                    echo json_encode(['success' => false, 'message' => 'Registration failed!']);
+                }
 
             } else {
-                echo json_encode([
-                    'success' => false,
-                    'message' => 'Missing data!'
-                ]);
-                exit;
+                http_response_code(400);
+                echo json_encode(['success' => false, 'message' => 'Missing data!']);
             }
+            exit;
         }
     }
 }
