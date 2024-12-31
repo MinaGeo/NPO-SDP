@@ -10,6 +10,7 @@ $configs = require "server-configs.php";
 class DonationController implements IControl
 {
     private $donationView;
+    private Donation $donation;
     // Show donation page
     public function show()
     {
@@ -17,8 +18,20 @@ class DonationController implements IControl
         $this->donationView->showDonation();
     }
 
+    public function showProcessing()
+    {
+        $this->donationView = new DonationView();
+        $this->donationView->showProcessing();
+    }
+
+    public function showSuccess()
+    {
+        $this->donationView = new DonationView();
+        $this->donationView->showSuccess();
+    }
+
     // Process donation
-    public function processDonation()
+    public function collectDonationData()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['donationFlag'])) {
             // Ensure all necessary parameters are present
@@ -28,62 +41,80 @@ class DonationController implements IControl
                 $donationAmount = isset($_POST['amount']) ? (float)$_POST['amount'] : 0.0;
                 $donatedItem = $_POST['donatedItem'] ?? '';
                 $paymentType = $_POST['paymentType'];
-    
-                // Initialize the donation context based on the donation type
-                // if ($donationType === 'monetary') {
-                //     // $donationContext = new DonationContext(new MonetaryDonation($donationAmount), $donationAmount);
-                // } else {
-                //     $paymentType = '';
-                //     $donationContext = new DonationContext(new NonMonetaryDonation($donatedItem), 0.0, $donatedItem);
-                // }
-    
-                // Process the donation
-                // $donationContext->doDonation();
 
-                // Initialize the payment context based on the payment type
-                if ($paymentType === 'paypal') {
-                    $paypalEmail = $_POST['paypalEmail'];
-                    $paypalPassword = $_POST['paypalPassword'];
-                    $paymentContext = new PaymentContext(new PayByPaypal($paypalEmail, $paypalPassword));
-                } 
-                else {
-                    $cardNumber = $_POST['cardNumber'];
-                    $cvv = $_POST['cvv'];
-                    $expiryDate = $_POST['expiryDate'];
-                    $paymentContext = new PaymentContext(new PayByCreditCard($cardNumber, $cvv, $expiryDate));
-                }
+                /* ---------------------------------------------------------------  */
+                /*                    Getting Donation Data State                   */
+                /* ---------------------------------------------------------------  */
+                // Initialize the donation object
+                $this->donation = new Donation();
+
+                $this->donation->setDonatorId($_SESSION['USER_ID']);
+                $this->donation->setDonatedItem($donatedItem);
+                $this->donation->setDonationType($donationType);
+                $this->donation->setDonationAmount($donationAmount);
+                $this->donation->setPaymentType($paymentType);
                 
-                // Attempt payment processing
-                $paymentSuccess = $paymentContext->doPayment($donationAmount);
-    
-                if ($paymentSuccess) {
-                    // Store donation in database
-                    $donationData = [
-                        'donatorId' => $_SESSION['USER_ID'],
-                        'donationType' => $donationType,
-                        'donationAmount' => $donationAmount,
-                        'donatedItem' => $donatedItem,
-                        'paymentType' => $paymentType
-                    ];
-                    $result = Donation::create_new_donation($donationData);
-                    if ($result) {
-                        echo json_encode(['success' => true]);
-                    } 
-                    else {
-                        echo json_encode(['success' => false, 'message' => 'Failed to save donation details']);
-                    }
-                } 
-                else {
-                    // If payment failed
-                    echo json_encode(['success' => false, 'message' => 'Payment failed']);
-                }
-            } 
-            else {
-                // Missing parameters
-                echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+                $this->donation->executeState(); 
+                $this->donation->nextState();
+                
+                
+                // $this->donation->executeState();
+
+                /* ---------------------------------------------------------------  */
+                /*                    Processing Payment State                      */
+                /* ---------------------------------------------------------------  */
+                // if ($this->donation->getPaymentType() === 'paypal') {
+                //     $donationStrategy = new MonetaryDonation($donationAmount);
+                //     $donationStrategy->setPaypalPayment($_POST['paypalEmail'], $_POST['paypalPassword']);
+                //     $this->donation->setDonationStrategy($donationStrategy);
+                // } 
+                // else {
+                //     $donationStrategy = new MonetaryDonation($donationAmount);
+                //     $donationStrategy->setCreditCardPayment($_POST['cardNumber'], $_POST['cvv'], $_POST['expiryDate']);
+                //     $this->donation->setDonationStrategy($donationStrategy);
+                // }
+                // $this->donation->executeState();
+
+                /* ---------------------------------------------------------------  */
+                /*                    Donation Completed State                      */
+                /* ---------------------------------------------------------------  */
+
+                //     if ($paymentSuccess) {
+                //         // Store donation in database
+                //         $donationData = [
+                //             'donatorId' => $_SESSION['USER_ID'],
+                //             'donationType' => $donationType,
+                //             'donationAmount' => $donationAmount,
+                //             'donatedItem' => $donatedItem,
+                //             'paymentType' => $paymentType
+                //         ];
+
+                //         $result = Donation::create_new_donation($donationData);
+
+                //         if ($result) {
+                //             echo json_encode(['success' => true]);
+                //         } 
+                //         else {
+                //             echo json_encode(['success' => false, 'message' => 'Failed to save donation details']);
+                //         }
+                //     } 
+                //     else {
+                //         // If payment failed
+                //         echo json_encode(['success' => false, 'message' => 'Payment failed']);
+                //     }
+                // } 
+                // else {
+                //     // Missing parameters
+                //     echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+                // }
             }
+            exit; // End the request
         }
-        exit; // End the request
+    }
+
+    public function executeDonationState()
+    {
+        $this->donation->executeState();
+        $this->donation->nextState();
     }
 }
-?>

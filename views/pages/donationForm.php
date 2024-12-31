@@ -217,7 +217,7 @@
 
             // Example of sending the data to the server (using Ajax for submission)
             $.ajax({
-                url: 'processDonation',
+                url: 'collectDonationData',
                 type: 'POST',
                 data: {
                     donationFlag: true,
@@ -233,8 +233,22 @@
                     expiryDate: expiryDate
                 },
                 success: function(response) {
-                    alert("Thank you for your donation!");
-                    location.reload();
+                    // alert("Thank you for your donation!");
+                    // location.reload();
+                    // console.log(response);
+                    const res = JSON.parse(response);
+                    // alert(res['message']);
+                    if (res['success']) {
+                        // location.href = 'home';
+                        alert('SUCCESS');
+                        location.href = "donationProcessing";
+                    }
+                    else{
+                        alert('FAILED');
+                    }
+                    // alert("We will process your donation!");
+                    
+                    // location.href('donationProcessing');
                 },
                 error: function(xhr, status, error) {
                     console.error("An error occurred:", error);

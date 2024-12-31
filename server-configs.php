@@ -60,7 +60,10 @@ return (object) array(
         '/removeMyEvent' => 'EventController@removeMyEvent',
         //-----------------------DONATION----------------------------//
         '/donation' => 'DonationController@show',
-        '/processDonation' =>'DonationController@processDonation'
-
+        '/donationProcessing' => 'DonationController@showProcessing',
+        '/donationSuccess' => 'DonationController@showSuccess',
+        '/collectDonationData' => 'DonationController@collectDonationData',
+        '/executeDonationState' => 'DonationController@executeDonationState',
+        '/processDonation' =>'DonationController@processDonation',
     ],
 );
