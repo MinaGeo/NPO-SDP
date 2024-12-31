@@ -22,6 +22,9 @@ return (object) array(
     'DB_EVENTS_TABLE'     => 'event',
     'DB_VOLUNTEER_EVENTS_TABLE' => 'volunteer_events',
     'DB_DONATIONS_TABLE' => 'donations',
+    'DB_PAYMENTS_TABLE'   => 'payments',
+    'DB_CREDIT_TABLE'     => 'credit',
+    'DB_PAYPAL_TABLE'     => 'paypal',
 
     // Routes
     'ROUTES' => [

@@ -20,12 +20,12 @@ class DonationStateComplete implements IDonationState
         $mailFacade = new MailFacade();
         $mailFacade->sendEmail(
             $_SESSION['USER_EMAIL'],
-            '/assets/homepage-image.jpg',
+            '',
             'Donation Complete',
             'Thank you for your donation'
         );
         // echo "Donation is complete. <br>";
-        echo json_encode(['success' => true]);
+        // echo json_encode(['success' => true]);
         exit;
     }
 

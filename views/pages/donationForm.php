@@ -241,7 +241,7 @@
                     if (res['success']) {
                         // location.href = 'home';
                         alert('SUCCESS');
-                        location.href = "donationProcessing";
+                        //location.href = "donationProcessing";
                     }
                     else{
                         alert('FAILED');

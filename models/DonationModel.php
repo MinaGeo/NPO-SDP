@@ -3,22 +3,12 @@ declare(strict_types=1);
 ob_start();
 require_once "./db_setup.php";
 require_once "./models/Donation_State_Interfaces.php"; 
-// require_once "./models/Donation_State_Pending.php";
 require_once "./models/Donation_State_GetData.php";
 require_once "./models/PaymentClasses.php";
 ob_end_clean();
 
 class Donation{
     /* ------------------- Attributes -------------------  */
-    // Attributes
-    // id INT AUTO_INCREMENT PRIMARY KEY,
-    // donatorId INT NOT NULL, 
-    // donationtype ENUM('monetary', 'nonMonetary') NOT NULL,
-    // donationAmount DOUBLE,
-    // donatedItem VARCHAR(100),
-    // paymentType ENUM('paypal', 'creditCard'),
-    // donationTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
     private $id;
     // private string $itemName;
     private $donatorId;
@@ -27,6 +17,12 @@ class Donation{
     private $donatedItem;
     private $paymentType;
     private $donationTimestamp;
+    private $cardNumber;
+    private $cvv;
+    private $expiryDate;
+    private $paypalEmail;
+    private $paypalPassword;
+
 
     // Donation Type Strategies
     private IDonateStrategy $donationStrategy;
@@ -41,7 +37,7 @@ class Donation{
         $this->state = new DonationGetDataState();
     }
 
-    // Getters
+    /* ------------------- Getters -------------------  */
     public function getId()
     {
         return $this->id;
@@ -77,7 +73,32 @@ class Donation{
         return $this->donatedItem;
     }
 
-    // Setters
+    public function getCardNumber()
+    {
+        return $this->cardNumber;
+    }
+
+    public function getCvv()
+    {
+        return $this->cvv;
+    }
+
+    public function getExpiryDate()
+    {
+        return $this->expiryDate;
+    }
+
+    public function getPaypalEmail()
+    {
+        return $this->paypalEmail;
+    }
+
+    public function getPaypalPassword()
+    {
+        return $this->paypalPassword;
+    }
+
+    /* ------------------- Setters -------------------  */
     public function setId($id): void
     {
         $this->id = $id;
@@ -113,6 +134,31 @@ class Donation{
         $this->donatedItem = $donatedItem;
     }
 
+    public function setCardNumber($cardNumber): void
+    {
+        $this->cardNumber = $cardNumber;
+    }
+
+    public function setCvv($cvv): void
+    {
+        $this->cvv = $cvv;
+    }
+
+    public function setExpiryDate($expiryDate): void
+    {
+        $this->expiryDate = $expiryDate;
+    }
+
+    public function setPaypalEmail($paypalEmail): void
+    {
+        $this->paypalEmail = $paypalEmail;
+    }
+
+    public function setPaypalPassword($paypalPassword): void
+    {
+        $this->paypalPassword = $paypalPassword;
+    }
+
     /* ------------------- State Management Functions -------------------  */
     public function setState(IDonationState $state):void{
         $this->state = $state;
@@ -133,6 +179,10 @@ class Donation{
     /* ------------------- Donation Type Strategy -------------------  */
     public function setDonationStrategy(IDonateStrategy $strategy):void{
         $this->donationStrategy = $strategy;
+    }
+
+    public function getDonationStrategy():IDonateStrategy{
+        return $this->donationStrategy;
     }
 
     public function processDonation():void{

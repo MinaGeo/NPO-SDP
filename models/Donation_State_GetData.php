@@ -17,20 +17,15 @@ class DonationGetDataState implements IDonationState
         ];
 
         $result = Donation::create_new_donation($donationData);
-
-        if ($result) {
-            echo json_encode(['success' => true]);
-        } 
-        else {
-            echo json_encode(['success' => false, 'message' => 'Failed to save donation details']);
-        }    
-        exit;
+        echo json_encode(['success' => $result]);
+    
+        // exit;
     }
 
     public function next(Donation $donation): void
     {
         // $donation->setState(new DonationStateProcess());
-        $donation->setState(new DonationStateComplete());
+        $donation->setState(new DonationStateProcess());
     }
 
     public function previous(Donation $donation): void

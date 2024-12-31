@@ -10,7 +10,6 @@ interface IDonateStrategy {
 
 // MonetaryDonation class for monetary donations, implementing IDonateStrategy
 class MonetaryDonation implements IDonateStrategy {
-    // private float $amount;
     private IPay $paymentStrategy;
     private String $cardNumber;
     private String $cvv;
@@ -36,8 +35,15 @@ class MonetaryDonation implements IDonateStrategy {
     }
 
     public function processDonation(Donation $donation): void {
-        $paymentContext = new PaymentContext($this->paymentStrategy);
-        $paymentContext->doPayment($donation->getDonationAmount());
+        if($donation->getPaymentType() === 'paypal'){
+            $this->setPaypalPayment($donation->getPaypalEmail(), $donation->getPaypalPassword());
+        } 
+        else if($donation->getPaymentType() === 'creditCard'){
+            $this->setCreditCardPayment($donation->getCardNumber(), $donation->getCvv(), $donation->getExpiryDate());
+        }
+        $paymentContext = new PaymentContext();
+        $paymentContext->setStrategy($this->paymentStrategy);
+        $paymentContext->doPayment($donation->getDonationAmount(), "Monetary Donation Payment");
     }
 }
 
@@ -51,28 +57,4 @@ class NonMonetaryDonation implements IDonateStrategy {
     }
 }
 
-// DonationContext manages the selected donation strategy and donation details
-// class DonationContext {
-//     private DateTime $date;
-//     private float $amount;
-//     private string $donatedItem;
-//     private IDonateStrategy $donationStrategy;
-
-//     public function __construct(IDonateStrategy $strategy, float $amount = 0.0, string $donatedItem = "") {
-//         $this->donationStrategy = $strategy;
-//         $this->date = new DateTime(); // current date by default
-//         $this->amount = $amount;
-//         $this->donatedItem = $donatedItem;
-//     }
-
-//     // Set a new donation strategy
-//     public function setDonateStrategy(IDonateStrategy $strategy): void {
-//         $this->donationStrategy = $strategy;
-//     }
-
-//     // Execute the donation strategy's process
-//     public function doDonation(): void {
-//         $this->donationStrategy->processDonation();
-//     }
-// }
-
+?>
