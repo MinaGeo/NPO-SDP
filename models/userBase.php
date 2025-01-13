@@ -6,7 +6,7 @@ ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
 
-require_once "./models/IObserver.php";
+require_once "./models/notifications/IObserver.php";
 require_once "propertyIterator.php";
 // Properties: id, firstName, lastName, email, passwordHash (MD5)
 

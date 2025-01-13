@@ -1,6 +1,6 @@
 <?php
 
-require_once "./models/IEventSubject.php";
+require_once "IEventSubject.php";
 
 
 class EventSubject implements ISubject {

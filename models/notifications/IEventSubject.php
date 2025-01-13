@@ -1,6 +1,6 @@
     <?php
 
-    require_once "./models/IObserver.php";
+    require_once "IObserver.php";
     interface ISubject
     {
         // Attach an observer to the subject.

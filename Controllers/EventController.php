@@ -10,9 +10,9 @@ require_once './models/filter/FilteringContext.php';
 require_once './models/sort/ISort.php';
 require_once './models/sort/SortStrategy.php';
 require_once './models/sort/SortingContext.php';
-require_once "./models/IEventSubject.php";
-require_once "./models/EventSubject.php";
-require_once "./models/NotificationObserver.php";
+require_once "./models/notifications/IEventSubject.php";
+require_once "./models/notifications/EventSubject.php";
+require_once "./models/notifications/NotificationObserver.php";
 require_once './views/EventView.php';
 
 class EventController
