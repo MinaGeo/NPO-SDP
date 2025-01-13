@@ -1,11 +1,11 @@
 <?php
 // Include necessary files and configurations
-require_once './models/DonationModel.php';
-require_once './models/DonationClasses.php';
+require_once './models/donations/DonationModel.php';
+require_once './models/donations/DonationClasses.php';
 require_once './models/PaymentClasses.php';
 require_once './views/DonationView.php';
-require_once './models/MonetaryDonationProcessor.php';
-require_once './models/NonMonetaryDonationProcessor.php';
+require_once './models/donations/MonetaryDonationProcessor.php';
+require_once './models/donations/NonMonetaryDonationProcessor.php';
 
 $configs = require "server-configs.php";
 

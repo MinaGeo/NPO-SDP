@@ -2,14 +2,14 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once "./models/EventModel.php";
+require_once "./models/events/EventModel.php";
 require_once './models/VolunteerEvent.php';
-require_once './models/IFilter.php';
-require_once './models/FilterStrategy.php';
-require_once './models/FilteringContext.php';
-require_once './models/ISort.php';
-require_once './models/SortStrategy.php';
-require_once './models/SortingContext.php';
+require_once './models/filter/IFilter.php';
+require_once './models/filter/FilterStrategy.php';
+require_once './models/filter/FilteringContext.php';
+require_once './models/sort/ISort.php';
+require_once './models/sort/SortStrategy.php';
+require_once './models/sort/SortingContext.php';
 require_once "./models/IEventSubject.php";
 require_once "./models/EventSubject.php";
 require_once "./models/NotificationObserver.php";

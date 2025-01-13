@@ -2,8 +2,8 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-require_once "./models/ShopModel.php";
-require_once "./models/CartModel.php";
+require_once "./models/shop/ShopModel.php";
+require_once "./models/shop/CartModel.php";
 require_once "./views/CartView.php";
 require_once "./models/PaymentClasses.php";
 class CartController implements IControl

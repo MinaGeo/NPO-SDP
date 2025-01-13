@@ -5,8 +5,8 @@ declare(strict_types=1);
 ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
-require_once "./models/CartDecorater.php";
-require_once "itemIterator.php";
+require_once "CartDecorater.php";
+require_once "./models/itemIterator.php";
 class ShopItem
 {
     // Define properties

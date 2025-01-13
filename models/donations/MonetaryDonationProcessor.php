@@ -1,6 +1,6 @@
 <?php
-require_once 'models/DonationTemplate.php';
-require_once 'models/DonationModel.php';
+require_once 'DonationTemplate.php';
+require_once 'DonationModel.php';
 require_once 'models/NotificationToMailAdapter.php';
 
 class MonetaryDonationProcessor extends DonationTemplate
