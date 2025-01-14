@@ -98,7 +98,8 @@ class DonationStateComplete implements IDonationState
         $mailFacade = new MailFacade();
         $mailFacade->sendEmail(
             $_SESSION['USER_EMAIL'],
-            './assets/thank you.jpg',
+            // './assets/thank you.jpg',
+            '',
             'Donation Complete',
             $emailContent
         );
