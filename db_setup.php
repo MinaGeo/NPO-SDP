@@ -123,17 +123,49 @@ class Database
                 FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE
             )");
 
-
         $this->conn->query("               
-            CREATE TABLE IF NOT EXISTS `donations` (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                donator_name VARCHAR(100) NOT NULL,
-                donation_type ENUM('monetary', 'nonMonetary') NOT NULL,
-                donation_amount DOUBLE,
-                donated_item VARCHAR(255),
-                payment_type ENUM('paypal', 'creditCard'),
-                donation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )");
+        CREATE TABLE IF NOT EXISTS `donations` (
+            id INT AUTO_INCREMENT PRIMARY KEY,
+            donatorId INT NOT NULL, 
+            donationtype ENUM('monetary', 'nonMonetary') NOT NULL,
+            donationAmount DOUBLE,
+            donatedItem VARCHAR(100),
+            paymentType ENUM('paypal', 'creditCard'),
+            donationTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
+
+        // Payment Table
+        $this->conn->query("               
+        CREATE TABLE IF NOT EXISTS `payments` (
+            paymentId INT AUTO_INCREMENT PRIMARY KEY,
+            userId INT NOT NULL, 
+            amount DOUBLE,
+            description VARCHAR(100),
+            paymentType ENUM('paypal', 'creditCard'),
+            paymentTimestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )");
+
+        // Paypal Strategy Table
+        $this->conn->query("               
+        CREATE TABLE IF NOT EXISTS `paypal` (
+            paypalId INT AUTO_INCREMENT PRIMARY KEY,
+            paymentId INT NOT NULL,
+            paypalEmail VARCHAR(100),
+            paypalPassword VARCHAR(100),
+            FOREIGN KEY (paymentId) REFERENCES `npo`.`payments`(paymentId) on DELETE CASCADE 
+        )");
+
+        // Credit Card Strategy Table
+        $this->conn->query("               
+        CREATE TABLE IF NOT EXISTS `credit` (
+            creditId INT AUTO_INCREMENT PRIMARY KEY,
+            paymentId INT NOT NULL,
+            cardNumber VARCHAR(100),
+            cvv VARCHAR(100),
+            expiryDate VARCHAR(100),
+            FOREIGN KEY (paymentId) REFERENCES `npo`.`payments`(paymentId) on DELETE CASCADE
+        )");
+
     }
 
     // Method to populate data

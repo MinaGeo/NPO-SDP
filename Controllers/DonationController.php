@@ -12,6 +12,7 @@ $configs = require "server-configs.php";
 class DonationController implements IControl
 {
     private $donationView;
+    private Donation $donation;
     // Show donation page
     public function show()
     {
@@ -19,8 +20,20 @@ class DonationController implements IControl
         $this->donationView->showDonation();
     }
 
+    public function showProcessing()
+    {
+        $this->donationView = new DonationView();
+        $this->donationView->showProcessing();
+    }
+
+    public function showSuccess()
+    {
+        $this->donationView = new DonationView();
+        $this->donationView->showSuccess();
+    }
+
     // Process donation
-    public function processDonation()
+    public function collectDonationData()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['donationFlag'])) {
             // Ensure all necessary parameters are present
@@ -30,24 +43,51 @@ class DonationController implements IControl
                 $donationAmount = isset($_POST['amount']) ? (float)$_POST['amount'] : 0.0;
                 $donatedItem = $_POST['donatedItem'] ?? '';
                 $paymentType = $_POST['paymentType'];
-    
-                // Initialize the donation context based on the donation type
-                if ($donationType === 'monetary') {
-                    $processor = new MonetaryDonationProcessor($donatorName, $donationType, $donationAmount, $paymentType);
-                } else {
-                    $processor = new NonMonetaryDonationProcessor($donatorName, $donationType, $donatedItem);
-                }
-    
-                // Process the donation
-                $processor->processDonation($donatorName);
+                $cardNumber = $_POST['cardNumber'] ?? '';
+                $cvv = $_POST['cvv'] ?? '';
+                $expiryDate = $_POST['expiryDate'] ?? '';
+                $paypalEmail = $_POST['paypalEmail'] ?? '';
+                $paypalPassword = $_POST['paypalPassword'] ?? '';
+                // $cardNumber
 
-            } else {
-                // Missing parameters
-                echo json_encode(['success' => false, 'message' => 'Missing required fields']);
+                /* ---------------------------------------------------------------  */
+                /*                    Getting Donation Data State                   */
+                /* ---------------------------------------------------------------  */
+                // Initialize the donation object
+                $this->donation = new Donation();
+                $this->donation->setDonatorId($_SESSION['USER_ID']);
+                $this->donation->setDonatedItem($donatedItem);
+                $this->donation->setDonationType($donationType);
+                $this->donation->setDonationAmount($donationAmount);
+                $this->donation->setPaymentType($paymentType);
+                $this->donation->setCardNumber($cardNumber);
+                $this->donation->setCvv($cvv);
+                $this->donation->setExpiryDate($expiryDate);
+                $this->donation->setPaypalEmail($paypalEmail);
+                $this->donation->setPaypalPassword($paypalPassword);
+                // Executing first state
+                $this->donation->executeState(); 
+
+                /* ---------------------------------------------------------------  */
+                /*                    Processing Donation State                     */
+                /* ---------------------------------------------------------------  */
+                $this->donation->nextState();
+                $this->donation->executeState(); 
+
+                /* ---------------------------------------------------------------  */
+                /*                          Complete State                          */
+                /* ---------------------------------------------------------------  */
+                $this->donation->nextState();
+                $this->donation->executeState(); 
+
             }
+            exit; // End the request
         }
-        exit; // End the request
     }
-    
+
+    public function executeDonationState()
+    {
+        $this->donation->executeState();
+        $this->donation->nextState();
+    }
 }
-?>

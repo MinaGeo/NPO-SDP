@@ -56,6 +56,7 @@
             margin-top: 20px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
@@ -143,7 +144,7 @@
 
             <!-- Submit Button -->
             <div class="center-align">
-                <button type="submit" class="btn waves-effect waves-light">Submit Donation</button>
+                <button type="button" onclick="submitDonation()" class="btn waves-effect waves-light">Submit Donation</button>
             </div>
         </form>
 
@@ -216,7 +217,7 @@
 
             // Example of sending the data to the server (using Ajax for submission)
             $.ajax({
-                url: 'processDonation',
+                url: 'collectDonationData',
                 type: 'POST',
                 data: {
                     donationFlag: true,
@@ -232,8 +233,22 @@
                     expiryDate: expiryDate
                 },
                 success: function(response) {
-                    alert("Thank you for your donation!");
-                    location.reload();
+                    // alert("Thank you for your donation!");
+                    // location.reload();
+                    // console.log(response);
+                    const res = JSON.parse(response);
+                    // alert(res['message']);
+                    if (res['success']) {
+                        // location.href = 'home';
+                        alert('SUCCESS');
+                        //location.href = "donationProcessing";
+                    }
+                    else{
+                        alert('FAILED');
+                    }
+                    // alert("We will process your donation!");
+                    
+                    // location.href('donationProcessing');
                 },
                 error: function(xhr, status, error) {
                     console.error("An error occurred:", error);
