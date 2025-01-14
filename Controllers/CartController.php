@@ -104,7 +104,7 @@ class CartController implements IControl
         if (isset($_POST['checkoutFlag'])) {
             if (!empty($_SESSION['USER_ID'])) {
                 $paymentMethod = $_POST['paymentMethod'];
-                $paymentContext = null;
+                $paymentContext = new PaymentContext();
 
                 // Handle payment method details
                 if ($paymentMethod === 'paypal') {
@@ -114,7 +114,8 @@ class CartController implements IControl
                         echo json_encode(['success' => false, 'message' => 'Please fill in all fields.']);
                         exit;
                     }
-                    $paymentContext = new PaymentContext(new PayByPaypal($paypalEmail, $paypalPassword));
+                    $paymentContext->setStrategy(new PayByPaypal($paypalEmail, $paypalPassword));
+
                 } elseif ($paymentMethod === 'creditCard') {
                     $cardNumber = $_POST['cardNumber'];
                     $cvv = $_POST['cvv'];
@@ -123,12 +124,12 @@ class CartController implements IControl
                         echo json_encode(['success' => false, 'message' => 'Please fill in all fields.']);
                         exit;
                     }
-                    $paymentContext = new PaymentContext(new PayByCreditCard($cardNumber, $cvv, $expiryDate));
+                    $paymentContext->setStrategy(new PayByCreditCard($cardNumber, $cvv, $expiryDate));
                 }
 
                 if ($paymentContext) {
                     $totalPrice = $_POST['totalPrice'];
-                    $paymentSuccess = $paymentContext->doPayment($totalPrice);
+                    $paymentSuccess = $paymentContext->doPayment($totalPrice,"Cart");
                     if ($paymentSuccess) {
                         // Mark the current cart as completed
                         $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
