@@ -5,6 +5,7 @@ require_once "./db_setup.php";
 require_once "./models/donations/Donation_State_Interfaces.php"; 
 require_once "./models/donations/Donation_State_GetData.php";
 require_once "./models/PaymentClasses.php";
+require_once "./models/database/IDatabaseProxy.php";
 ob_end_clean();
 
 class Donation{
@@ -208,14 +209,14 @@ class Donation{
     // Database fetch function 
     public static function get_by_id(int $id): ?Donation{
         global $configs;
-        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE WHERE id = '$id'");
+        $rows = DatabaseProxy::getInstance()->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE WHERE id = '$id'");
         return $rows->num_rows > 0 ? new User($rows->fetch_assoc()) : null;
     }
 
     // Database fetch function to fetch all donations in the database 
     public static function get_all(){
         global $configs;
-        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE");
+        $rows = DatabaseProxy::getInstance()->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE");
         $donations = [];
         while($row = $rows->fetch_assoc()){
             $donations[] = new Donation($row);
@@ -230,7 +231,7 @@ class Donation{
         $columns = implode(", ", array_keys($donationData));
         $values = implode("', '", array_values($donationData));
         $query = "INSERT INTO $configs->DB_NAME.$configs->DB_DONATIONS_TABLE ($columns) VALUES ('$values')";
-        return run_query($query);
+        return DatabaseProxy::getInstance()->run_query($query);
     }
 
     // Remove a record from the database given an ID
@@ -238,7 +239,7 @@ class Donation{
     {
         global $configs;
         $query = "DELETE FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE WHERE id = '$id'";
-        return run_query($query);
+        return DatabaseProxy::getInstance()->run_query($query);
     }
 }
 

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 ob_start();
 require_once "./db_setup.php";
+require_once "./models/database/IDatabase.php";
+require_once "./models/database/IDatabaseProxy.php";
 ob_end_clean();
 
 require_once "./models/notifications/IObserver.php";
@@ -119,7 +121,8 @@ class User
     static public function does_email_exist(string $email): bool
     {
         global $configs;
-        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email'");
+        $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email'";
+        $rows = DatabaseProxy::getInstance()->run_select_query($query);
         return $rows->num_rows > 0;
     }
 
@@ -130,7 +133,8 @@ class User
         $columns = implode(", ", array_keys($userData));
         $values = implode("', '", array_values($userData));
         $query = "INSERT INTO $configs->DB_NAME.$configs->DB_USERS_TABLE ($columns) VALUES ('$values')";
-        return run_query($query);
+        return DatabaseProxy::getInstance()->run_query($query);
+        // return run_query($query);
     }
 
     // Deletes a user from the database given an ID, returns true if successful, otherwise false
@@ -138,7 +142,7 @@ class User
     {
         global $configs;
         $query = "DELETE FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE id = '$id'";
-        return run_query($query);
+        return DatabaseProxy::getInstance()->run_query($query);
     }
 
     // Updates a user's information in the database given an ID and an associative array of new data, returns true if successful, otherwise false
@@ -151,13 +155,14 @@ class User
         }
         $setClauseString = implode(", ", $setClause);
         $query = "UPDATE $configs->DB_NAME.$configs->DB_USERS_TABLE SET $setClauseString WHERE id = '$id'";
-        return run_query($query);
+        return DatabaseProxy::getInstance()->run_query($query);
     }
     static public function get_all_users(): array
     {
         global $configs;
         $users = [];
-        $result = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE");
+        $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE";
+        $result = DatabaseProxy::getInstance()->run_select_query($query);
 
         while ($row = $result->fetch_assoc()) {
             $users[] = new User($row);
