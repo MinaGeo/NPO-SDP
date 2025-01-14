@@ -1,58 +1,30 @@
 <?php
 require_once 'DonationTemplate.php';
 require_once 'DonationModel.php';
-require_once 'models/NotificationToMailAdapter.php';
+require_once './models/notifications/NotificationToMailAdapter.php';
 
 class MonetaryDonationProcessor extends DonationTemplate
 {
-    private DonationContext $donationContext;
-    private float $donationAmount;
-    private string $paymentType, $donatorName, $donationType;
+    private Donation $donation;
+    private IPay $paymentStrategy;
 
-    public function __construct(string $donatorName, string $donationType, float $donationAmount, string $paymentType)
+    public function __construct(Donation $donation, IPay $paymentStrategy)
     {
-        $this->donationAmount = $donationAmount;
-        $this->paymentType = $paymentType;
-        $this->donatorName = $donatorName;
-        $this->donationType = $donationType;
-        $this->donationContext = new DonationContext(new MonetaryDonation($donationAmount), $donationAmount);
+        $this->donation = $donation;
+        $this->paymentStrategy = $paymentStrategy;
     }
 
     protected function processPayment()
     {
-        $this->donationContext->doDonation();
-        // Initialize the payment context based on the payment type
-        if ($this->paymentType === 'paypal') {
-            $paypalEmail = $_POST['paypalEmail'];
-            $paypalPassword = $_POST['paypalPassword'];
-            $paymentContext = new PaymentContext(new PayByPaypal($paypalEmail, $paypalPassword));
-        } else {
-            $cardNumber = $_POST['cardNumber'];
-            $cvv = $_POST['cvv'];
-            $expiryDate = $_POST['expiryDate'];
-            $paymentContext = new PaymentContext(new PayByCreditCard($cardNumber, $cvv, $expiryDate));
-        }
-
-
-        // Attempt payment processing
-        $paymentSuccess = $paymentContext->doPayment($this->donationAmount);
-
-        if ($paymentSuccess) {
-            $result = Donation::saveDonation($this->donatorName, $this->donationType, $this->donationAmount, '', $this->paymentType);
-            if ($result) {
-                echo json_encode(['success' => true]);
-            } else {
-                echo json_encode(['success' => false, 'message' => 'Failed to save donation details']);
-            }
-        } else {
-            // If payment failed
-            echo json_encode(['success' => false, 'message' => 'Payment failed']);
-        }
+        $paymentContext = new PaymentContext();
+        $paymentContext->setStrategy($this->paymentStrategy);
+        $paymentContext->doPayment($this->donation->getDonationAmount(), "Monetary Donation Payment");
+        echo json_encode(['success' => true, 'Popup' => false]);
     }
 
     protected function sendReceipt(string $donatorName)
     {
         $email = new NotificationToMailAdapter();
-        $email->sendNotification("Monetary Donation!", $donatorName . ": has donated " . $this->donationAmount);
+        $email->sendNotification("Monetary Donation!", $donatorName . ": has donated " . $this->donation->getDonationAmount());
     }
 }

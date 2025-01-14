@@ -1,44 +1,52 @@
 <?php
-// Define IPay interface for payment strategies
+
+declare(strict_types=1);
+ob_start();
+require_once "./db_setup.php";
+ob_end_clean();
+
+/*==================================================================================================*/
+/*                                      IPay Interface                                              */
+/*==================================================================================================*/
 interface IPay {
-    public function pay(float $paymentAmount): bool;
-    public function collectPaymentDetails(): void;
-    public function verifyPaymentCredentials(): bool;
+    public function pay($paymentId): bool;
 }
 
-// PayByPaypal class, implementing IPay for PayPal payments
+/*==================================================================================================*/
+/*                                    Paypal Concrete Class                                         */
+/*==================================================================================================*/
 class PayByPaypal implements IPay {
     private string $email;
     private string $password;
+    public string $paymentType = 'paypal';
 
     public function __construct(string $email, string $password) {
         $this->email = $email;
         $this->password = $password;
     }
 
-    public function collectPaymentDetails(): void {
-        echo "Collecting PayPal payment details.\n";
-    }
-
-    public function verifyPaymentCredentials(): bool {
-        // Verify credentials (simulated)
-        return true;
-    }
-
-    public function pay(float $paymentAmount): bool {
-        if ($this->verifyPaymentCredentials()) {
-            echo "Processed PayPal payment of $" . $paymentAmount . ".\n";
-            return true;
-        }
-        return false;
+    public function pay($paymentId): bool {
+        global $configs;
+        $paypalData = [
+            'paymentId' => $paymentId,
+            'paypalEmail' => $this->email,
+            'paypalPassword' => $this->password
+        ];
+        $columns = implode(", ", array_keys($paypalData));
+        $values = implode("', '", array_values($paypalData));
+        $query = "INSERT INTO $configs->DB_NAME.$configs->DB_PAYPAL_TABLE ($columns) VALUES ('$values')";
+        return run_query($query);
     }
 }
 
-// PayByCreditCard class, implementing IPay for credit card payments
-class PayByCreditCard implements IPay {
+/*==================================================================================================*/
+/*                                 Credit Card Concrete Class                                       */
+/*==================================================================================================*/
+class PayByCreditCard implements IPay{
     private string $number;
     private string $cvv;
     private string $expiryDate;
+    public string $paymentType = 'creditCard';
 
     public function __construct(string $number, string $cvv, string $expiryDate) {
         $this->number = $number;
@@ -46,38 +54,47 @@ class PayByCreditCard implements IPay {
         $this->expiryDate = $expiryDate;
     }
 
-    public function collectPaymentDetails(): void {
-        echo "Collecting credit card payment details.\n";
-    }
-
-    public function verifyPaymentCredentials(): bool {
-        // Verify card credentials (simulated)
-        return true;
-    }
-
-    public function pay(float $paymentAmount): bool {
-        if ($this->verifyPaymentCredentials()) {
-            echo "Processed credit card payment of $" . $paymentAmount . ".\n";
-            return true;
-        }
-        return false;
+    public function pay($paymentId): bool {
+        global $configs;
+        $paypalData = [
+            'paymentId' => $paymentId,
+            'cardNumber' => $this->number,
+            'cvv' => $this->cvv,
+            'expiryDate' => $this->expiryDate
+        ];
+        $columns = implode(", ", array_keys($paypalData));
+        $values = implode("', '", array_values($paypalData));
+        $query = "INSERT INTO $configs->DB_NAME.$configs->DB_CREDIT_TABLE ($columns) VALUES ('$values')";
+        return run_query($query);
     }
 }
 
-// PaymentContext to manage and execute payment strategies
+/*==================================================================================================*/
+/*                               Payment Context Concrete Class                                     */
+/*==================================================================================================*/
 class PaymentContext {
-    private IPay $strategy;
-
-    public function __construct(IPay $strategy) {
-        $this->strategy = $strategy;
-    }
+    private IPay $strategy; 
 
     public function setStrategy(IPay $strategy): void {
         $this->strategy = $strategy;
     }
 
-    public function doPayment(float $amount): bool {
-        return $this->strategy->pay($amount);
+    public function doPayment(float $amount, string $description): bool {
+        global $configs;
+        $paymentData = [
+            'userId' => $_SESSION['USER_ID'],
+            'amount' => $amount,
+            'description' => $description,
+            'paymentType' => $this->strategy->paymentType
+        ];
+        $columns = implode(", ", array_keys($paymentData));
+        $values = implode("', '", array_values($paymentData));
+        $query = "INSERT INTO $configs->DB_NAME.$configs->DB_PAYMENTS_TABLE ($columns) VALUES ('$values')";
+        if(run_query($query)){
+            $paymentId = Database::getInstance()->getConnection()->insert_id;
+            return $this->strategy->pay($paymentId);
+        }
     }
 }
 
+?>

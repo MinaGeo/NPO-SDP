@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="../assets/eventStyle.css">
 
     <style>
+        #modalMessage {
+            color: black !important;
+        }
+
         /* Custom Styles */
         .logo {
             width: 20px;
@@ -56,6 +60,7 @@
             margin-top: 20px;
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/js/materialize.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 </head>
 
@@ -143,11 +148,22 @@
 
             <!-- Submit Button -->
             <div class="center-align">
-                <button type="submit" class="btn waves-effect waves-light">Submit Donation</button>
+                <button type="button" onclick="submitDonation()" class="btn waves-effect waves-light">Submit Donation</button>
             </div>
         </form>
 
         <div class="response-message"></div>
+    </div>
+
+    <!-- Success Modal Structure -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h4>Donation Successful!</h4>
+            <p id="modalMessage"></p>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        </div>
     </div>
 
     <script>
@@ -191,7 +207,7 @@
                 }
             });
 
-            // Trigger initial change events to set visibility
+            // Trigger initial change events
             $('input[name="donationType"]:checked').trigger('change');
             $('input[name="paymentType"]:checked').trigger('change');
         });
@@ -216,7 +232,7 @@
 
             // Example of sending the data to the server (using Ajax for submission)
             $.ajax({
-                url: 'processDonation',
+                url: 'collectDonationData',
                 type: 'POST',
                 data: {
                     donationFlag: true,
@@ -232,8 +248,25 @@
                     expiryDate: expiryDate
                 },
                 success: function(response) {
-                    alert("Thank you for your donation!");
-                    location.reload();
+                    const res = JSON.parse(response);
+                    if (res['success']) {
+                        if (res['Popup']) {
+                            // For Non-Monetary Donations, show the item being donated
+                            $('#modalMessage').text('Thank you for your generous non-monetary donation of "' + donatedItem + '"! We will collect it soon.');
+                        } else {
+                            // For Monetary Donations, show the donation amount
+                            $('#modalMessage').text('Thank you for your generous monetary donation of $' + amount + '. Your contribution is greatly appreciated!');
+                        }
+
+                        var modal = document.getElementById('successModal');
+                        var instance = M.Modal.init(modal);
+                        instance.open();
+                    } else {
+                        $('#modalMessage').text('Donation failed. Please try again.');
+                        var modal = document.getElementById('successModal');
+                        var instance = M.Modal.init(modal);
+                        instance.open();
+                    }
                 },
                 error: function(xhr, status, error) {
                     console.error("An error occurred:", error);

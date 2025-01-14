@@ -24,6 +24,9 @@ return (object) array(
     'DB_DONATIONS_TABLE' => 'donations',
     'DB_LOCATIONS_TABLE' => 'location',
     'DB_LOCATION_HIERARCHY_TABLE' => 'location_hierarchy',
+    'DB_PAYMENTS_TABLE'   => 'payments',
+    'DB_CREDIT_TABLE'     => 'credit',
+    'DB_PAYPAL_TABLE'     => 'paypal',
 
     // Routes
     'ROUTES' => [
@@ -62,7 +65,13 @@ return (object) array(
         '/removeMyEvent' => 'EventController@removeMyEvent',
         //-----------------------DONATION----------------------------//
         '/donation' => 'DonationController@show',
-        '/processDonation' =>'DonationController@processDonation'
-
+        '/donationProcessing' => 'DonationController@showProcessing',
+        '/donationSuccess' => 'DonationController@showSuccess',
+        '/collectDonationData' => 'DonationController@collectDonationData',
+        '/executeDonationState' => 'DonationController@executeDonationState',
+        '/processDonation' =>'DonationController@processDonation',
+        '/processDonation' =>'DonationController@processDonation',
+        '/donationAdmin' => 'DonationController@showAdmin',
+        '/removeDonation' => 'DonationController@removeDonation',
     ],
 );
