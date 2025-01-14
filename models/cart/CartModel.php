@@ -274,9 +274,10 @@ class Cart implements Billable
         return null; // No current cart
     }
 
-    public static function checkout_cart(int $cart_id): bool
+    public function checkout_cart(): bool
     {
         global $configs;
+        $cart_id = $this->get_id(); // Assuming `get_id()` returns the cart's ID
 
         // Update cart status to 'completed'
         $query = "UPDATE $configs->DB_NAME.$configs->DB_CARTS_TABLE 
@@ -321,7 +322,7 @@ class Cart implements Billable
         global $configs;
         $cart_id = $this->get_id(); // Assuming `get_id()` returns the cart's ID
         // Check if item exists in the cart
-        $result = run_select_query("SELECT quantity FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = cart_id AND `item_id` = $item_id");
+        $result = run_select_query("SELECT quantity FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id AND `item_id` = $item_id");
         if ($result->num_rows > 0) {
             // Fetch the current quantity
             $currentQuantity = (int) $result->fetch_assoc()['quantity'];

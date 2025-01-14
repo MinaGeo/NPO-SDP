@@ -84,7 +84,7 @@ class CartController implements IControl
             $itemId = $_POST['itemId'];
     
             if (!empty($userId) && !empty($itemId)) {
-                $result = CartFactory::removeItemFromCart($userId, $itemId);
+                $result = CartFactory::cartOptions("remove",$userId, $itemId);
     
                 if ($result) {
                     echo json_encode(['success' => true, 'message' => 'Item removed from cart!']);
@@ -134,7 +134,7 @@ class CartController implements IControl
                         // Mark the current cart as completed
                         $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
                         if ($cart) {
-                            Cart::checkout_cart($cart->get_id()); // Update cart status to 'completed'
+                            $cart->checkout_cart(); // Update cart status to 'completed'
                             // Cart::create_new_cart($_SESSION['USER_ID']); // Create a new current cart
                             echo json_encode(['success' => true, 'message' => 'Checkout successful!']);
                         } else {

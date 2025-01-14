@@ -87,14 +87,14 @@ class ShopController implements IControl
             $description = $_POST['description'];
             $price = (float)$_POST['price'];
             $categoryName = $_POST['category'];
-    
+
             // Check if the category exists or create a new one
             $category = ShopCategory::get_by_name($categoryName);
             if (!$category) {
                 run_query("INSERT INTO `shop_categories` (`name`, `description`) VALUES (?, ?)", [$categoryName, '']);
                 $category = ShopCategory::get_by_name($categoryName);
             }
-    
+
             // Create the item and add it to the category
             if (ShopItem::add_shop_item($name, $description, $price)) {
                 // Fetch the item ID of the newly created item
@@ -108,17 +108,17 @@ class ShopController implements IControl
             exit;
         }
     }
-    
-    
+
+
     public function showCategoryTree()
     {
-    $userType = $_SESSION['USER_TYPE'];
-    $userId = $_SESSION['USER_ID'];
-    // Retrieve all categories
-    $categories = ShopCategory::get_all();
+        $userType = $_SESSION['USER_TYPE'];
+        $userId = $_SESSION['USER_ID'];
+        // Retrieve all categories
+        $categories = ShopCategory::get_all();
 
-    // Send the categories to the view
-    $this->shopView->showCategoryTree($categories, $userType, $userId);
+        // Send the categories to the view
+        $this->shopView->showCategoryTree($categories, $userType, $userId);
     }
 
 
@@ -127,10 +127,10 @@ class ShopController implements IControl
         if (isset($_POST['addToCart'])) {
             $userId = $_SESSION['USER_ID'];
             $itemId = $_POST['itemId'];
-    
+
             if (!empty($userId) && !empty($itemId)) {
-                $result = CartFactory::addItemToCart($userId, $itemId);
-    
+                $result = CartFactory::cartOptions("add", $userId, $itemId);
+
                 if ($result) {
                     echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
                 } else {
@@ -142,5 +142,4 @@ class ShopController implements IControl
             exit; // Ensure no further output is sent
         }
     }
-    
 }
