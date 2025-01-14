@@ -9,6 +9,7 @@ require_once "./models/cart/RemoveItemFromCartCommand.php";
 require_once "./models/cart/CartModel.php";
 require_once "./views/CartView.php";
 require_once "./models/PaymentClasses.php";
+require_once "./models/cart/CartFactory.php";
 class CartController implements IControl
 {
     private $cartView;
@@ -86,30 +87,16 @@ class CartController implements IControl
     public function removeCartItem()
     {
         if (isset($_POST['removeFromCart'])) {
-            if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
-                $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
-                if ($cart) {
-
-                    
-                    $itemId = $_POST['itemId'];
-                    // Set up invoker
-                    $invoker = new CartInvoker();
-
-                    // Create remove item command and assign it to the invoker's "off" method
-                    $removeItemCommand = new RemoveItemFromCartCommand($cart->get_id(), $itemId);
-                    $invoker->setOffCommand($removeItemCommand);
-
-                    // Execute "off" to remove the item from the cart
-                    $result = $invoker->off();
-                    
-                    //$result = Cart::remove_item_from_cart($cart->get_id(), $_POST['itemId']);
-                    if ($result) {
-                        echo json_encode(['success' => true, 'message' => 'Item removed from cart!']);
-                    } else {
-                        echo json_encode(['success' => false, 'message' => 'Failed to remove item from cart.']);
-                    }
+            $userId = $_SESSION['USER_ID'];
+            $itemId = $_POST['itemId'];
+    
+            if (!empty($userId) && !empty($itemId)) {
+                $result = CartFactory::removeItemFromCart($userId, $itemId);
+    
+                if ($result) {
+                    echo json_encode(['success' => true, 'message' => 'Item removed from cart!']);
                 } else {
-                    echo json_encode(['success' => false, 'message' => 'No active cart found.']);
+                    echo json_encode(['success' => false, 'message' => 'Failed to remove item from cart.']);
                 }
             } else {
                 echo json_encode(['success' => false, 'message' => 'Invalid input.']);
@@ -117,9 +104,7 @@ class CartController implements IControl
             exit; // Ensure no further output is sent
         }
     }
-
-
-
+    
 
     public function checkout()
     {

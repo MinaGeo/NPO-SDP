@@ -1,30 +1,60 @@
 <?php
+require_once './models/cart/CartModel.php';
+require_once './models/cart/CartInvoker.php';
+require_once './models/cart/AddItemToCartCommand.php';
+require_once './models/cart/RemoveItemFromCartCommand.php';
+
 class CartFactory
 {
-    // Method to create a new Cart object
-    public static function createCart(int $user_id): Cart
+    public static function getCartForUser($userId)
     {
-        // Check if a current cart exists for the user, if not, create a new one
-        if (Cart::cart_exists_for_user($user_id)) {
-            // Fetch the existing cart
-            return Cart::get_current_cart_by_user_id($user_id);
+        // Retrieve the current cart for the user
+        $cart = Cart::get_current_cart_by_user_id($userId);
+
+        // If no cart exists, create a new one
+        if (!$cart) {
+            Cart::create_new_cart($userId);
+            $cart = Cart::get_current_cart_by_user_id($userId);
         }
 
-        // Otherwise, create a new cart for the user
-        Cart::create_new_cart($user_id);
-        return Cart::get_current_cart_by_user_id($user_id);
+        return $cart;
     }
 
-    // Method to create a completed Cart, could be extended to handle other statuses
-    public static function createCompletedCart(int $user_id): Cart
+    public static function addItemToCart($userId, $itemId)
     {
-        $completedCart = Cart::get_completed_carts_by_user_id($user_id);
+        // Retrieve the user's cart
+        $cart = Cart::get_current_cart_by_user_id($userId);
 
-        // Assuming the latest completed cart is the one needed, return the first one
-        return $completedCart[0] ?? null; // Returns null if no completed cart exists
+        // If no cart exists, create a new one
+        if (!$cart) {
+            Cart::create_new_cart($userId);
+            $cart = Cart::get_current_cart_by_user_id($userId);
+        }
+
+        // Set up the invoker and add item command
+        $invoker = new CartInvoker();
+        $addItemCommand = new AddItemToCartCommand($cart, $itemId);
+        $invoker->setOnCommand($addItemCommand);
+
+        // Execute the "on" method to add the item
+        return $invoker->on();
     }
 
-    // You can add more methods for creating different types of carts with different statuses or conditions.
-}
+    public static function removeItemFromCart($userId, $itemId)
+    {
+        // Retrieve the user's cart
+        $cart = Cart::get_current_cart_by_user_id($userId);
 
-?>
+        if (!$cart) {
+            return false; // No cart to remove items from
+        }
+
+        // Set up the invoker and remove item command
+        $invoker = new CartInvoker();
+        $removeItemCommand = new RemoveItemFromCartCommand($cart, $itemId);
+        $invoker->setOffCommand($removeItemCommand);
+
+        // Execute the "off" method to remove the item
+        return $invoker->off();
+    }
+}

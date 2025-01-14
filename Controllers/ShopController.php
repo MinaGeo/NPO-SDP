@@ -12,7 +12,7 @@ require_once "./models/cart/CartInvoker.php";
 require_once "./models/cart/AddItemToCartCommand.php";
 require_once "./models/cart/CartModel.php";
 require_once "./views/ShopView.php";
-
+require_once "./models/cart/CartFactory.php";
 class ShopController implements IControl
 {
     private SortingContext $sortingContext;
@@ -95,30 +95,13 @@ class ShopController implements IControl
 
     public function shopAddItemToCart()
     {
-        // Ensure there's a "current" cart for the user
-        $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
-
-        if (!$cart) {
-            // If no current cart exists, create a new one
-            Cart::create_new_cart($_SESSION['USER_ID']);
-            $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
-        }
-
         if (isset($_POST['addToCart'])) {
-            if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
-                //$result = Cart::add_item_to_cart($cart->get_id(), $_POST['itemId']);
-                
-                $itemId = $_POST['itemId'];
-                
-                // Set up invoker
-                $invoker = new CartInvoker();
-
-                // Create add item command and assign it to the invoker's "on" method
-                $addItemCommand = new AddItemToCartCommand($cart->get_id(), $itemId);
-                $invoker->setOnCommand($addItemCommand);
-
-                // Execute "on" to add the item to the cart
-                $result = $invoker->on();
+            $userId = $_SESSION['USER_ID'];
+            $itemId = $_POST['itemId'];
+    
+            if (!empty($userId) && !empty($itemId)) {
+                $result = CartFactory::addItemToCart($userId, $itemId);
+    
                 if ($result) {
                     echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
                 } else {
@@ -130,4 +113,5 @@ class ShopController implements IControl
             exit; // Ensure no further output is sent
         }
     }
+    
 }
