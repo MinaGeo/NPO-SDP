@@ -3,7 +3,10 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
 require_once "./models/shop/ShopModel.php";
-require_once "./models/shop/CartModel.php";
+require_once "./models/cart/CartInvoker.php";
+require_once "./models/cart/AddItemToCartCommand.php";
+require_once "./models/cart/RemoveItemFromCartCommand.php";
+require_once "./models/cart/CartModel.php";
 require_once "./views/CartView.php";
 require_once "./models/PaymentClasses.php";
 class CartController implements IControl
@@ -86,7 +89,20 @@ class CartController implements IControl
             if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
                 $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
                 if ($cart) {
-                    $result = Cart::remove_item_from_cart($cart->get_id(), $_POST['itemId']);
+
+                    
+                    $itemId = $_POST['itemId'];
+                    // Set up invoker
+                    $invoker = new CartInvoker();
+
+                    // Create remove item command and assign it to the invoker's "off" method
+                    $removeItemCommand = new RemoveItemFromCartCommand($cart->get_id(), $itemId);
+                    $invoker->setOffCommand($removeItemCommand);
+
+                    // Execute "off" to remove the item from the cart
+                    $result = $invoker->off();
+                    
+                    //$result = Cart::remove_item_from_cart($cart->get_id(), $_POST['itemId']);
                     if ($result) {
                         echo json_encode(['success' => true, 'message' => 'Item removed from cart!']);
                     } else {

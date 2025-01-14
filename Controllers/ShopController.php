@@ -1,7 +1,6 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
 require_once "./models/shop/ShopModel.php";
 require_once './models/filter/IFilter.php';
 require_once './models/filter/FilterStrategy.php';
@@ -9,7 +8,9 @@ require_once './models/filter/FilteringContext.php';
 require_once './models/sort/ISort.php';
 require_once './models/sort/SortStrategy.php';
 require_once './models/sort/SortingContext.php';
-require_once "./models/shop/CartModel.php";
+require_once "./models/cart/CartInvoker.php";
+require_once "./models/cart/AddItemToCartCommand.php";
+require_once "./models/cart/CartModel.php";
 require_once "./views/ShopView.php";
 
 class ShopController implements IControl
@@ -105,9 +106,19 @@ class ShopController implements IControl
 
         if (isset($_POST['addToCart'])) {
             if (!empty($_SESSION['USER_ID']) && !empty($_POST['itemId'])) {
-                // Add the item to the current cart
-                $result = Cart::add_item_to_cart($cart->get_id(), $_POST['itemId']);
+                //$result = Cart::add_item_to_cart($cart->get_id(), $_POST['itemId']);
+                
+                $itemId = $_POST['itemId'];
+                
+                // Set up invoker
+                $invoker = new CartInvoker();
 
+                // Create add item command and assign it to the invoker's "on" method
+                $addItemCommand = new AddItemToCartCommand($cart->get_id(), $itemId);
+                $invoker->setOnCommand($addItemCommand);
+
+                // Execute "on" to add the item to the cart
+                $result = $invoker->on();
                 if ($result) {
                     echo json_encode(['success' => true, 'message' => 'Item added to cart!']);
                 } else {
