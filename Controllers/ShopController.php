@@ -82,13 +82,42 @@ class ShopController implements IControl
     public function shopAddItem()
     {
         if (isset($_POST['addItem'])) {
-            if (ShopItem::add_shop_item($_POST['name'], $_POST['description'], $_POST['price'])) {
-                echo json_encode(['success' => true, 'message' => $_POST['name'] . ' Item Added!']);
+            $name = $_POST['name'];
+            $description = $_POST['description'];
+            $price = (float)$_POST['price'];
+            $categoryName = $_POST['category'];
+    
+            // Check if the category exists or create a new one
+            $category = ShopCategory::get_by_name($categoryName);
+            if (!$category) {
+                run_query("INSERT INTO `shop_categories` (`name`, `description`) VALUES (?, ?)", [$categoryName, '']);
+                $category = ShopCategory::get_by_name($categoryName);
+            }
+    
+            // Create the item and add it to the category
+            if (ShopItem::add_shop_item($name, $description, $price)) {
+                // Fetch the item ID of the newly created item
+                $itemId = run_select_query("SELECT id FROM `shop_items` WHERE `name` = ?", [$name])->fetch_assoc()['id'];
+                $item = ShopItem::get_by_id($itemId);
+                $category->add($item); // Add to the category and DB
+                echo json_encode(['success' => true, 'message' => $name . ' Item Added!']);
             } else {
                 echo json_encode(['success' => false, 'message' => 'Failed to add item or item already exists.']);
             }
             exit;
         }
+    }
+    
+    
+    public function showCategoryTree()
+    {
+    $userType = $_SESSION['USER_TYPE'];
+    $userId = $_SESSION['USER_ID'];
+    // Retrieve all categories
+    $categories = ShopCategory::get_all();
+
+    // Send the categories to the view
+    $this->shopView->showCategoryTree($categories, $userType, $userId);
     }
 
 

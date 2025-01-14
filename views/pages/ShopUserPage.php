@@ -49,6 +49,7 @@
                             </span>
                             <p><span class="item-detail-label">Description:</span> <span class="item-detail-value"><?php echo htmlspecialchars($item->get_description()); ?></span></p>
                             <p><span class="item-detail-label">Price:</span> <span class="item-detail-value">$<?php echo htmlspecialchars($item->get_price()); ?></span></p>
+                            <?php $category = $item->get_category(); if ($category): ?> <p><span class="item-detail-label">Category:</span> <span class="item-detail-value"><?php echo htmlspecialchars($category->get_name()); ?></span></p> <?php endif; ?>
                         </div>
                         <div class="card-action">
                         <?php if ($userType === 1 && $userId !== -1): ?>

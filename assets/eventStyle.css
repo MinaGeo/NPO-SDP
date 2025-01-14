@@ -1,183 +1,194 @@
-        /* Style the description in cyan */
-        body {
-            background-color: #DAF4F5;
-            color: #ffffff;
-        }
+/* Style the description in cyan */
+body {
+  background-color: #daf4f5;
+  color: #ffffff;
+}
 
-        h5,h4,
-        h6 {    
-            color: #044848;
-        }
+h5,
+h4,
+h6 {
+  color: #044848;
+}
 
-        /* Card styling with gradient background and shadow */
-        .card {
-            background: linear-gradient(145deg, #00796b, #80E3A2);
-            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-        }
+/* Card styling with gradient background and shadow */
+.card {
+  background: linear-gradient(145deg, #00796b, #80e3a2);
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+}
 
-        .card-content h5 {
-            color: #C4FF90;
-            margin-bottom: 15px;
-        }
+.card-content h5 {
+  color: #c4ff90;
+  margin-bottom: 15px;
+}
 
-        .event-detail-label {
-            font-weight: bold;
-            color: #C4FFE0;
-        }
+.event-detail-label {
+  font-weight: bold;
+  color: #c4ffe0;
+}
 
-        .event-detail-value {
-            color: #ffffff;
-        }
+.event-detail-value {
+  color: #ffffff;
+}
 
-        /* Dropdown container and dropdowns */
-        .dropdown-container {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-        }
+/* Dropdown container and dropdowns */
+.dropdown-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
 
-        .input-field {
-            flex: 1;
-            /* Make dropdowns take equal space */
-            margin-right: 10px;
-            /* Spacing between dropdowns */
-            min-width: 150px;
-            /* Minimum width for smaller dropdowns */
-        }
+.input-field {
+  flex: 1;
+  /* Make dropdowns take equal space */
+  margin-right: 10px;
+  /* Spacing between dropdowns */
+  min-width: 150px;
+  /* Minimum width for smaller dropdowns */
+}
 
-        .input-field {
-            flex: 1;
-            margin-right: 10px;
-            min-width: 150px;
-        }
+.input-field {
+  flex: 1;
+  margin-right: 10px;
+  min-width: 150px;
+}
 
-        /* Logo styling */
-        .logo {
-            width: 20px;
-            margin-right: 5px;
-            vertical-align: middle;
-        }
+/* Logo styling */
+.logo {
+  width: 20px;
+  margin-right: 5px;
+  vertical-align: middle;
+}
 
-        /* Button styling */
-        .btn {
-            border-radius: 5px;
-            transition: all 0.3s ease;
-        }
+/* Button styling */
+.btn {
+  border-radius: 5px;
+  transition: all 0.3s ease;
+}
 
-        .btn:hover {
-            background-color: #C4DCE0;
-        }
+.btn:hover {
+  background-color: #c4dce0;
+}
 
-        /* Delete button color */
-        .deleteBtn {
-            background-color: #ff6b6b;
-        }
+/* Delete button color */
+.deleteBtn {
+  background-color: #ff6b6b;
+}
 
-        /* Container styling */
-        .container {
-            margin-top: 30px;
-        }
+/* Container styling */
+.container {
+  margin-top: 30px;
+}
 
-        /* Notification card styling */
-        .notification-card {
-            margin: 10px 0;
-            padding: 15px;
-            border-left: 5px solid #2196F3;
-            background: linear-gradient(145deg, #00796b, #80E3A2);
-            /* Matching the card gradient */
-            border-radius: 8px;
-            /* To match the .card border-radius */
-            box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
-            /* Similar shadow as .card */
-            opacity: 0;
-            transform: translateY(10px);
-            transition: opacity 0.3s ease, transform 0.3s ease;
-            display: flex;
-            align-items: center;
-        }
+/* Notification card styling */
+.notification-card {
+  margin: 10px 0;
+  padding: 15px;
+  border-left: 5px solid #2196f3;
+  background: linear-gradient(145deg, #00796b, #80e3a2);
+  /* Matching the card gradient */
+  border-radius: 8px;
+  /* To match the .card border-radius */
+  box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.2);
+  /* Similar shadow as .card */
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  display: flex;
+  align-items: center;
+}
 
-        /* Icon styling within notification */
-        .notification-icon {
-            margin-right: 10px;
-            color: #2196F3;
-            vertical-align: middle;
-        }
+/* Icon styling within notification */
+.notification-icon {
+  margin-right: 10px;
+  color: #2196f3;
+  vertical-align: middle;
+}
 
-        /* Notification text styling */
-        .notification-text {
-            font-weight: bold;
-            color: #ffffff;
-            /* Matching text color in your theme */
-        }
+/* Notification text styling */
+.notification-text {
+  font-weight: bold;
+  color: #ffffff;
+  /* Matching text color in your theme */
+}
 
-        /* Item detail styling */
+/* Item detail styling */
 .item-detail-label {
-    font-weight: bold;
-    margin-right: 5px;
-    color: #C4FFE0; /* Matches h5, h6 color */
+  font-weight: bold;
+  margin-right: 5px;
+  color: #c4ffe0; /* Matches h5, h6 color */
 }
 
 .item-detail-value {
-    color: #ffffff; /* Matches the light green from .card-content h5 */
-    display: inline;
+  color: #ffffff; /* Matches the light green from .card-content h5 */
+  display: inline;
 }
 
-.card-title{
-    color: #053131;
+.card-title {
+  color: #053131;
 }
 /* List styling for cart items */
 .cart-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
-    border-bottom: 1px solid #80A3A2; /* Matches original teal color */
-    background-color: #DAF4F5; /* Matches body background color */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #80a3a2; /* Matches original teal color */
+  background-color: #daf4f5; /* Matches body background color */
 }
 
 .cart-item h6 {
-    margin: 0;
-    flex: 1;
-    color: #688787; /* Same as h5, h6 */
+  margin: 0;
+  flex: 1;
+  color: #688787; /* Same as h5, h6 */
 }
 
 .cart-item-actions {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .quantity-label,
 .price-label {
-    font-weight: bold;
-    color: #555; /* Slightly muted for readability */
-    margin-right: 5px;
+  font-weight: bold;
+  color: #555; /* Slightly muted for readability */
+  margin-right: 5px;
 }
 
 .quantity,
 .price {
-    margin-right: 20px;
-    color: #333;
+  margin-right: 20px;
+  color: #333;
 }
 
 .total-price-section {
-    margin-top: 20px;
-    padding: 15px;
-    border-top: 2px solid #80A3A2; /* Matches original teal color */
-    text-align: right;
-    font-size: 1.2em;
-    background-color: #DAF4F5; /* Matches body background */
+  margin-top: 20px;
+  padding: 15px;
+  border-top: 2px solid #80a3a2; /* Matches original teal color */
+  text-align: right;
+  font-size: 1.2em;
+  background-color: #daf4f5; /* Matches body background */
 }
 
 .total-price {
-    font-weight: bold;
-    color: green; /* Retain green for emphasis */
+  font-weight: bold;
+  color: green; /* Retain green for emphasis */
 }
 
-strong{
-    color: #C4FF90;
+strong {
+  color: #c4ff90;
 }
 
-.history-price{
-    color: #3cff80;
+.history-price {
+  color: #3cff80;
+}
+
+.category-label {
+  background-color: #00796b;
+    color: #ffffff;
+}
+
+.category-body {
+  background-color: #80e3a2;
+  color: #000000;   
 }
