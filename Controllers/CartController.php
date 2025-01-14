@@ -21,14 +21,7 @@ class CartController implements IControl
     public function show()
     {
         // Fetch the user's current cart
-        $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
-
-        if (!$cart) {
-            // If no current cart exists, create a new one
-            Cart::create_new_cart($_SESSION['USER_ID']);
-            $cart = Cart::get_current_cart_by_user_id($_SESSION['USER_ID']);
-        }
-
+        $cart = CartFactory::getCartForUser($_SESSION['USER_ID']);
         // Fetch each item in the cart along with its details
         $cart_items = [];
         $itemIterator = new itemIterator($cart->get_items());
