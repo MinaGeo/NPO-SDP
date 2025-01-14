@@ -302,9 +302,10 @@ class Cart implements Billable
         return run_query($query);
     }
     // Add a certain item to a certain user's cart
-    static public function add_item_to_cart($cart_id, $item_id): bool
+    public function add_item_to_cart($item_id): bool
     {
         global $configs;
+        $cart_id = $this->get_id(); // Assuming `get_id()` returns the cart's ID
         // Check if item already exists
         if (run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id AND `item_id` = $item_id")->num_rows > 0) {
             // Increment if exists
@@ -315,12 +316,12 @@ class Cart implements Billable
         }
     }
     // Remove item from cart
-    static public function remove_item_from_cart($cart_id, $item_id): bool
+    public function remove_item_from_cart($item_id): bool
     {
         global $configs;
-
+        $cart_id = $this->get_id(); // Assuming `get_id()` returns the cart's ID
         // Check if item exists in the cart
-        $result = run_select_query("SELECT quantity FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = $cart_id AND `item_id` = $item_id");
+        $result = run_select_query("SELECT quantity FROM $configs->DB_NAME.$configs->DB_CART_ITEMS_TABLE WHERE `cart_id` = cart_id AND `item_id` = $item_id");
         if ($result->num_rows > 0) {
             // Fetch the current quantity
             $currentQuantity = (int) $result->fetch_assoc()['quantity'];

@@ -1,19 +1,17 @@
 <?php
 require_once 'ICommand.php';
 class AddItemToCartCommand implements ICommand {
-    //private $cart;
-    private $cartId;
+    private $cart;
     private $itemId;
 
-    public function __construct($cartId, $itemId) {
-        //$this->cart = $cart;
-        $this->cartId = $cartId;
+    public function __construct($cart, $itemId) {
+        $this->cart = $cart;
         $this->itemId = $itemId;
     }
 
     public function execute() {
-        //return $this->cart->add_item_to_cart($this->itemId);
-        return Cart::add_item_to_cart($this->cartId, $this->itemId);
+        
+        return $this->cart->add_item_to_cart($this->itemId);
     }
 }
 ?>
