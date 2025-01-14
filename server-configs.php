@@ -50,6 +50,7 @@ return (object) array(
         '/addShopItemToCart'=>'ShopController@shopAddItemToCart',
         '/showAddItem' => 'ShopController@showAddItem',
         '/addShopItem' => 'ShopController@shopAddItem',
+        '/showCategoryTree' => 'ShopController@showCategoryTree',
         //-----------------------CART----------------------------//
         '/cart' => 'CartController@show',
         '/removeCartItem' => 'CartController@removeCartItem',

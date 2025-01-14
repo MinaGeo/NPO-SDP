@@ -42,6 +42,12 @@
                     <label for="itemDescription">Description</label>
                 </div>
 
+                <!-- Item Category --> 
+                <div class="input-field col s12"> 
+                    <input id="itemCategory" name="category" type="text" required> 
+                    <label for="itemCategory">Category</label> 
+            </div>
+
                 <!-- Item Price -->
                 <div class="input-field col s12">
                     <input id="itemPrice" name="price" type="number" required min="0" step="0.01">
@@ -69,8 +75,9 @@
             const name = document.getElementById('itemName').value;
             const description = document.getElementById('itemDescription').value;
             const price = document.getElementById('itemPrice').value;
+            const category = document.getElementById('itemCategory').value;
 
-            if (!name || !description || !price) {
+            if (!name || !description || !price || !category) {
                 M.toast({ html: 'Please fill in all fields.', classes: 'rounded red' });
                 return false; // Return false if any field is empty
             }
@@ -89,12 +96,13 @@
             const name = document.getElementById('itemName').value;
             const description = document.getElementById('itemDescription').value;
             const price = document.getElementById('itemPrice').value;
+            const category = document.getElementById('itemCategory').value;
 
             // Call addItem function with form data
-            addItem(name, description, price);
+            addItem(name, description, price, category);
         }
 
-        function addItem(name, description, price) {
+        function addItem(name, description, price, category) {
             $.ajax({
                 url: 'addShopItem',
                 type: 'POST',
@@ -103,6 +111,7 @@
                     name: name,
                     description: description,
                     price: price,
+                    category: category,
                 },
                 success: function (response) {
                     alert("Item Added!");

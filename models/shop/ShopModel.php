@@ -7,8 +7,9 @@ require_once "./db_setup.php";
 ob_end_clean();
 require_once "./models/cart/CartDecorater.php";
 require_once "./models/itemIterator.php";
-
-class ShopItem
+require_once "IShopComponent.php";
+require_once "ShopCategory.php";
+class ShopItem implements IShopComponent
 {
     // Define properties
     private int $id;
@@ -101,23 +102,50 @@ class ShopItem
         return false; // Return false if Shop Item already exists
     }
 
-    // Delete Shop Item
-    static public function delete_shop_item(int $id): bool
+    public static function delete_shop_item(int $id): bool
     {
-        // Check if Shop Item exists
-        $result = run_select_query("SELECT * FROM `NPO`.`shop_items` WHERE `id` = $id");
-
+        // First, remove associations with any category in the category_items table
+        run_query("DELETE FROM `category_items` WHERE item_id = ?", [$id]);
+    
+        // Check if the Shop Item exists
+        $result = run_select_query("SELECT * FROM `NPO`.`shop_items` WHERE `id` = ?", [$id]);
+    
         if ($result && $result->num_rows > 0) {
             // Remove the Shop Item
-            $success = run_query("DELETE FROM `NPO`.`shop_items` WHERE `id` = $id");
-
+            $success = run_query("DELETE FROM `NPO`.`shop_items` WHERE `id` = ?", [$id]);
+    
             if (!$success) {
                 error_log("Database delete failed..."); // Log the error
             }
-
+    
             return $success;
         }
+    
+        return false; // Return false if the shop item does not exist
+    }
+    
 
-        return false; // Return false if shop item does not exist
+    public function add(IShopComponent $component): void
+    {
+        // Not implemented in leaf node
+    }
+
+    public function remove(IShopComponent $component): void
+    {
+        // Not implemented in leaf node
+    }
+
+    public function update(array $properties): bool
+    {
+        $this->name = $properties['name'] ?? $this->name;
+        $this->description = $properties['description'] ?? $this->description;
+        $this->price = (float)($properties['price'] ?? $this->price);
+        return false;
+    }
+
+    public function get_category(): ?ShopCategory { 
+        $row = run_select_query("SELECT category_id FROM `category_items` WHERE item_id = ?", [$this->id])->fetch_assoc(); 
+        return $row ? ShopCategory::get_by_id((int)$row['category_id']) : null; 
     }
 }
+

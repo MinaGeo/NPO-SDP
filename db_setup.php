@@ -97,6 +97,23 @@ class Database
             )");
 
         $this->conn->query("
+            CREATE TABLE IF NOT EXISTS `shop_categories` (
+                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                description TEXT
+            );");
+
+        $this->conn->query("    
+            CREATE TABLE IF NOT EXISTS `category_items` (
+                category_id INT NOT NULL,
+                item_id INT,
+                subcategory_id INT,
+                FOREIGN KEY (category_id) REFERENCES shop_categories(id),
+                FOREIGN KEY (item_id) REFERENCES shop_items(id),
+                FOREIGN KEY (subcategory_id) REFERENCES shop_categories(id)
+            );");
+                
+        $this->conn->query("
             CREATE TABLE IF NOT EXISTS `cart` (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
                 user_id INT NOT NULL,
