@@ -1,34 +1,24 @@
 <?php
-// require_once 'DonationTemplate.php';
+require_once 'DonationTemplate.php';
 
-// class NonMonetaryDonationProcessor extends DonationTemplate
-// {
-//     private DonationContext $donationContext;
-//     private string $donatedItem;
-//     private string $donatorName, $donationType;
+class NonMonetaryDonationProcessor extends DonationTemplate
+{
+    private Donation $donation;
 
-//     public function __construct(string $donatorName, string $donationType, string $donatedItem) {
-//         $this->donatedItem = $donatedItem;
-//         $this->donatorName = $donatorName;
-//         $this->donationType = $donationType;
-//         $this->donationContext = new DonationContext(new NonMonetaryDonation($donatedItem), 0.0, $donatedItem);
-//     }
+    public function __construct(Donation $donation)
+    {
+        $this->donation = $donation;
+    }
 
-//     protected function processPayment()
-//     {
-//         $this->donationContext->doDonation();
-//         $result = Donation::saveDonation($this->donatorName, $this->donationType, 0.0, $this->donatedItem, '');
-//         if ($result) {
-//             echo json_encode(['success' => true]);
-//         } else {
-//             echo json_encode(['success' => false, 'message' => 'Failed to save donation details']);
-//         }
-//     }
+    protected function processPayment()
+    {
+        DonationView::nonMonetaryPopUp($this->donation);
+    }
 
-//     protected function sendReceipt(string $donatorName)
-//     {
-//         $email = new NotificationToMailAdapter();
-//         $email->sendNotification("Non-Monetary Donation!",$donatorName . ": has donated ". $this->donatedItem . ". We will collect it soon!");
-//     }
-// }
+    protected function sendReceipt(string $donatorName)
+    {
+        $email = new NotificationToMailAdapter();
+        $email->sendNotification("Non-Monetary Donation!",$donatorName . ": has donated ". $this->donation->getDonatedItem() . ". We will collect it soon!");
+    }
+}
 ?>

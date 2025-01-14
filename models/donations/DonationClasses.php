@@ -2,12 +2,26 @@
 
 require_once "./models/PaymentClasses.php";
 require_once "./models/donations/DonationModel.php";
+require_once "./models/donations/MonetaryDonationProcessor.php";
+require_once "./models/donations/NonMonetaryDonationProcessor.php";
+require_once "./models/userBase.php";
 
 // Define the IDonateStrategy interface for donation strategies
 interface IDonateStrategy {
     public function processDonation(Donation $donation): void;
 }
-
+function processTemplate($donationTemplate)
+{
+    if(empty($_SESSION['USER_ID']) || $_SESSION['USER_ID']=='')
+    {
+        $user = 'Guest';
+    }
+    else
+    {
+        $user = User::get_by_id($_SESSION['USER_ID'])->getFirstName();
+    }
+    $donationTemplate->processDonation($user);
+}
 // MonetaryDonation class for monetary donations, implementing IDonateStrategy
 class MonetaryDonation implements IDonateStrategy {
     private IPay $paymentStrategy;
@@ -41,19 +55,18 @@ class MonetaryDonation implements IDonateStrategy {
         else if($donation->getPaymentType() === 'creditCard'){
             $this->setCreditCardPayment($donation->getCardNumber(), $donation->getCvv(), $donation->getExpiryDate());
         }
-        $paymentContext = new PaymentContext();
-        $paymentContext->setStrategy($this->paymentStrategy);
-        $paymentContext->doPayment($donation->getDonationAmount(), "Monetary Donation Payment");
+        $donationTemplate = new MonetaryDonationProcessor($donation, $this->paymentStrategy);
+        processTemplate($donationTemplate);
     }
 }
 
 // NonMonetaryDonation class for non-monetary donations, implementing IDonateStrategy
 class NonMonetaryDonation implements IDonateStrategy {
-    private string $donatedItem;
-
     public function processDonation(Donation $donation): void {
-        // Additional logic for processing a non-monetary donation
+        $donationTemplate = new NonMonetaryDonationProcessor($donation);
+        processTemplate($donationTemplate);
     }
 }
+
 
 ?>

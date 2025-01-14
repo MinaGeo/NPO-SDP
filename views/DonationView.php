@@ -22,5 +22,12 @@ class DonationView{
     {
         require_once './views/pages/DonationAdmin.php';
     }
+
+    public static function nonMonetaryPopUp(Donation $donation)
+    {
+        echo json_encode(['success' => true, 'Popup' => true]);
+    }
+    
+    
 }
 ?>

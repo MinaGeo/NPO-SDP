@@ -13,6 +13,20 @@ class DonationController implements IControl
 {
     private $donationView;
     private Donation $donation;
+
+    public function removeDonation() 
+    {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'removeDonation') {
+            if (!empty($_POST['id'])) {
+                $donationId = $_POST['id'];
+                $status = Donation::remove_by_id($donationId);
+                if($status){
+                    header("Location: donationAdmin");
+                }
+            }
+        }
+    }
+
     // Show donation page
     public function show()
     {
@@ -30,6 +44,29 @@ class DonationController implements IControl
     {
         $this->donationView = new DonationView();
         $this->donationView->showSuccess();
+    }
+
+    // Show donation admin page
+    public function showAdmin()
+    {
+        // Check if user is admin
+        if ($_SESSION['USER_TYPE'] !== 0) {
+            echo "Cannot access this page. Unauthorized user.";
+            exit;
+        }
+
+        // Getting donations list 
+        $donationsList = Donation::get_all();
+
+        // Check if donations list is available
+        // if (!isset($donationsList) || !is_array($donationsList)) {
+        //     echo "Error: Donations list is not available.";
+        //     exit;
+        // }
+
+        // Display donation admin page
+        $this->donationView = new DonationView();
+        $this->donationView->showAdmin($donationsList);
     }
 
     // Process donation
@@ -54,7 +91,8 @@ class DonationController implements IControl
                 /*                    Getting Donation Data State                   */
                 /* ---------------------------------------------------------------  */
                 // Initialize the donation object
-                $this->donation = new Donation();
+                $donationData = 
+                $this->donation = new Donation([]);
                 $this->donation->setDonatorId($_SESSION['USER_ID']);
                 $this->donation->setDonatedItem($donatedItem);
                 $this->donation->setDonationType($donationType);

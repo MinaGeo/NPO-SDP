@@ -17,7 +17,6 @@ class DonationGetDataState implements IDonationState
         ];
 
         $result = Donation::create_new_donation($donationData);
-        echo json_encode(['success' => $result]);
     
         // exit;
     }
