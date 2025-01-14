@@ -52,7 +52,6 @@ class NonMonetaryDonation implements IDonateStrategy {
     private string $donatedItem;
 
     public function processDonation(Donation $donation): void {
-        // echo "Processing a non-monetary donation: " . $this->donatedItem . ".\n";
         // Additional logic for processing a non-monetary donation
     }
 }

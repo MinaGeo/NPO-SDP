@@ -23,7 +23,6 @@ class Donation{
     private $paypalEmail;
     private $paypalPassword;
 
-
     // Donation Type Strategies
     private IDonateStrategy $donationStrategy;
 
@@ -32,8 +31,22 @@ class Donation{
 
     /* ------------------- Constructor -------------------  */
     // Constructor
-    public function __construct()
+    // public function __construct()
+    // {
+    //     $this->state = new DonationGetDataState();
+    // }
+
+    // Constructor with data
+    public function __construct(array $data)
     {
+        $this->id = $data['id'] ?? null;
+        $this->donatorId = $data['donatorId'] ?? null;
+        $this->donationType = $data['donationType'] ?? null;
+        $this->donationAmount = $data['donationAmount'] ?? null;
+        $this->donatedItem = $data['donatedItem'] ?? null;
+        $this->paymentType = $data['paymentType'] ?? null;
+        $this->donationTimestamp = $data['donationTimestamp'] ?? null;
+        
         $this->state = new DonationGetDataState();
     }
 
