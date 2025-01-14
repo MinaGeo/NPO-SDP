@@ -1,9 +1,9 @@
 <?php
 
-require_once "./models/DonationModel.php";
-require_once "./models/Donation_State_Interfaces.php";
-require_once "./models/Donation_State_ProcessDonation.php";
-require_once "./models/Donation_State_GetData.php";
+require_once "./models/donations/DonationModel.php";
+require_once "./models/donations/Donation_State_Interfaces.php";
+require_once "./models/donations/Donation_State_ProcessDonation.php";
+require_once "./models/donations/Donation_State_GetData.php";
 require_once "./models/phpmailer.php";
 
 // Concrete state class: Complete

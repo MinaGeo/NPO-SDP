@@ -17,5 +17,10 @@ class DonationView{
     {
         require_once './views/pages/SuccessProcess.php';
     }
+
+    public function showAdmin($donationsList)
+    {
+        require_once './views/pages/DonationAdmin.php';
+    }
 }
 ?>

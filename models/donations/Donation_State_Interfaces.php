@@ -1,6 +1,6 @@
 <?php
 
-require_once "./models/DonationModel.php";
+require_once "./models/donations/DonationModel.php";
 
 // Require all state classes to implement the same function for executing the state logic
 interface IDonationState{

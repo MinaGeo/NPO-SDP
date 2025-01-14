@@ -70,5 +70,8 @@ return (object) array(
         '/collectDonationData' => 'DonationController@collectDonationData',
         '/executeDonationState' => 'DonationController@executeDonationState',
         '/processDonation' =>'DonationController@processDonation',
+        '/processDonation' =>'DonationController@processDonation',
+        '/donationAdmin' => 'DonationController@showAdmin',
+        '/removeDonation' => 'DonationController@removeDonation',
     ],
 );

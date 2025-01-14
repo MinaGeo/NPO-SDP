@@ -1,10 +1,10 @@
 <?php
 
-require_once "./models/Donation_State_Interfaces.php";
-require_once "./models/Donation_State_Complete.php";
-require_once "./models/Donation_State_GetData.php";
-require_once "./models/DonationClasses.php";
-require_once "./models/DonationModel.php";
+require_once "./models/donations/Donation_State_Interfaces.php";
+require_once "./models/donations/Donation_State_Complete.php";
+require_once "./models/donations/Donation_State_GetData.php";
+require_once "./models/donations/DonationClasses.php";
+require_once "./models/donations/DonationModel.php";
 
 class DonationStateProcess implements IDonationState
 {    

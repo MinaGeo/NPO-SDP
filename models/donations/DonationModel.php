@@ -2,74 +2,230 @@
 declare(strict_types=1);
 ob_start();
 require_once "./db_setup.php";
+require_once "./models/donations/Donation_State_Interfaces.php"; 
+require_once "./models/donations/Donation_State_GetData.php";
+require_once "./models/PaymentClasses.php";
 ob_end_clean();
 
-class Donation {
-    public static function create(array $data): Donation {
-        return new self($data);
-    }
-    public static function saveDonation(string $donatorName, string $donationType, float $donationAmount, ?string $donatedItem, string $paymentType): bool
+class Donation{
+    /* ------------------- Attributes -------------------  */
+    private $id;
+    // private string $itemName;
+    private $donatorId;
+    private $donationType;
+    private $donationAmount;
+    private $donatedItem;
+    private $paymentType;
+    private $donationTimestamp;
+    private $cardNumber;
+    private $cvv;
+    private $expiryDate;
+    private $paypalEmail;
+    private $paypalPassword;
+
+
+    // Donation Type Strategies
+    private IDonateStrategy $donationStrategy;
+
+    // State attribute
+    private IDonationState $state;
+
+    /* ------------------- Constructor -------------------  */
+    // Constructor
+    public function __construct()
     {
-        global $configs;
-
-        $query = "INSERT INTO {$configs->DB_NAME}.{$configs->DB_DONATIONS_TABLE} 
-                  (donator_name, donation_type, donation_amount, donated_item, payment_type) 
-                  VALUES (?, ?, ?, ?, ?)";
-
-        $params = [$donatorName, $donationType, $donationAmount, $donatedItem, $paymentType];
-        return run_query($query, $params, true);
+        $this->state = new DonationGetDataState();
     }
 
-    // Retrieve a donation by ID
-    public static function getDonationById(int $id): ?Donation
+    /* ------------------- Getters -------------------  */
+    public function getId()
     {
-        global $configs;
-
-        $query = "SELECT * FROM {$configs->DB_NAME}.{$configs->DB_DONATIONS_TABLE} WHERE id = ?";
-        $rows = run_select_query($query, [$id]);
-
-        return $rows && $rows->num_rows > 0 ? new Donation($rows->fetch_assoc()) : null;
+        return $this->id;
     }
 
-    // Retrieve all donations
-    public static function getAllDonations(): array
+    public function getDonatorId()
     {
+        return $this->donatorId;
+    }
+
+    public function getDonationType()
+    {
+        return $this->donationType;
+    }
+
+    public function getDonationAmount()
+    {
+        return $this->donationAmount;
+    }
+
+    public function getPaymentType()
+    {
+        return $this->paymentType;
+    }
+
+    public function getDonationTimestamp()
+    {
+        return $this->donationTimestamp;
+    }
+
+    public function getDonatedItem()
+    {
+        return $this->donatedItem;
+    }
+
+    public function getCardNumber()
+    {
+        return $this->cardNumber;
+    }
+
+    public function getCvv()
+    {
+        return $this->cvv;
+    }
+
+    public function getExpiryDate()
+    {
+        return $this->expiryDate;
+    }
+
+    public function getPaypalEmail()
+    {
+        return $this->paypalEmail;
+    }
+
+    public function getPaypalPassword()
+    {
+        return $this->paypalPassword;
+    }
+
+    /* ------------------- Setters -------------------  */
+    public function setId($id): void
+    {
+        $this->id = $id;
+    }
+
+    public function setDonatorId($donatorId): void
+    {
+        $this->donatorId = $donatorId;
+    }
+
+    public function setDonationType($donationType): void
+    {
+        $this->donationType = $donationType;
+    }
+
+    public function setDonationAmount($donationAmount): void
+    {
+        $this->donationAmount = $donationAmount;
+    }
+
+    public function setPaymentType($paymentType): void
+    {
+        $this->paymentType = $paymentType;
+    }
+
+    public function setDonationTimestamp($donationTimestamp): void
+    {
+        $this->donationTimestamp = $donationTimestamp;
+    }
+
+    public function setDonatedItem($donatedItem): void
+    {
+        $this->donatedItem = $donatedItem;
+    }
+
+    public function setCardNumber($cardNumber): void
+    {
+        $this->cardNumber = $cardNumber;
+    }
+
+    public function setCvv($cvv): void
+    {
+        $this->cvv = $cvv;
+    }
+
+    public function setExpiryDate($expiryDate): void
+    {
+        $this->expiryDate = $expiryDate;
+    }
+
+    public function setPaypalEmail($paypalEmail): void
+    {
+        $this->paypalEmail = $paypalEmail;
+    }
+
+    public function setPaypalPassword($paypalPassword): void
+    {
+        $this->paypalPassword = $paypalPassword;
+    }
+
+    /* ------------------- State Management Functions -------------------  */
+    public function setState(IDonationState $state):void{
+        $this->state = $state;
+    }
+
+    public function executeState():void{
+        $this->state->execute($this);
+    }
+
+    public function nextState():void{
+        $this->state->next($this);
+    }
+
+    public function previousState():void{
+        $this->state->previous($this);
+    }
+
+    /* ------------------- Donation Type Strategy -------------------  */
+    public function setDonationStrategy(IDonateStrategy $strategy):void{
+        $this->donationStrategy = $strategy;
+    }
+
+    public function getDonationStrategy():IDonateStrategy{
+        return $this->donationStrategy;
+    }
+
+    public function processDonation():void{
+        $this->donationStrategy->processDonation($this);
+        // $this->donationStrategy->processDonation();
+    }
+
+    /* ------------------- Database Interfacing Functions -------------------  */
+    // Database fetch function 
+    public static function get_by_id(int $id): ?Donation{
         global $configs;
+        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE WHERE id = '$id'");
+        return $rows->num_rows > 0 ? new User($rows->fetch_assoc()) : null;
+    }
 
-        $query = "SELECT * FROM {$configs->DB_NAME}.{$configs->DB_DONATIONS_TABLE}";
-        $rows = run_select_query($query)->fetch_all(MYSQLI_ASSOC);
-
+    // Database fetch function to fetch all donations in the database 
+    public static function get_all(){
+        global $configs;
+        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE");
         $donations = [];
-        $donationIterator = new itemIterator($rows);
-        while ($donationIterator->hasNext()) {
-            $donations[] = Donation::create($donationIterator->next());
+        while($row = $rows->fetch_assoc()){
+            $donations[] = new Donation($row);
         }
-
         return $donations;
     }
 
-    // Update a donation
-    public static function updateDonation(int $id, string $donatorName, string $donationType, float $donationAmount, ?string $donatedItem, string $paymentType): bool
+    // Create a new record in the database
+    static public function create_new_donation(array $donationData): bool
     {
         global $configs;
-
-        $query = "UPDATE {$configs->DB_NAME}.{$configs->DB_DONATIONS_TABLE} 
-                  SET donator_name = ?, donation_type = ?, donation_amount = ?, donated_item = ?, payment_type = ? 
-                  WHERE id = ?";
-
-        $params = [$donatorName, $donationType, $donationAmount, $donatedItem, $paymentType, $id];
-        return run_query($query, $params, true);
+        $columns = implode(", ", array_keys($donationData));
+        $values = implode("', '", array_values($donationData));
+        $query = "INSERT INTO $configs->DB_NAME.$configs->DB_DONATIONS_TABLE ($columns) VALUES ('$values')";
+        return run_query($query);
     }
 
-    // Delete a donation
-    public static function deleteDonation(int $id): bool
+    // Remove a record from the database given an ID
+    static public function remove_by_id(int $id): bool
     {
         global $configs;
-
-        $query = "DELETE FROM {$configs->DB_NAME}.{$configs->DB_DONATIONS_TABLE} WHERE id = ?";
-        return run_query($query, [$id], true);
+        $query = "DELETE FROM $configs->DB_NAME.$configs->DB_DONATIONS_TABLE WHERE id = '$id'";
+        return run_query($query);
     }
-    
 }
 
 
