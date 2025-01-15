@@ -1,8 +1,9 @@
 <?php
 // Load configurations
+require_once "./models/database/IDatabase.php";
 $configs = require "server-configs.php";
 
-class Database
+class Database implements IDatabase 
 {
     private static $instance = null;
     private $conn;
