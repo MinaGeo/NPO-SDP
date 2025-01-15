@@ -10,13 +10,14 @@ class ShopCategory implements IShopComponent {
     }
     public function add(IShopComponent $component, bool $addToDb = true): void {
     // Check if the component already exists to avoid duplication 
+    global $conn, $configs;
         if (!in_array($component, $this->components, true)) { 
             $this->components[] = $component; 
             if ($addToDb) { 
                 if ($component instanceof ShopItem) { 
-                    run_query("INSERT INTO `category_items` (category_id, item_id) VALUES (?, ?)", [$this->id, $component->get_id()]); 
+                    $conn->run_query("INSERT INTO $configs->DB_NAME.$configs->DB_CATEGORY_ITEMS_TABLE (category_id, item_id) VALUES (?, ?)", [$this->id, $component->get_id()]); 
                 } else if ($component instanceof ShopCategory) { 
-                    run_query("INSERT INTO `category_items` (category_id, subcategory_id) VALUES (?, ?)", [$this->id, $component->get_id()]); 
+                    $conn->run_query("INSERT INTO $configs->DB_NAME.$configs->DB_CATEGORY_ITEMS_TABLE (category_id, subcategory_id) VALUES (?, ?)", [$this->id, $component->get_id()]); 
                 } 
             } 
         }
@@ -24,18 +25,20 @@ class ShopCategory implements IShopComponent {
     
 
     public function remove(IShopComponent $component): void { 
+        global $conn, $configs;
         $key = array_search($component, $this->components, true); 
         if ($key !== false) { 
             unset($this->components[$key]); 
             if ($component instanceof ShopItem) { 
-                run_query("DELETE FROM `category_items` WHERE category_id = ? AND item_id = ?", [$this->id, $component->get_id()]); 
+                $conn->run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CATEGORY_ITEMS_TABLE WHERE category_id = ? AND item_id = ?", [$this->id, $component->get_id()]); 
             } else if ($component instanceof ShopCategory) { 
-                run_query("DELETE FROM `category_items` WHERE category_id = ? AND subcategory_id = ?", [$this->id, $component->get_id()]); 
+                $conn->run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CATEGORY_ITEMS_TABLE WHERE category_id = ? AND subcategory_id = ?", [$this->id, $component->get_id()]); 
             } 
         }
     }
     public function loadComponents(): void { 
-        $component_rows = run_select_query("SELECT * FROM `category_items` WHERE `category_id` = ?", [$this->id])->fetch_all(MYSQLI_ASSOC); 
+        global $conn, $configs;
+        $component_rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_CATEGORY_ITEMS_TABLE WHERE `category_id` = ?", [$this->id])->fetch_all(MYSQLI_ASSOC); 
         foreach ($component_rows as $component_row) { 
             if (isset($component_row['item_id'])) { 
                 $this->components[] = ShopItem::get_by_id((int)$component_row['item_id']); 
@@ -69,19 +72,11 @@ class ShopCategory implements IShopComponent {
             return $total + $component->get_price(); 
         }, 0.0); 
     }
-
-    public function __toString(): string { 
-        $str = "<pre>ID: $this->id<br/>Category: $this->name<br/>Components:<br/>";
-        foreach ($this->components as $component) { 
-            $str .= $component->__toString(); 
-        } 
-        return $str . '</pre>'; 
-    }
-
     
     static public function get_all(): array { 
         $categories = []; 
-        $rows = run_select_query("SELECT * FROM `shop_categories`")->fetch_all(MYSQLI_ASSOC); 
+        global $conn, $configs;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_CATEGORIES_TABLE ")->fetch_all(MYSQLI_ASSOC); 
         foreach ($rows as $row) { 
             $category = new ShopCategory($row['id'], $row['name']); 
             $category->loadComponents(); 
@@ -89,14 +84,22 @@ class ShopCategory implements IShopComponent {
             $categories[] = $category; 
         } return $categories; 
     }
+    public static function add_category(string $categoryName, string $description = ''): bool
+    {
+        global $conn, $configs;
+        $rows = $conn->run_query("INSERT INTO $configs->DB_NAME.$configs->DB_SHOP_CATEGORIES_TABLE (`name`, `description`) VALUES (?, ?)", [$categoryName, $description]);
+        return $rows;
+    }
     
     static public function get_by_name(string $name): ?ShopCategory {
-        $rows = run_select_query("SELECT * FROM `shop_categories` WHERE `name` = ?", [$name]);
+        global $conn, $configs;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_CATEGORIES_TABLE WHERE `name` = ?", [$name]);
         return $rows && $rows->num_rows > 0 ? new ShopCategory($rows->fetch_assoc()['id'], $name) : null;
     }
 
     static public function get_by_id(int $id): ?ShopCategory {
-        $rows = run_select_query("SELECT * FROM `shop_categories` WHERE `id` = ?", [$id]);
+        global $conn, $configs;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_CATEGORIES_TABLE WHERE `id` = ?", [$id]);
         return $rows && $rows->num_rows > 0 ? new ShopCategory($id, $rows->fetch_assoc()['name']) : null;
     }
 }

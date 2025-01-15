@@ -27,6 +27,7 @@ class PayByPaypal implements IPay {
 
     public function pay($paymentId): bool {
         global $configs;
+        global $conn;
         $paypalData = [
             'paymentId' => $paymentId,
             'paypalEmail' => $this->email,
@@ -35,7 +36,7 @@ class PayByPaypal implements IPay {
         $columns = implode(", ", array_keys($paypalData));
         $values = implode("', '", array_values($paypalData));
         $query = "INSERT INTO $configs->DB_NAME.$configs->DB_PAYPAL_TABLE ($columns) VALUES ('$values')";
-        return run_query($query);
+        return $conn->run_query($query);
     }
 }
 
@@ -56,6 +57,7 @@ class PayByCreditCard implements IPay{
 
     public function pay($paymentId): bool {
         global $configs;
+        global $conn;
         $paypalData = [
             'paymentId' => $paymentId,
             'cardNumber' => $this->number,
@@ -65,7 +67,7 @@ class PayByCreditCard implements IPay{
         $columns = implode(", ", array_keys($paypalData));
         $values = implode("', '", array_values($paypalData));
         $query = "INSERT INTO $configs->DB_NAME.$configs->DB_CREDIT_TABLE ($columns) VALUES ('$values')";
-        return run_query($query);
+        return $conn->run_query($query);
     }
 }
 
@@ -81,6 +83,7 @@ class PaymentContext {
 
     public function doPayment(float $amount, string $description): bool {
         global $configs;
+        global $conn;
         $paymentData = [
             'userId' => $_SESSION['USER_ID'],
             'amount' => $amount,
@@ -90,7 +93,7 @@ class PaymentContext {
         $columns = implode(", ", array_keys($paymentData));
         $values = implode("', '", array_values($paymentData));
         $query = "INSERT INTO $configs->DB_NAME.$configs->DB_PAYMENTS_TABLE ($columns) VALUES ('$values')";
-        if(run_query($query)){
+        if($conn->run_query($query)){
             $paymentId = Database::getInstance()->getConnection()->insert_id;
             return $this->strategy->pay($paymentId);
         }

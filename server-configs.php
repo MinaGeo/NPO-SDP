@@ -16,7 +16,9 @@ return (object) array(
 
     // DB Tables
     'DB_USERS_TABLE'      => 'user',
-    'DB_ITEMS_TABLE'      => 'shirt',
+    'DB_SHOP_ITEMS_TABLE'      => 'shop_items',
+    'DB_CATEGORY_ITEMS_TABLE' => 'category_items',
+    'DB_SHOP_CATEGORIES_TABLE' => 'shop_categories',
     'DB_CARTS_TABLE'      => 'cart',
     'DB_CART_ITEMS_TABLE' => 'cart_items',
     'DB_EVENTS_TABLE'     => 'event',

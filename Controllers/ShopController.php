@@ -91,14 +91,14 @@ class ShopController implements IControl
             // Check if the category exists or create a new one
             $category = ShopCategory::get_by_name($categoryName);
             if (!$category) {
-                run_query("INSERT INTO `shop_categories` (`name`, `description`) VALUES (?, ?)", [$categoryName, '']);
+                ShopCategory::add_category($categoryName);
                 $category = ShopCategory::get_by_name($categoryName);
             }
 
             // Create the item and add it to the category
             if (ShopItem::add_shop_item($name, $description, $price)) {
                 // Fetch the item ID of the newly created item
-                $itemId = run_select_query("SELECT id FROM `shop_items` WHERE `name` = ?", [$name])->fetch_assoc()['id'];
+                $itemId = ShopItem::get_by_name($name)->get_id();
                 $item = ShopItem::get_by_id($itemId);
                 $category->add($item); // Add to the category and DB
                 echo json_encode(['success' => true, 'message' => $name . ' Item Added!']);

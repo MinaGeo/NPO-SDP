@@ -5,17 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donation Admin Dashboard</title>
+    <link rel="stylesheet" href="../assets/eventStyle.css">
     <link href="https://cdn.jsdelivr.net/npm/@materializecss/materialize@1.0.0/dist/css/materialize.min.css" rel="stylesheet">
 </head>
 
 <body>
     <div class="container">
-        <h1 class="center-align">Donation Admin Dashboard</h1>
+        <h1 class="center-align card-title">Donation Admin Dashboard</h1>
 
         <?php if (empty($donationsList)): ?>
-            <p class="center-align">Error: No donations found.</p>
+            <p class="center-align card-title">No donations found.</p>
         <?php else: ?>
-            <table class="highlight">
+            <table class="highlight card">
                 <thead>
                     <tr>
                         <th>ID</th>

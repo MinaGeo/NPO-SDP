@@ -43,6 +43,7 @@ class VolunteerEvent
     public function __toString(): string
     {
         global $configs;
+        global $conn;
         $dbName = $configs->DB_NAME;
         $str = '<br/>';
         $query = "
@@ -53,7 +54,8 @@ class VolunteerEvent
     ";
 
         // Fetch results
-        $stmt = run_select_query($query, [$this->volunteer_id]);
+
+        $stmt = $conn->run_select_query($query, [$this->volunteer_id]);
 
         if ($stmt && $stmt instanceof mysqli_result) {
             $rows = $stmt->fetch_all(MYSQLI_ASSOC);
@@ -74,15 +76,15 @@ class VolunteerEvent
     public static function register(int $volunteerId, int $eventId): bool
     {
         global $configs;
-
-        $checkRegistration = run_select_query(
+        global $conn;
+        $checkRegistration = $conn->run_select_query(
             "SELECT * FROM $configs->DB_NAME.volunteer_events WHERE volunteer_id = ? AND event_id = ?",
             [$volunteerId, $eventId],
             true
         );
 
         if ($checkRegistration && $checkRegistration->num_rows == 0) {
-            return run_query(
+            return $conn->run_query(
                 "INSERT INTO $configs->DB_NAME.volunteer_events (volunteer_id, event_id) VALUES (?, ?)",
                 [$volunteerId, $eventId],
                 true
@@ -96,7 +98,7 @@ class VolunteerEvent
     {
         $events = [];
         global $configs;
-
+        global $conn;
         // echo "Volunteer ID: " . $volunteerId . "<br>";
 
         // Query to get events related to a specific volunteer by filtering with volunteer_id
@@ -110,7 +112,7 @@ class VolunteerEvent
             JOIN {$dbName}.location cl ON lh.child_id = cl.id WHERE ve.volunteer_id = ? ";
 
         // Fetch results
-        $stmt = run_select_query($query, [$volunteerId]);
+        $stmt = $conn->run_select_query($query, [$volunteerId]);
 
         if ($stmt && $stmt instanceof mysqli_result) {
             $rows = $stmt->fetch_all(MYSQLI_ASSOC);
@@ -134,6 +136,7 @@ class VolunteerEvent
     {
         $volunteers = [];
         global $configs;
+        global $conn;
 
         // Query to get volunteers associated with a specific event by filtering with event_id
         $dbName = $configs->DB_NAME;
@@ -145,7 +148,7 @@ class VolunteerEvent
         ";
 
         // Fetch results
-        $stmt = run_select_query($query, [$eventId]);
+        $stmt = $conn->run_select_query($query, [$eventId]);
 
         if ($stmt && $stmt instanceof mysqli_result) {
             $rows = $stmt->fetch_all(MYSQLI_ASSOC);
@@ -166,9 +169,10 @@ class VolunteerEvent
     static public function removeVolunteerFromEvent(int $volunteerId, int $eventId): bool
     {
         global $configs;
-        $result = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_VOLUNTEER_EVENTS_TABLE WHERE volunteer_id = $volunteerId AND event_id = $eventId");
+        global $conn;
+        $result = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_VOLUNTEER_EVENTS_TABLE WHERE volunteer_id = $volunteerId AND event_id = $eventId");
         if ($result && $result->num_rows > 0) {
-            $success = run_query("DELETE FROM $configs->DB_NAME.$configs->DB_VOLUNTEER_EVENTS_TABLE WHERE volunteer_id = $volunteerId AND event_id = $eventId");
+            $success = $conn->run_query("DELETE FROM $configs->DB_NAME.$configs->DB_VOLUNTEER_EVENTS_TABLE WHERE volunteer_id = $volunteerId AND event_id = $eventId");
 
             if (!$success) {
                 error_log("Database delete failed...");
@@ -184,9 +188,9 @@ class VolunteerEvent
     {
         $volunteerEvents = [];
         global $configs;
-
+        global $conn;
         // Fetch all volunteer-event records
-        $rows = run_select_query(
+        $rows = $conn->run_select_query(
             "SELECT * FROM $configs->DB_NAME.volunteer_events",
             [],
             true
@@ -204,9 +208,10 @@ class VolunteerEvent
     public static function delete_registration(int $volunteerId, int $eventId): bool
     {
         global $configs;
+        global $conn;
 
         // Check if the registration exists
-        $checkRegistration = run_select_query(
+        $checkRegistration = $conn->run_select_query(
             "SELECT * FROM $configs->DB_NAME.volunteer_events WHERE volunteer_id = ? AND event_id = ?",
             [$volunteerId, $eventId],
             true
@@ -214,7 +219,7 @@ class VolunteerEvent
 
         if ($checkRegistration && $checkRegistration->num_rows > 0) {
             // Delete the registration
-            return run_query(
+            return $conn->run_query(
                 "DELETE FROM $configs->DB_NAME.volunteer_events WHERE volunteer_id = ? AND event_id = ?",
                 [$volunteerId, $eventId],
                 true

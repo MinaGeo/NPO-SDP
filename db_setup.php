@@ -2,8 +2,9 @@
 // Load configurations
 require_once "./models/database/IDatabase.php";
 $configs = require "server-configs.php";
+$conn = Database::getInstance();
 
-class Database 
+class Database
 {
     private static $instance = null;
     private $conn;
@@ -113,7 +114,7 @@ class Database
                 FOREIGN KEY (item_id) REFERENCES shop_items(id),
                 FOREIGN KEY (subcategory_id) REFERENCES shop_categories(id)
             );");
-                
+
         $this->conn->query("
             CREATE TABLE IF NOT EXISTS `cart` (
                 id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
@@ -122,15 +123,6 @@ class Database
                 FOREIGN KEY (user_id) REFERENCES `user`(id)
             )");
 
-        $this->conn->query("
-            CREATE TABLE IF NOT EXISTS `cart_items` (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                cart_id INT NOT NULL,
-                item_id INT NOT NULL,
-                quantity INT NOT NULL DEFAULT 1,
-                FOREIGN KEY (cart_id) REFERENCES `NPO`.`cart`(id) on DELETE CASCADE,
-                FOREIGN KEY (item_id) REFERENCES `NPO`.`shop_items`(id)
-            )");
 
         $this->conn->query("               
             CREATE TABLE IF NOT EXISTS `volunteer_events` (
@@ -184,6 +176,16 @@ class Database
             FOREIGN KEY (paymentId) REFERENCES `npo`.`payments`(paymentId) on DELETE CASCADE
         )");
 
+        
+        $this->conn->query("
+            CREATE TABLE IF NOT EXISTS `cart_items` (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                cart_id INT NOT NULL,
+                item_id INT NOT NULL,
+                quantity INT NOT NULL DEFAULT 1,
+                FOREIGN KEY (cart_id) REFERENCES `NPO`.`cart`(id) on DELETE CASCADE,
+                FOREIGN KEY (item_id) REFERENCES `NPO`.`shop_items`(id) ON DELETE CASCADE
+            )");
     }
 
     // Method to populate data
@@ -278,88 +280,92 @@ class Database
                     ('Casual Striped Tee', 'Comfortable striped t-shirt, casual fit', 22.00)
             ");
         }
-        // // Insert data into `cart` table
-        // if ($cartCheck->num_rows === 0) {
-        //     $this->conn->query("
-        //         INSERT INTO `cart` (user_id) VALUES
-        //             (1),
-        //             (2),
-        //             (3),
-        //             (4),
-        //             (5)
-        //     ");
-        // }
+
+        // Populate `shop_categories` table
+        $categoriesCheck = $this->conn->query("SELECT 1 FROM `shop_categories` LIMIT 1");
+        if ($categoriesCheck->num_rows === 0) {
+            $this->conn->query("
+                INSERT INTO `shop_categories` (name, description) VALUES
+                    ('Basic Tees', 'Everyday basic t-shirts for all occasions'),
+                    ('Graphic Tees', 'T-shirts with stylish graphic prints'),
+                    ('Performance Wear', 'Activewear for sports and fitness'),
+                    ('Casual Wear', 'Comfortable casual t-shirts');
+          ");
+        }
+        // Populate `category_items` table to associate items with categories
+        $categoryItemsCheck = $this->conn->query("SELECT 1 FROM `category_items` LIMIT 1");
+        if ($categoryItemsCheck->num_rows === 0) {
+            $this->conn->query("
+                 INSERT INTO `category_items` (category_id, item_id) VALUES
+                    (1, 1), -- Classic Cotton Tee in Basic Tees
+                    (2, 2), -- Vintage Graphic Tee in Graphic Tees
+                    (3, 3), -- Sporty Performance Tee in Performance Wear
+                     (4, 4); -- Casual Striped Tee in Casual Wear
+                ");
+        }
+
+
+
         if ($cartCheck->num_rows === 0) {
             $this->conn->query("
-        INSERT INTO `volunteer_events` (volunteer_id, event_id) VALUES
-(7, 1),
-(6, 1),
-(7, 2),
-(6, 2),
-(5, 2),
-(5, 1)");
+                INSERT INTO `volunteer_events` (volunteer_id, event_id) VALUES
+                    (7, 1),
+                    (6, 1),
+                    (7, 2),
+                    (6, 2),
+                    (5, 2),
+                    (5, 1)
+            ");
         }
     }
-}
 
-// Helper functions
-function run_query($query, $params = [], $echo = false): bool
-{
-    $conn = Database::getInstance()->getConnection();
 
-    $stmt = $conn->prepare($query);
-    if ($stmt === false) {
-        if ($echo) echo "Error preparing statement: " . $conn->error;
-        return false;
-    }
+    function run_query($query, $params = [], $log_errors = true): bool
+    {
+        $conn = $this->getConnection();
 
-    if (!empty($params)) {
-        $types = str_repeat('s', count($params));
-        $stmt->bind_param($types, ...$params);
-    }
-
-    if ($stmt->execute()) {
-        if ($echo) {
-            //echo "Query ran successfully<br/>";
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            if ($log_errors) error_log("Error preparing statement: " . $conn->error);
+            return false;
         }
-        return true;
-    } else {
-        if ($echo) echo "Error: " . $stmt->error;
-        return false;
-    }
-}
 
-function run_select_query($query, $params = [], $echo = false): mysqli_result|bool
-{
-    $conn = Database::getInstance()->getConnection();
+        if (!empty($params)) {
+            $types = str_repeat('s', count($params));
+            $stmt->bind_param($types, ...$params);
+        }
 
-    $stmt = $conn->prepare($query);
-    if ($stmt === false) {
-        if ($echo) echo "Error preparing statement: " . $conn->error;
-        return false;
-    }
-
-    if (!empty($params)) {
-        $types = str_repeat('s', count($params));
-        $stmt->bind_param($types, ...$params);
-    }
-
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($echo) {
-        // echo '<pre>' . $query . '</pre>';
-        if ($result && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                // echo print_r($row, true);
-            }
+        if ($stmt->execute()) {
+            return true;
         } else {
-            // echo "0 results";
+            if ($log_errors) error_log("Error: " . $stmt->error);
+            return false;
         }
-        // echo "<hr/>";
     }
 
-    return $result;
+    function run_select_query($query, $params = [], $log_errors = true): mysqli_result|bool
+    {
+        $conn =$this->getConnection();
+
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            if ($log_errors) error_log("Error preparing statement: " . $conn->error);
+            return false;
+        }
+
+        if (!empty($params)) {
+            $types = str_repeat('s', count($params));
+            $stmt->bind_param($types, ...$params);
+        }
+
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($log_errors) {
+            error_log("Error: " . $stmt->error);
+        }
+        return $result;
+    }
 }
 
 // Initialize database, create tables, and populate data if missing

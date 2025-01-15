@@ -37,7 +37,6 @@ class DBAuthenticator implements AuthenticationProvider
     public function login(String $email, String $password): User|null
     {
         $md5Hash = md5($password);
-        // $rows = run_select_query("SELECT * FROM ESHOP.user WHERE email = '$email' AND passwordHash = '$md5Hash'");
         return User::get_by_email_and_password_hash($email, $md5Hash);
     }
 }

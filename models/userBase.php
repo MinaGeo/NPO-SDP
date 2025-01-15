@@ -105,7 +105,8 @@ class User
     static public function get_by_id(int $id): ?User
     {
         global $configs;
-        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE id = '$id'");
+        global $conn;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE id = '$id'");
         return $rows->num_rows > 0 ? new User($rows->fetch_assoc()) : null;
     }
 
@@ -113,7 +114,8 @@ class User
     static public function get_by_email_and_password_hash(string $email, string $md5Hash): ?User
     {
         global $configs;
-        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email' AND passwordHash = '$md5Hash'");
+        global $conn;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email' AND passwordHash = '$md5Hash'");
         return $rows->num_rows > 0 ? new User($rows->fetch_assoc()) : null;
     }
 
@@ -121,8 +123,9 @@ class User
     static public function does_email_exist(string $email): bool
     {
         global $configs;
+        global $conn;
         $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email'";
-        $rows = run_select_query($query);
+        $rows = $conn->run_select_query($query);
         return $rows->num_rows > 0;
     }
 
@@ -130,39 +133,42 @@ class User
     static public function create_new_user(array $userData): bool
     {
         global $configs;
+        global $conn;
         $columns = implode(", ", array_keys($userData));
         $values = implode("', '", array_values($userData));
         $query = "INSERT INTO $configs->DB_NAME.$configs->DB_USERS_TABLE ($columns) VALUES ('$values')";
-        return run_query($query);
-        // return run_query($query);
+        return $conn->run_query($query);
     }
 
     // Deletes a user from the database given an ID, returns true if successful, otherwise false
     static public function delete_by_id(int $id): bool
     {
         global $configs;
+        global $conn;
         $query = "DELETE FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE id = '$id'";
-        return run_query($query);
+        return $conn->run_query($query);
     }
 
     // Updates a user's information in the database given an ID and an associative array of new data, returns true if successful, otherwise false
     static public function update_by_id(int $id, array $newData): bool
     {
         global $configs;
+        global $conn;
         $setClause = [];
         foreach ($newData as $column => $value) {
             $setClause[] = "$column = '$value'";
         }
         $setClauseString = implode(", ", $setClause);
         $query = "UPDATE $configs->DB_NAME.$configs->DB_USERS_TABLE SET $setClauseString WHERE id = '$id'";
-        return run_query($query);
+        return $conn->run_query($query);
     }
     static public function get_all_users(): array
     {
         global $configs;
+        global $conn;
         $users = [];
         $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE";
-        $result = run_select_query($query);
+        $result = $conn->run_select_query($query);
 
         while ($row = $result->fetch_assoc()) {
             $users[] = new User($row);

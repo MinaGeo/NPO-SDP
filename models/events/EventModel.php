@@ -89,9 +89,10 @@ class Event
     }
 
     static public function get_by_id(int $id): ?Event
-    {
+    {   
         global $configs;
-        $rows = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE id = ?", [$id]);
+        global $conn;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE id = ?", [$id]);
         return $rows && $rows->num_rows > 0 ? new Event($rows->fetch_assoc()) : null;
     }
 
@@ -99,8 +100,9 @@ class Event
     static public function get_all(): array
     {
         $events = [];
-        global $configs;    
-        $rows = run_select_query("SELECT * FROM $configs->DB_EVENTS_TABLE")->fetch_all(MYSQLI_ASSOC);
+        global $configs; 
+        global $conn;   
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_EVENTS_TABLE")->fetch_all(MYSQLI_ASSOC);
 
         $eventIterator = new itemIterator($rows);
         while ($eventIterator->hasNext()) {
@@ -115,12 +117,13 @@ class Event
     {
         // Check if event already exists
         global $configs;    
-        $checkEvent = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `name` = ?", [$name], true);
+        global $conn;
+        $checkEvent = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `name` = ?", [$name], true);
         
         // Use num_rows to check if there are no results
         if ($checkEvent && $checkEvent->num_rows == 0) {  
             // Insert the new event
-            return run_query("INSERT INTO $configs->DB_NAME.$configs->DB_EVENTS_TABLE (`name`, `description`, `location_id`, `type`, `date`) VALUES (?, ?, ?, ?, ?)", 
+            return $conn->run_query("INSERT INTO $configs->DB_NAME.$configs->DB_EVENTS_TABLE (`name`, `description`, `location_id`, `type`, `date`) VALUES (?, ?, ?, ?, ?)", 
                 [$name, $description, $location_id, $type, $date], true);
         }
     
@@ -132,11 +135,12 @@ class Event
     {
         // Check if event exists
         global $configs;
-        $result = run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `id` = $id");
+        global $conn;
+        $result = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `id` = $id");
 
         if ($result && $result->num_rows > 0) {
             // Remove the event
-            $success = run_query("DELETE FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `id` = $id");
+            $success = $conn->run_query("DELETE FROM $configs->DB_NAME.$configs->DB_EVENTS_TABLE WHERE `id` = $id");
 
             if (!$success) {
                 error_log("Database delete failed..."); // Log the error

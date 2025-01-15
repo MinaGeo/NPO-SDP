@@ -59,16 +59,18 @@ class DatabaseProxy implements IDatabase
 
     public function run_query($query, $params = [], $echo = false)
     {
+        global $conn;
         if($this->validateUser()){
-            return run_query($query);
+            return $conn->run_query($query);
         }
         // return $this->database->run_query($query, $params, $echo);
     }
 
     public function run_select_query($query, $params = [], $echo = false) : mysqli_result|bool
     {
+        global $conn;
         if($this->validateUser()){
-            return run_select_query($query);
+            return $conn->run_select_query($query);
         }
     }
 }

@@ -20,6 +20,7 @@ class DonationView{
 
     public function showAdmin($donationsList)
     {
+        require_once "./views/Navbar.php";
         require_once './views/pages/DonationAdmin.php';
     }
 

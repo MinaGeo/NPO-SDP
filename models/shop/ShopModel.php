@@ -65,19 +65,20 @@ class ShopItem implements IShopComponent
         }
         return $str . '</pre>';
     }
-    
 
     static public function get_by_id(int $id): ?ShopItem
     {
-        $rows = run_select_query("SELECT * FROM `NPO`.`shop_items` WHERE id = ?", [$id]);
+        global $conn, $configs;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_ITEMS_TABLE WHERE id = ?", [$id]);
         return $rows && $rows->num_rows > 0 ? new ShopItem($rows->fetch_assoc()) : null;
     }
 
     // Get every Shop Item
     static public function get_all(): array
     {
+        global $conn, $configs;
         $shop_items = [];
-        $rows = run_select_query("SELECT * FROM `shop_items`")->fetch_all(MYSQLI_ASSOC);
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_ITEMS_TABLE")->fetch_all(MYSQLI_ASSOC);
 
         $shopIterator = new itemIterator($rows);
         while ($shopIterator->hasNext()) {
@@ -89,41 +90,64 @@ class ShopItem implements IShopComponent
     // Add an Shop Item
     static public function add_shop_item(string $name, string $description, float $price): bool
     {
+        global $conn, $configs;
         // Check if Shop Item already exists
-        $checkShopItem = run_select_query("SELECT * FROM `NPO`.`shop_items` WHERE `name` = ?", [$name], true);
-        
+        $checkShopItem = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_ITEMS_TABLE WHERE `name` = ?", [$name], true);
+
         // Use num_rows to check if there are no results
-        if ($checkShopItem && $checkShopItem->num_rows == 0) {  
+        if ($checkShopItem && $checkShopItem->num_rows == 0) {
             // Insert the new Shop Item
-            return run_query("INSERT INTO `NPO`.`shop_items` (`name`, `description`, `price`) VALUES (?, ?, ?)", 
-                [$name, $description, $price], true);
+            return $conn->run_query(
+                "INSERT INTO $configs->DB_NAME.$configs->DB_SHOP_ITEMS_TABLE (`name`, `description`, `price`) VALUES (?, ?, ?)",
+                [$name, $description, $price],
+                true
+            );
         }
-    
+
         return false; // Return false if Shop Item already exists
     }
 
-    public static function delete_shop_item(int $id): bool
+    
+    public static function get_by_name(string $name): ?ShopItem
     {
-        // First, remove associations with any category in the category_items table
-        run_query("DELETE FROM `category_items` WHERE item_id = ?", [$id]);
-    
-        // Check if the Shop Item exists
-        $result = run_select_query("SELECT * FROM `NPO`.`shop_items` WHERE `id` = ?", [$id]);
-    
-        if ($result && $result->num_rows > 0) {
-            // Remove the Shop Item
-            $success = run_query("DELETE FROM `NPO`.`shop_items` WHERE `id` = ?", [$id]);
-    
-            if (!$success) {
-                error_log("Database delete failed..."); // Log the error
-            }
-    
-            return $success;
-        }
-    
-        return false; // Return false if the shop item does not exist
+        global $conn, $configs;
+        $rows = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_ITEMS_TABLE WHERE name = ?", [$name]);
+        return $rows && $rows->num_rows > 0 ? new ShopItem($rows->fetch_assoc()) : null;
     }
     
+    public static function delete_shop_item(int $id): bool
+    {
+        global $conn, $configs;
+    
+        // Check if the Shop Item exists
+        $result = $conn->run_select_query("SELECT * FROM $configs->DB_NAME.$configs->DB_SHOP_ITEMS_TABLE WHERE `id` = ?", [$id]);
+    
+        if ($result && $result->num_rows > 0) {
+            // Try to remove category associations regardless of whether they exist
+            $delete_category_associations = $conn->run_query("DELETE FROM $configs->DB_NAME.$configs->DB_CATEGORY_ITEMS_TABLE WHERE item_id = ?", [$id]);
+            if ($delete_category_associations === false) {
+                error_log("Failed to delete category associations for item_id: $id");
+                // Continue even if no associations exist
+            }
+    
+            // Remove the Shop Item
+            $delete_item = $conn->run_query("DELETE FROM $configs->DB_NAME.$configs->DB_SHOP_ITEMS_TABLE WHERE `id` = ?", [$id]);
+            if (!$delete_item) {
+                error_log("Failed to delete shop item with id: $id");
+                return false; // Stop if the item cannot be deleted
+            }
+    
+            return true; // Item deleted successfully
+        }
+    
+        // Log if the shop item does not exist
+        error_log("Shop item with id: $id does not exist");
+        return false;
+    }
+    
+
+
+
 
     public function add(IShopComponent $component): void
     {
@@ -143,9 +167,10 @@ class ShopItem implements IShopComponent
         return false;
     }
 
-    public function get_category(): ?ShopCategory { 
-        $row = run_select_query("SELECT category_id FROM `category_items` WHERE item_id = ?", [$this->id])->fetch_assoc(); 
-        return $row ? ShopCategory::get_by_id((int)$row['category_id']) : null; 
+    public function get_category(): ?ShopCategory
+    {
+        global $conn, $configs;
+        $row = $conn->run_select_query("SELECT category_id FROM $configs->DB_NAME.$configs->DB_CATEGORY_ITEMS_TABLE WHERE item_id = ?", [$this->id])->fetch_assoc();
+        return $row ? ShopCategory::get_by_id((int)$row['category_id']) : null;
     }
 }
-
