@@ -33,22 +33,22 @@ class DatabaseProxy implements IDatabase
     }
 
     // Check if the user type is valid (e.g., '1' for admin, '0' for guest )
-    if (!in_array($user->type, [1, 2])) { 
+    if (!in_array($user->getType(), [0, 1, 2])) { 
         return false; // Invalid user type
     }
 
     // Validate first name and last name (ensure they are non-empty strings)
-    if (empty(trim($user->firstName)) || empty(trim($user->lastName))) {
+    if (empty(trim($user->getFirstName())) || empty(trim($user->getLastName()))) {
         return false; // Invalid name data
     }
 
     // Validate email format
-    if (!filter_var($user->email, FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL)) {
         return false; // Invalid email
     }
 
     // Ensure password hash is not empty
-    if (empty($user->passwordHash)) {
+    if (empty($user->getPasswordHash())) {
         return false; // Password hash missing
     }
 

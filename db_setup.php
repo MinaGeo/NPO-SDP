@@ -3,7 +3,7 @@
 require_once "./models/database/IDatabase.php";
 $configs = require "server-configs.php";
 
-class Database implements IDatabase 
+class Database 
 {
     private static $instance = null;
     private $conn;

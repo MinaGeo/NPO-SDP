@@ -122,7 +122,7 @@ class User
     {
         global $configs;
         $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE email = '$email'";
-        $rows = DatabaseProxy::getInstance()->run_select_query($query);
+        $rows = run_select_query($query);
         return $rows->num_rows > 0;
     }
 
@@ -133,7 +133,7 @@ class User
         $columns = implode(", ", array_keys($userData));
         $values = implode("', '", array_values($userData));
         $query = "INSERT INTO $configs->DB_NAME.$configs->DB_USERS_TABLE ($columns) VALUES ('$values')";
-        return DatabaseProxy::getInstance()->run_query($query);
+        return run_query($query);
         // return run_query($query);
     }
 
@@ -142,7 +142,7 @@ class User
     {
         global $configs;
         $query = "DELETE FROM $configs->DB_NAME.$configs->DB_USERS_TABLE WHERE id = '$id'";
-        return DatabaseProxy::getInstance()->run_query($query);
+        return run_query($query);
     }
 
     // Updates a user's information in the database given an ID and an associative array of new data, returns true if successful, otherwise false
@@ -155,14 +155,14 @@ class User
         }
         $setClauseString = implode(", ", $setClause);
         $query = "UPDATE $configs->DB_NAME.$configs->DB_USERS_TABLE SET $setClauseString WHERE id = '$id'";
-        return DatabaseProxy::getInstance()->run_query($query);
+        return run_query($query);
     }
     static public function get_all_users(): array
     {
         global $configs;
         $users = [];
         $query = "SELECT * FROM $configs->DB_NAME.$configs->DB_USERS_TABLE";
-        $result = DatabaseProxy::getInstance()->run_select_query($query);
+        $result = run_select_query($query);
 
         while ($row = $result->fetch_assoc()) {
             $users[] = new User($row);

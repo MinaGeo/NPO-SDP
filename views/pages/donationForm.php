@@ -248,6 +248,7 @@
                     expiryDate: expiryDate
                 },
                 success: function(response) {
+                    console.log(response);
                     const res = JSON.parse(response);
                     if (res['success']) {
                         if (res['Popup']) {
