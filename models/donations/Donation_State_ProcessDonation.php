@@ -10,12 +10,8 @@ class DonationStateProcess implements IDonationState
 {    
     public function execute(Donation $donation): void
     {
-        if($donation->getDonationType() === 'monetary'){
-            $donation->setDonationStrategy(new MonetaryDonation());
-        }
-        else{
-            $donation->setDonationStrategy(new NonMonetaryDonation());
-        }
+        $donationStrategy = DonationStrategyFactory::createDonationStrategy($donation->getDonationType());
+        $donation->setDonationStrategy($donationStrategy);
         $donation->processDonation();
     }
 
@@ -30,4 +26,14 @@ class DonationStateProcess implements IDonationState
     }
 }
 
+class DonationStrategyFactory {
+    public static function createDonationStrategy($donationType): IDonateStrategy {
+        if($donationType === 'monetary'){
+            return new MonetaryDonation();
+        }
+        else{
+            return new NonMonetaryDonation();
+        }
+    }
+}
 ?>
