@@ -10,10 +10,14 @@ class CartFactory
     private static $invoker = null;
 
     // Get or create the shared CartInvoker
-    private static function getInvoker()
+    private static function getInvoker($cart, $itemId)
     {
         if (self::$invoker === null) {
             self::$invoker = new CartInvoker();
+            $addItemCommand = new AddItemToCartCommand($cart, $itemId);
+            $removeItemCommand = new RemoveItemFromCartCommand($cart, $itemId);
+            self::$invoker->setOffCommand($removeItemCommand);
+            self::$invoker->setOnCommand($addItemCommand);
         }
         return self::$invoker;
     }
@@ -36,19 +40,13 @@ class CartFactory
     {
         // Retrieve the user's cart
         $cart = self::getCartForUser($userId);
-        $invoker = self::getInvoker();
+        $invoker = self::getInvoker($cart, $itemId);
         // Process the action
         switch ($action) {
             case 'add':
-                // Create the add item command
-                $addItemCommand = new AddItemToCartCommand($cart, $itemId);
-                $invoker->setOnCommand($addItemCommand);
                 return $invoker->on();
     
             case 'remove':
-                // Create the remove item command
-                $removeItemCommand = new RemoveItemFromCartCommand($cart, $itemId);
-                $invoker->setOffCommand($removeItemCommand);
                 return $invoker->off();
     
             default:
