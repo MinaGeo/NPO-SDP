@@ -34,14 +34,14 @@
             <li><a href="home">Home</a></li>
             <li><a href="donation">Donation</a></li>
             <li><a href="event">Events</a></li>
-            <?php if ($_SESSION['USER_TYPE'] == 0): ?>
+            <?php if ($_SESSION['USER_TYPE'] == 0 && $_SESSION['USER_ID']!=-1): ?>
                 <li><a class="dropdown-trigger" href="#!" data-target="adminDropdown">Shop<i class="material-icons right"></i></a></li>
                 <!-- Dropdown Structure -->
                 <ul id="adminDropdown" class="dropdown-content">
                     <li><a href="shop">Shop</a></li>
                     <li><a href="showCategoryTree">Show Category Tree</a></li>
                 </ul>
-            <?php elseif ($_SESSION['USER_TYPE'] == 1): ?>
+            <?php elseif ($_SESSION['USER_TYPE'] == 1 || $_SESSION['USER_ID']==-1): ?>
                 <li><a href="shop">Shop</a></li>
             <?php endif; ?>
         </ul>
