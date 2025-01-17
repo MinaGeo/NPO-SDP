@@ -1,6 +1,5 @@
 <?php
 
-require_once "IObserver.php";
 require_once "./models/phpmailer.php";
 
 interface INotification {
