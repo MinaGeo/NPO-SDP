@@ -8,7 +8,9 @@ ob_end_clean();
 // require_once "./models/ShopItem.php";
 require_once "CartDecorater.php";
 require_once "./models/itemIterator.php";
-class Cart implements Billable
+require_once "./models/IAggregater.php";
+
+class Cart implements Billable, IAggregater
 {
     // Define properties
     private int $id;

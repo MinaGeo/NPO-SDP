@@ -7,7 +7,9 @@ require_once "./db_setup.php";
 ob_end_clean();
 require_once "./models/userBase.php";
 require_once "itemIterator.php";
-class VolunteerEvent
+require_once "./models/IAggregater.php";
+
+class VolunteerEvent implements IAggregater
 {
     private int $id;
     private int $volunteer_id;

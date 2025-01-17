@@ -9,7 +9,8 @@ require_once "./models/cart/CartDecorater.php";
 require_once "./models/itemIterator.php";
 require_once "IShopComponent.php";
 require_once "ShopCategory.php";
-class ShopItem implements IShopComponent
+require_once "./models/IAggregater.php";
+class ShopItem implements IShopComponent, IAggregater
 {
     // Define properties
     private int $id;
@@ -43,7 +44,7 @@ class ShopItem implements IShopComponent
         $this->price = (float)($properties['price'] ?? 0);
     }
 
-    public function getIterator(): itemIterator
+    public function getIterator($items = ''): itemIterator
     {
         return new itemIterator([
             'id' => $this->id,

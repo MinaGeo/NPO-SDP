@@ -6,11 +6,10 @@ ob_start();
 require_once "./db_setup.php";
 ob_end_clean();
 require_once "models/itemIterator.php";
-require_once "LocationComponent.php";
-require_once "SingleLocation.php";
-require_once "CompositeLocation.php";
 require_once "LocationRepository.php"; // Include the LocationRepository
-class Event
+require_once "./models/IAggregater.php";
+
+class Event implements IAggregater
 {
     // Define properties
     private int $id;
@@ -57,7 +56,7 @@ class Event
         $this->date = $properties['date'] ?? '';
     }
 
-    public function getIterator(): itemIterator
+    public function getIterator($items = ''): itemIterator
     {
         return new itemIterator([
             'id' => $this->id,
